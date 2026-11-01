@@ -1,0 +1,3957 @@
+[
+{
+"name": "HALIM PERDANAKUSUMA",
+"locId": "WIHH",
+"city": "JAKARTA",
+"arp": "0616S10653E",
+"fir": "WIIF"
+},
+{
+"name": "HANG NADIM",
+"locId": "WIDD",
+"city": "BATAM",
+"arp": "0107N10406E",
+"fir": "WIIF"
+},
+{
+"name": "I GUSTI NGURAH RAI",
+"locId": "WADD",
+"city": "BALI",
+"arp": "0845S11510E",
+"fir": "WAAF"
+},
+{
+"name": "INTERNASIONAL YOGYAKARTA",
+"locId": "WAHI",
+"city": "KULON PROGO",
+"arp": "0754S11002E",
+"fir": "WAAF"
+},
+{
+"name": "JUANDA",
+"locId": "WARR",
+"city": "SURABAYA",
+"arp": "0723S11247E",
+"fir": "WAAF"
+},
+{
+"name": "KERTAJATI",
+"locId": "WICA",
+"city": "MAJALENGKA",
+"arp": "0639S10809E",
+"fir": "WIIF"
+},
+{
+"name": "KOMODO",
+"locId": "WATO",
+"city": "LABUAN BAJO",
+"arp": "0829S11953E",
+"fir": "WAAF"
+},
+{
+"name": "KUALANAMU INTERNATIONAL",
+"locId": "WIMM",
+"city": "DELI SERDANG",
+"arp": "0339N09853E",
+"fir": "WIIF"
+},
+{
+"name": "MINANGKABAU INTERNATIONAL",
+"locId": "WIEE",
+"city": "PADANG PARIAMAN",
+"arp": "0047S10017E",
+"fir": "WIIF"
+},
+{
+"name": "SAM RATULANGI",
+"locId": "WAMM",
+"city": "MANADO",
+"arp": "0133N12456E",
+"fir": "WAAF"
+},
+{
+"name": "SENTANI",
+"locId": "WAJJ",
+"city": "JAYAPURA",
+"arp": "0234S14031E",
+"fir": "WAAF"
+},
+{
+"name": "SOEKARNO-HATTA",
+"locId": "WIII",
+"city": "JAKARTA",
+"arp": "0607S10640E",
+"fir": "WIIF"
+},
+{
+"name": "SULTAN AJI MUHAMMAD SULAIMAN SEPINGGAN",
+"locId": "WALL",
+"city": "BALIKPAPAN",
+"arp": "0117S11651E",
+"fir": "WAAF"
+},
+{
+"name": "SULTAN HASANUDDIN",
+"locId": "WAAA",
+"city": "MAKASSAR",
+"arp": "0504S11933E",
+"fir": "WAAF"
+},
+{
+"name": "SULTAN ISKANDAR MUDA",
+"locId": "WITT",
+"city": "BANDA ACEH",
+"arp": "0531N09525E",
+"fir": "WIIF"
+},
+{
+"name": "SULTAN SYARIF KASIM II",
+"locId": "WIBB",
+"city": "PEKANBARU",
+"arp": "0028N10127E",
+"fir": "WIIF"
+},
+{
+"name": "ZAINUDDIN ABDUL MADJID",
+"locId": "WADL",
+"city": "PRAYA",
+"arp": "0845S11617E",
+"fir": "WAAF"
+},
+{
+"name": "A. A. BERE TALLO",
+"locId": "WATA",
+"city": "ATAMBUA",
+"arp": "0905S12454E",
+"fir": "WAAF"
+},
+{
+"name": "ABDUL RACHMAN SALEH",
+"locId": "WARA",
+"city": "MALANG",
+"arp": "0756S11243E",
+"fir": "WAAF"
+},
+{
+"name": "ADI SOEMARMO",
+"locId": "WAHQ",
+"city": "BOYOLALI",
+"arp": "0731S11045E",
+"fir": "WAAF"
+},
+{
+"name": "ADISUTJIPTO",
+"locId": "WAHH",
+"city": "SLEMAN",
+"arp": "0747S11026E",
+"fir": "WAAF"
+},
+{
+"name": "AEK GODANG",
+"locId": "WIME",
+"city": "PADANG SIDEMPUAN",
+"arp": "0124N09926E",
+"fir": "WIIF"
+},
+{
+"name": "AJI PANGERAN TUMENGGUNG PRANOTO",
+"locId": "WALS",
+"city": "SAMARINDA",
+"arp": "0023S11715E",
+"fir": "WAAF"
+},
+{
+"name": "ALAS LEUSER",
+"locId": "WIMU",
+"city": "KUTACANE",
+"arp": "0323N09752E",
+"fir": "WIIF"
+},
+{
+"name": "ANDI JEMMA",
+"locId": "WAFM",
+"city": "MASAMBA",
+"arp": "0233S12019E",
+"fir": "WAAF"
+},
+{
+"name": "ARUNG PALAKKA",
+"locId": "WAWN",
+"city": "BONE",
+"arp": "0428S12018E",
+"fir": "WAAF"
+},
+{
+"name": "BANYUWANGI",
+"locId": "WADY",
+"city": "BANYUWANGI",
+"arp": "0819S11420E",
+"fir": "WAAF"
+},
+{
+"name": "BERSUJUD",
+"locId": "WAOC",
+"city": "BATULICIN",
+"arp": "0325S11600E",
+"fir": "WAAF"
+},
+{
+"name": "BETOAMBARI",
+"locId": "WAWB",
+"city": "BAU BAU",
+"arp": "0529S12234E",
+"fir": "WAAF"
+},
+{
+"name": "BINAKA",
+"locId": "WIMB",
+"city": "GUNUNG SITOLI",
+"arp": "0110N09742E",
+"fir": "WIIF"
+},
+{
+"name": "BOLAANG MONGONDOW",
+"locId": "WAMI",
+"city": "BOLAANG MONGONDOW",
+"arp": "0053N12402E",
+"fir": "WAAF"
+},
+{
+"name": "BUDIARTO",
+"locId": "WIRR",
+"city": "TANGERANG",
+"arp": "0618S10634E",
+"fir": "WIIF"
+},
+{
+"name": "BULA",
+"locId": "WAPB",
+"city": "SERAM ISLAND",
+"arp": "0306S13030E",
+"fir": "WAAF"
+},
+{
+"name": "BULI",
+"locId": "WAEM",
+"city": "HALMAHERA ISLAND",
+"arp": "0055N12823E",
+"fir": "WAAF"
+},
+{
+"name": "CUT NYAK DHIEN NAGAN RAYA",
+"locId": "WITC",
+"city": "NAGAN RAYA",
+"arp": "0403N09615E",
+"fir": "WIIF"
+},
+{
+"name": "DABO",
+"locId": "WIDS",
+"city": "SINGKEP",
+"arp": "0029S10435E",
+"fir": "WIIF"
+},
+{
+"name": "DAVID CONSTANTIJN SAUDALE",
+"locId": "WATR",
+"city": "ROTE NDAO",
+"arp": "1046S12304E",
+"fir": "WAAF"
+},
+{
+"name": "DEPATI AMIR",
+"locId": "WIKK",
+"city": "PANGKAL PINANG",
+"arp": "0210S10608E",
+"fir": "WIIF"
+},
+{
+"name": "DEPATI PARBO",
+"locId": "WIJI",
+"city": "KERINCI",
+"arp": "0205S10128E",
+"fir": "WIIF"
+},
+{
+"name": "DEWADARU",
+"locId": "WAHU",
+"city": "KARIMUN JAWA",
+"arp": "0548S11029E",
+"fir": "WAAF"
+},
+{
+"name": "DHOHO",
+"locId": "WARD",
+"city": "KEDIRI",
+"arp": "0745S11157E",
+"fir": "WAAF"
+},
+{
+"name": "DJALALUDDIN",
+"locId": "WAMG",
+"city": "GORONTALO",
+"arp": "0038N12251E",
+"fir": "WAAF"
+},
+{
+"name": "DOBO",
+"locId": "WAPD",
+"city": "DOBO",
+"arp": "0546S13413E",
+"fir": "WAAF"
+},
+{
+"name": "DOMINE EDUARD OSOK",
+"locId": "WASS",
+"city": "SORONG",
+"arp": "0054S13117E",
+"fir": "WAAF"
+},
+{
+"name": "DOUW ATURURE",
+"locId": "WABI",
+"city": "NABIRE",
+"arp": "0324S13524E",
+"fir": "WAAF"
+},
+{
+"name": "DR FERDINAND LUMBANTOBING",
+"locId": "WIMS",
+"city": "CENTRAL TAPANULI",
+"arp": "0133N09854E",
+"fir": "WIIF"
+},
+{
+"name": "EL TARI",
+"locId": "WATT",
+"city": "KUPANG",
+"arp": "1011S12340E",
+"fir": "WAAF"
+},
+{
+"name": "ENGGANO",
+"locId": "WIGE",
+"city": "BENGKULU UTARA",
+"arp": "0518S10211E",
+"fir": "WIIF"
+},
+{
+"name": "EWER",
+"locId": "WAKG",
+"city": "ASMAT",
+"arp": "0530S13805E",
+"fir": "WAAF"
+},
+{
+"name": "FATMAWATI SOEKARNO",
+"locId": "WIGG",
+"city": "BENGKULU",
+"arp": "0352S10220E",
+"fir": "WIIF"
+},
+{
+"name": "FRANS KAISIEPO",
+"locId": "WABB",
+"city": "BIAK",
+"arp": "0112S13607E",
+"fir": "WAAF"
+},
+{
+"name": "FRANS SALES LEGA",
+"locId": "WATG",
+"city": "RUTENG",
+"arp": "0836S12029E",
+"fir": "WAAF"
+},
+{
+"name": "FRANSISKUS XAVERIUS SEDA",
+"locId": "WATC",
+"city": "MAUMERE",
+"arp": "0838S12214E",
+"fir": "WAAF"
+},
+{
+"name": "GAMAR MALAMO",
+"locId": "WAEG",
+"city": "NORTH HALMAHERA",
+"arp": "0150N12747E",
+"fir": "WAAF"
+},
+{
+"name": "GATOT SOEBROTO",
+"locId": "WIPO",
+"city": "WAY KANAN",
+"arp": "0424S10424E",
+"fir": "WIIF"
+},
+{
+"name": "GEWAYANTANA",
+"locId": "WATL",
+"city": "LARANTUKA",
+"arp": "0817S12300E",
+"fir": "WAAF"
+},
+{
+"name": "GUSTI SJAMSIR ALAM",
+"locId": "WAOK",
+"city": "KOTABARU",
+"arp": "0318S11610E",
+"fir": "WAAF"
+},
+{
+"name": "H. AROEPPALA",
+"locId": "WAWH",
+"city": "SELAYAR",
+"arp": "0611S12026E",
+"fir": "WAAF"
+},
+{
+"name": "H. ASAN",
+"locId": "WAGS",
+"city": "SAMPIT",
+"arp": "0230S11259E",
+"fir": "WAAF"
+},
+{
+"name": "H. HASAN AROEBOESMAN",
+"locId": "WATE",
+"city": "ENDE",
+"arp": "0851S12140E",
+"fir": "WAAF"
+},
+{
+"name": "H.AS. HANANDJOEDDIN",
+"locId": "WIKT",
+"city": "BELITUNG",
+"arp": "0245S10745E",
+"fir": "WIIF"
+},
+{
+"name": "HAJI MUHAMMAD SIDIK",
+"locId": "WAGB",
+"city": "MUARA TEWEH",
+"arp": "0101S11456E",
+"fir": "WAAF"
+},
+{
+"name": "HALU OLEO",
+"locId": "WAWW",
+"city": "KENDARI",
+"arp": "0405S12225E",
+"fir": "WAAF"
+},
+{
+"name": "HUSEIN SASTRANEGARA",
+"locId": "WICC",
+"city": "BANDUNG",
+"arp": "0654S10735E",
+"fir": "WIIF"
+},
+{
+"name": "IMIP",
+"locId": "WAMP",
+"city": "MOROWALI",
+"arp": "0248S12208E",
+"fir": "WAAF"
+},
+{
+"name": "ISKANDAR",
+"locId": "WAGI",
+"city": "PANGKALAN BUN",
+"arp": "0242S11140E",
+"fir": "WAAF"
+},
+{
+"name": "JAPURA",
+"locId": "WIBJ",
+"city": "RENGAT",
+"arp": "0021S10220E",
+"fir": "WIIF"
+},
+{
+"name": "JENDERAL AHMAD YANI",
+"locId": "WAHS",
+"city": "SEMARANG",
+"arp": "0659S11023E",
+"fir": "WAAF"
+},
+{
+"name": "JENDERAL BESAR ABDUL HARIS NASUTION",
+"locId": "WIMF",
+"city": "MANDAILING NATAL",
+"arp": "0057N09932E",
+"fir": "WIIF"
+},
+{
+"name": "JENDERAL BESAR SOEDIRMAN",
+"locId": "WAHP",
+"city": "PURBALINGGA",
+"arp": "0728S10925E",
+"fir": "WAAF"
+},
+{
+"name": "JOS ORNO IMSULA",
+"locId": "WAPM",
+"city": "TIAKUR",
+"arp": "0808S12754E",
+"fir": "WAAF"
+},
+{
+"name": "JUWATA",
+"locId": "WAQQ",
+"city": "TARAKAN",
+"arp": "0320N11734E",
+"fir": "WAAF"
+},
+{
+"name": "KALIMARAU",
+"locId": "WAQT",
+"city": "TANJUNG REDEB",
+"arp": "0209N11726E",
+"fir": "WAAF"
+},
+{
+"name": "KAREL SADSUITUBUN",
+"locId": "WAPF",
+"city": "LANGGUR",
+"arp": "0545S13246E",
+"fir": "WAAF"
+},
+{
+"name": "KASIGUNCU",
+"locId": "WAFP",
+"city": "POSO",
+"arp": "0125S12040E",
+"fir": "WAAF"
+},
+{
+"name": "KEPI",
+"locId": "WAKP",
+"city": "MAPPI",
+"arp": "0633S13920E",
+"fir": "WAAF"
+},
+{
+"name": "KOL. ROBERT ATTY BESSING",
+"locId": "WAQM",
+"city": "MALINAU",
+"arp": "0334N11637E",
+"fir": "WAAF"
+},
+{
+"name": "KOROWAY BATU",
+"locId": "WAKY",
+"city": "BOVEN DIGOEL",
+"arp": "0513S14001E",
+"fir": "WAAF"
+},
+{
+"name": "KUABANG",
+"locId": "WAEK",
+"city": "KAO",
+"arp": "0111N12754E",
+"fir": "WAAF"
+},
+{
+"name": "LAGALIGO",
+"locId": "WAFD",
+"city": "LUWU",
+"arp": "0305S12015E",
+"fir": "WAAF"
+},
+{
+"name": "LASIKIN",
+"locId": "WIML",
+"city": "SINABANG",
+"arp": "0224N09620E",
+"fir": "WIIF"
+},
+{
+"name": "LASONDRE",
+"locId": "WIMO",
+"city": "NIAS SELATAN",
+"arp": "0001S09818E",
+"fir": "WIIF"
+},
+{
+"name": "LEDE KALUMBANG",
+"locId": "WATK",
+"city": "TAMBOLAKA",
+"arp": "0925S11915E",
+"fir": "WAAF"
+},
+{
+"name": "MAIMUN SALEH",
+"locId": "WITN",
+"city": "SABANG",
+"arp": "0553N09520E",
+"fir": "WIIF"
+},
+{
+"name": "MALI",
+"locId": "WATM",
+"city": "ALOR",
+"arp": "0808S12436E",
+"fir": "WAAF"
+},
+{
+"name": "MALIKUSSALEH",
+"locId": "WIMA",
+"city": "ACEH UTARA",
+"arp": "0514N09657E",
+"fir": "WIIF"
+},
+{
+"name": "MARATUA",
+"locId": "WAQC",
+"city": "BERAU",
+"arp": "0212N11836E",
+"fir": "WAAF"
+},
+{
+"name": "MARINDA",
+"locId": "WASN",
+"city": "RAJA AMPAT",
+"arp": "0026S13046E",
+"fir": "WAAF"
+},
+{
+"name": "MATAHORA",
+"locId": "WAWD",
+"city": "WAKATOBI",
+"arp": "0517S12338E",
+"fir": "WAAF"
+},
+{
+"name": "MATHILDA BATLAYERI",
+"locId": "WAPS",
+"city": "SAUMLAKI",
+"arp": "0751S13120E",
+"fir": "WAAF"
+},
+{
+"name": "MELONGUANE",
+"locId": "WAMN",
+"city": "SANGIHE TALAUD",
+"arp": "0400N12640E",
+"fir": "WAAF"
+},
+{
+"name": "MENTAWAI",
+"locId": "WIEB",
+"city": "KEPULAUAN MENTAWAI",
+"arp": "0206S09942E",
+"fir": "WIIF"
+},
+{
+"name": "MIANGAS",
+"locId": "WAMS",
+"city": "MIANGAS",
+"arp": "0533N12635E",
+"fir": "WAAF"
+},
+{
+"name": "MOPAH",
+"locId": "WAKK",
+"city": "MERAUKE",
+"arp": "0831S14025E",
+"fir": "WAAF"
+},
+{
+"name": "MOROWALI",
+"locId": "WAFO",
+"city": "MOROWALI",
+"arp": "0212S12140E",
+"fir": "WAAF"
+},
+{
+"name": "MOZES KILANGIN",
+"locId": "WAYY",
+"city": "TIMIKA",
+"arp": "0432S13653E",
+"fir": "WAAF"
+},
+{
+"name": "MUARA BUNGO",
+"locId": "WIJB",
+"city": "MUARA BUNGO",
+"arp": "0133S10211E",
+"fir": "WIIF"
+},
+{
+"name": "MUKOMUKO",
+"locId": "WIGM",
+"city": "MUKOMUKO",
+"arp": "0232S10105E",
+"fir": "WIIF"
+},
+{
+"name": "MUTIARA SIS AL-JUFRI",
+"locId": "WAFF",
+"city": "PALU",
+"arp": "0055S11955E",
+"fir": "WAAF"
+},
+{
+"name": "NAHA",
+"locId": "WAMH",
+"city": "TAHUNA",
+"arp": "0341N12532E",
+"fir": "WAAF"
+},
+{
+"name": "NAMNIWEL",
+"locId": "WAPN",
+"city": "BURU ISLAND",
+"arp": "0309S12659E",
+"fir": "WAAF"
+},
+{
+"name": "NGLORAM",
+"locId": "WARC",
+"city": "BLORA",
+"arp": "0712S11133E",
+"fir": "WAAF"
+},
+{
+"name": "NOP GOLIAT DEKAI",
+"locId": "WAVD",
+"city": "YAHUKIMO",
+"arp": "0451S13929E",
+"fir": "WAAF"
+},
+{
+"name": "NOTO HADINEGORO",
+"locId": "WARE",
+"city": "JEMBER",
+"arp": "0815S11342E",
+"fir": "WAAF"
+},
+{
+"name": "NUMFOR",
+"locId": "WABF",
+"city": "BIAK NUMFOR",
+"arp": "0056S13452E",
+"fir": "WAAF"
+},
+{
+"name": "NUNUKAN",
+"locId": "WAQA",
+"city": "NUNUKAN",
+"arp": "0408N11740E",
+"fir": "WAAF"
+},
+{
+"name": "NUSANTARA",
+"locId": "WALK",
+"city": "PENAJAM PASER UTARA",
+"arp": "0110S11642E",
+"fir": "WAAF"
+},
+{
+"name": "NUSAWIRU",
+"locId": "WICN",
+"city": "PANGANDARAN",
+"arp": "0743S10829E",
+"fir": "WIIF"
+},
+{
+"name": "OESMAN SADIK",
+"locId": "WAEL",
+"city": "LABUHA",
+"arp": "0038S12730E",
+"fir": "WAAF"
+},
+{
+"name": "OKSIBIL",
+"locId": "WAJO",
+"city": "PEGUNUNGAN BINTANG",
+"arp": "0454S14038E",
+"fir": "WAAF"
+},
+{
+"name": "PANGSUMA",
+"locId": "WIOP",
+"city": "PUTUSSIBAU",
+"arp": "0050N11256E",
+"fir": "WIIF"
+},
+{
+"name": "PATTIMURA",
+"locId": "WAPP",
+"city": "AMBON",
+"arp": "0342S12805E",
+"fir": "WAAF"
+},
+{
+"name": "PINANG KAMPAI",
+"locId": "WIBD",
+"city": "DUMAI",
+"arp": "0137N10126E",
+"fir": "WIIF"
+},
+{
+"name": "PITU",
+"locId": "WAEW",
+"city": "MOROTAI",
+"arp": "0203N12819E",
+"fir": "WAAF"
+},
+{
+"name": "POGOGUL",
+"locId": "WAFY",
+"city": "BUOL",
+"arp": "0106N12125E",
+"fir": "WAAF"
+},
+{
+"name": "PONDOK CABE",
+"locId": "WIHP",
+"city": "SOUTH TANGERANG",
+"arp": "0620S10646E",
+"fir": "WIIF"
+},
+{
+"name": "RADIN INTEN II",
+"locId": "WILL",
+"city": "BANDAR LAMPUNG",
+"arp": "0514S10511E",
+"fir": "WIIF"
+},
+{
+"name": "RAHADI OESMAN",
+"locId": "WIOK",
+"city": "KETAPANG",
+"arp": "0149S10958E",
+"fir": "WIIF"
+},
+{
+"name": "RAJA HAJI ABDULLAH",
+"locId": "WIDT",
+"city": "TANJUNG BALAI KARIMUN",
+"arp": "0103N10323E",
+"fir": "WIIF"
+},
+{
+"name": "RAJA HAJI FISABILILLAH",
+"locId": "WIDN",
+"city": "TANJUNGPINANG",
+"arp": "0055N10432E",
+"fir": "WIIF"
+},
+{
+"name": "RAJA SISINGAMANGARAJA XII",
+"locId": "WIMN",
+"city": "SIBORONGBORONG",
+"arp": "0216N09900E",
+"fir": "WIIF"
+},
+{
+"name": "RANAI",
+"locId": "WIDO",
+"city": "NATUNA",
+"arp": "0354N10823E",
+"fir": "WIIF"
+},
+{
+"name": "REMBELE",
+"locId": "WITK",
+"city": "TAKENGON",
+"arp": "0443N09651E",
+"fir": "WIIF"
+},
+{
+"name": "RENDANI",
+"locId": "WAUU",
+"city": "MANOKWARI",
+"arp": "0054S13403E",
+"fir": "WAAF"
+},
+{
+"name": "SANGIA NIBANDERA",
+"locId": "WAWP",
+"city": "KOLAKA",
+"arp": "0421S12131E",
+"fir": "WAAF"
+},
+{
+"name": "SELAPARANG",
+"locId": "WADA",
+"city": "MATARAM",
+"arp": "0834S11606E",
+"fir": "WAAF"
+},
+{
+"name": "SIBISA",
+"locId": "WIMP",
+"city": "PARAPAT",
+"arp": "0236N09858E",
+"fir": "WIIF"
+},
+{
+"name": "SIBORU",
+"locId": "WASF",
+"city": "FAKFAK",
+"arp": "0256S13205E",
+"fir": "WAAF"
+},
+{
+"name": "SILAMPARI",
+"locId": "WIPB",
+"city": "LUBUK LINGGAU",
+"arp": "0317S10255E",
+"fir": "WIIF"
+},
+{
+"name": "SINGKAWANG",
+"locId": "WIOD",
+"city": "SINGKAWANG",
+"arp": "0048N10857E",
+"fir": "WIIF"
+},
+{
+"name": "SOA",
+"locId": "WATB",
+"city": "BAJAWA",
+"arp": "0843S12103E",
+"fir": "WAAF"
+},
+{
+"name": "STEVANUS RUMBEWAS",
+"locId": "WABO",
+"city": "SERUI",
+"arp": "0150S13604E",
+"fir": "WAAF"
+},
+{
+"name": "SUGIMANURU",
+"locId": "WAWR",
+"city": "MUNA",
+"arp": "0446S12234E",
+"fir": "WAAF"
+},
+{
+"name": "SULTAN BABULLAH",
+"locId": "WAEE",
+"city": "TERNATE",
+"arp": "0050N12723E",
+"fir": "WAAF"
+},
+{
+"name": "SULTAN BANTILAN",
+"locId": "WAFL",
+"city": "TOLI-TOLI",
+"arp": "0107N12048E",
+"fir": "WAAF"
+},
+{
+"name": "SULTAN MAHMUD BADARUDDIN II",
+"locId": "WIPP",
+"city": "PALEMBANG",
+"arp": "0254S10442E",
+"fir": "WIIF"
+},
+{
+"name": "SULTAN MUHAMMAD KAHARUDDIN",
+"locId": "WADS",
+"city": "SUMBAWA BESAR",
+"arp": "0829S11725E",
+"fir": "WAAF"
+},
+{
+"name": "SULTAN MUHAMMAD SALAHUDDIN",
+"locId": "WADB",
+"city": "BIMA",
+"arp": "0832S11841E",
+"fir": "WAAF"
+},
+{
+"name": "SULTAN SYARIF HAROEN SETIA NEGARA",
+"locId": "WIBL",
+"city": "PELALAWAN",
+"arp": "0030N10155E",
+"fir": "WIIF"
+},
+{
+"name": "SULTAN THAHA",
+"locId": "WIJJ",
+"city": "JAMBI",
+"arp": "0138S10339E",
+"fir": "WIIF"
+},
+{
+"name": "SUPADIO",
+"locId": "WIOO",
+"city": "PONTIANAK",
+"arp": "0009S10924E",
+"fir": "WIIF"
+},
+{
+"name": "SYAMSUDIN NOOR",
+"locId": "WAOO",
+"city": "BANJARBARU",
+"arp": "0326S11445E",
+"fir": "WAAF"
+},
+{
+"name": "SYUKURAN AMINUDDIN AMIR",
+"locId": "WAFW",
+"city": "LUWUK",
+"arp": "0102S12246E",
+"fir": "WAAF"
+},
+{
+"name": "TAMPA PADANG",
+"locId": "WAFJ",
+"city": "MAMUJU",
+"arp": "0236S11901E",
+"fir": "WAAF"
+},
+{
+"name": "TANAH MERAH",
+"locId": "WAKT",
+"city": "BOVEN DIGOEL",
+"arp": "0606S14018E",
+"fir": "WAAF"
+},
+{
+"name": "TANJUNG API",
+"locId": "WAFU",
+"city": "AMPANA",
+"arp": "0052S12138E",
+"fir": "WAAF"
+},
+{
+"name": "TANJUNG HARAPAN",
+"locId": "WAQD",
+"city": "TANJUNG SELOR",
+"arp": "0250N11722E",
+"fir": "WAAF"
+},
+{
+"name": "TEBELIAN",
+"locId": "WIOS",
+"city": "SINTANG",
+"arp": "0003S11128E",
+"fir": "WIIF"
+},
+{
+"name": "TJILIK RIWUT",
+"locId": "WAGG",
+"city": "PALANGKA RAYA",
+"arp": "0214S11357E",
+"fir": "WAAF"
+},
+{
+"name": "TORAJA",
+"locId": "WAFB",
+"city": "TANA TORAJA",
+"arp": "0311S11955E",
+"fir": "WAAF"
+},
+{
+"name": "TRUNOJOYO",
+"locId": "WART",
+"city": "SUMENEP",
+"arp": "0701S11353E",
+"fir": "WAAF"
+},
+{
+"name": "TUNGGUL WULUNG",
+"locId": "WAHL",
+"city": "CILACAP",
+"arp": "0739S10902E",
+"fir": "WAAF"
+},
+{
+"name": "UMBU MEHANG KUNDA",
+"locId": "WATU",
+"city": "WAINGAPU",
+"arp": "0940S12018E",
+"fir": "WAAF"
+},
+{
+"name": "UTAROM",
+"locId": "WASK",
+"city": "KAIMANA",
+"arp": "0339S13342E",
+"fir": "WAAF"
+},
+{
+"name": "WAGHETE BARU",
+"locId": "WABA",
+"city": "DEIYAI",
+"arp": "0404S13616E",
+"fir": "WAAF"
+},
+{
+"name": "WAMENA",
+"locId": "WAVV",
+"city": "JAYAWIJAYA",
+"arp": "0406S13857E",
+"fir": "WAAF"
+},
+{
+"name": "WARUKIN",
+"locId": "WAON",
+"city": "TABALONG",
+"arp": "0213S11527E",
+"fir": "WAAF"
+},
+{
+"name": "WEDA BAY",
+"locId": "WAEH",
+"city": "LELILEF SAWAI",
+"arp": "0028N12757E",
+"fir": "WAAF"
+},
+{
+"name": "WERUR",
+"locId": "WAUE",
+"city": "TAMBRAUW",
+"arp": "0025S13211E",
+"fir": "WAAF"
+},
+{
+"name": "WIRIADINATA",
+"locId": "WICM",
+"city": "TASIKMALAYA",
+"arp": "0721S10815E",
+"fir": "WIIF"
+},
+{
+"name": "YUVAI SEMARING",
+"locId": "WAQJ",
+"city": "LONG BAWAN",
+"arp": "0354N11542E",
+"fir": "WAAF"
+},
+{
+"name": "ABOGE",
+"locId": "WAKB",
+"city": "ABOGE",
+"arp": "0604S13914E",
+"fir": "WAAF"
+},
+{
+"name": "ABRESSO",
+"locId": "WAUR",
+"city": "RANSIKI",
+"arp": "0130S13411E",
+"fir": "WAAF"
+},
+{
+"name": "AIRPORT POINT A LHOKSUKON",
+"locId": "WITL",
+"city": "LHOK SUKON",
+"arp": "0504N09715E",
+"fir": "WIIF"
+},
+{
+"name": "AKIMUGA",
+"locId": "WAYG",
+"city": "MIMIKA",
+"arp": "0436S13740E",
+"fir": "WAAF"
+},
+{
+"name": "ALAMA",
+"locId": "WAYA",
+"city": "ALAMA",
+"arp": "0420S13750E",
+"fir": "WAAF"
+},
+{
+"name": "AMAHAI",
+"locId": "WAPA",
+"city": "PULAU SERAM",
+"arp": "0321S12856E",
+"fir": "WAAF"
+},
+{
+"name": "AMAROE MEER",
+"locId": "WASE",
+"city": "AMAROE MEER",
+"arp": "0115S13211E",
+"fir": "WAAF"
+},
+{
+"name": "AMAZU",
+"locId": "WAKS",
+"city": "AMAZU PAPUA",
+"arp": "0523S13937E",
+"fir": "WAAF"
+},
+{
+"name": "AMBALAU",
+"locId": "WION",
+"city": "AMBALAU WEST KALIMANTAN",
+"arp": "0012N11238E",
+"fir": "WIIF"
+},
+{
+"name": "AMBISIBIL",
+"locId": "WAJF",
+"city": "AMBISIBIL PAPUA",
+"arp": "0447S14033E",
+"fir": "WAAF"
+},
+{
+"name": "AMGOTRO",
+"locId": "WREA",
+"city": "PAPUA",
+"arp": "0332S14057E",
+"fir": "WAAF"
+},
+{
+"name": "ANDONG",
+"locId": "WIOX",
+"city": "ANDONG WEST KALIMANTAN",
+"arp": "0020S11107E",
+"fir": "WIIF"
+},
+{
+"name": "ANGGI",
+"locId": "WAUA",
+"city": "ANGGI PAPUA",
+"arp": "0323S13352E",
+"fir": "WAAF"
+},
+{
+"name": "ANGGURUK",
+"locId": "WAVN",
+"city": "ANGGURUK PAPUA",
+"arp": "0415S13924E",
+"fir": "WAAF"
+},
+{
+"name": "ANIK",
+"locId": "WIOQ",
+"city": "ANIK WEST KALIMANTAN",
+"arp": "0031N10945E",
+"fir": "WIIF"
+},
+{
+"name": "APA UPING",
+"locId": "WAQN",
+"city": "APA UPING",
+"arp": "0305N11550E",
+"fir": "WAAF"
+},
+{
+"name": "APALAPSILI",
+"locId": "WAVR",
+"city": "APALAPSILI",
+"arp": "0354S13917E",
+"fir": "WAAF"
+},
+{
+"name": "APOGOMACIDA",
+"locId": "WABX",
+"city": "APOGOMACIDA PAPUA",
+"arp": "0405S13534E",
+"fir": "WAAF"
+},
+{
+"name": "ARSO",
+"locId": "WAJA",
+"city": "ARSO PAPUA",
+"arp": "0256S14047E",
+"fir": "WAAF"
+},
+{
+"name": "ASMAT",
+"locId": "WAKM",
+"city": "KAMUR",
+"arp": "0611S13838E",
+"fir": "WAAF"
+},
+{
+"name": "ASTRA KSETRA",
+"locId": "WILM",
+"city": "MANGGALA",
+"arp": "0436S10515E",
+"fir": "WIIF"
+},
+{
+"name": "ATANG SENDJAJA",
+"locId": "WIHJ",
+"city": "BOGOR",
+"arp": "0633S10645E",
+"fir": "WIIF"
+},
+{
+"name": "ATUNG BUNGSU",
+"locId": "WIPY",
+"city": "PAGAR ALAM",
+"arp": "0401S10323E",
+"fir": "WIIF"
+},
+{
+"name": "AURIMI",
+"locId": "WREF",
+"city": "AURIMI PAPUA",
+"arp": "0210S13827E",
+"fir": "WAAF"
+},
+{
+"name": "AURINA",
+"locId": "WREH",
+"city": "AURINA PAPUA",
+"arp": "0328S14018E",
+"fir": "WAAF"
+},
+{
+"name": "AYAMARU",
+"locId": "WASU",
+"city": "KAMBUAYA",
+"arp": "0119S13217E",
+"fir": "WAAF"
+},
+{
+"name": "AYAWASI",
+"locId": "WASA",
+"city": "MAYBRAT",
+"arp": "0110S13228E",
+"fir": "WAAF"
+},
+{
+"name": "BABANG",
+"locId": "WIOV",
+"city": "BABANG WEST KALIMANTAN",
+"arp": "0119N10954E",
+"fir": "WIIF"
+},
+{
+"name": "BABO",
+"locId": "WASO",
+"city": "TELUK BINTUNI",
+"arp": "0232S13326E",
+"fir": "WAAF"
+},
+{
+"name": "BADE",
+"locId": "WAKE",
+"city": "MAPPI",
+"arp": "0711S13935E",
+"fir": "WAAF"
+},
+{
+"name": "BAITANI",
+"locId": "WIOW",
+"city": "BAITANI",
+"arp": "0009S11109E",
+"fir": "WIIF"
+},
+{
+"name": "BALAI AGAS",
+"locId": "WIAB",
+"city": "BALAI AGAS WEST KALIMANTAN",
+"arp": "0032S11115E",
+"fir": "WIIF"
+},
+{
+"name": "BALAI SEPUAK",
+"locId": "WIAC",
+"city": "BALAI SEPUAK WEST KALIMANTAN",
+"arp": "0025S11113E",
+"fir": "WIIF"
+},
+{
+"name": "BANDANEIRA",
+"locId": "WAPC",
+"city": "CENTRAL MALUKU",
+"arp": "0431S12954E",
+"fir": "WAAF"
+},
+{
+"name": "BANDING AGUNG",
+"locId": "WIPD",
+"city": "RANAU",
+"arp": "0448S10357E",
+"fir": "WIIF"
+},
+{
+"name": "BANGKO",
+"locId": "WIPE",
+"city": "TANJUNG ENIM",
+"arp": "0348S10355E",
+"fir": "WIIF"
+},
+{
+"name": "BARERI",
+"locId": "WABN",
+"city": "BARERI PAPUA",
+"arp": "0258S13749E",
+"fir": "WAAF"
+},
+{
+"name": "BASIEM",
+"locId": "WRMA",
+"city": "BASIEM PAPUA",
+"arp": "0602S13823E",
+"fir": "WAAF"
+},
+{
+"name": "BASO",
+"locId": "WRHT",
+"city": "PELITA",
+"arp": "0309S13849E",
+"fir": "WAAF"
+},
+{
+"name": "BATAF",
+"locId": "WREK",
+"city": "BATAF PAPUA",
+"arp": "0207S13915E",
+"fir": "WAAF"
+},
+{
+"name": "BATOM",
+"locId": "WAJG",
+"city": "PEGUNUNGAN BINTANG",
+"arp": "0427S14053E",
+"fir": "WAAF"
+},
+{
+"name": "BAYAN KARA",
+"locId": "WALG",
+"city": "BAYAN KARA",
+"arp": "0243N11007E",
+"fir": "WAAF"
+},
+{
+"name": "BEGINCI LAUT",
+"locId": "WIAD",
+"city": "BEGINCI LAUT WEST KALIMANTAN",
+"arp": "0015S11059E",
+"fir": "WIIF"
+},
+{
+"name": "BEGOWRE",
+"locId": "WREL",
+"city": "BEGOWRE PAPUA",
+"arp": "0259S14055E",
+"fir": "WAAF"
+},
+{
+"name": "BELONGKA",
+"locId": "WIAE",
+"city": "BELONGKA WEST KALIMANTAN",
+"arp": "0055N11330E",
+"fir": "WIIF"
+},
+{
+"name": "BENGKAYANG",
+"locId": "WIOB",
+"city": "BENGKAYANG WEST KALIMANTAN",
+"arp": "0054S10931E",
+"fir": "WIIF"
+},
+{
+"name": "BENTIANG",
+"locId": "WIAF",
+"city": "BENTIANG WEST KALIMANTAN",
+"arp": "0055N10955E",
+"fir": "WIIF"
+},
+{
+"name": "BEOGA",
+"locId": "WAVO",
+"city": "BEOGA PAPUA",
+"arp": "0349S13725E",
+"fir": "WAAF"
+},
+{
+"name": "BERIAN BARU",
+"locId": "WALI",
+"city": "BERIAN BARU",
+"arp": "0350N11540E",
+"fir": "WAAF"
+},
+{
+"name": "BERINGIN",
+"locId": "WIAR",
+"city": "LANDAU",
+"arp": "0038N11150E",
+"fir": "WIIF"
+},
+{
+"name": "BETELEME",
+"locId": "WAFV",
+"city": "BETELEME CENTRAL SULAWESI",
+"arp": "0209S12117E",
+"fir": "WAAF"
+},
+{
+"name": "BETHEL",
+"locId": "WIAG",
+"city": "BETHEL WEST KALIMANTAN",
+"arp": "0035N11121E",
+"fir": "WIIF"
+},
+{
+"name": "BETHESDA",
+"locId": "WIAH",
+"city": "BETHESDA WEST KALIMANTAN",
+"arp": "0034N11121E",
+"fir": "WIIF"
+},
+{
+"name": "BILAI",
+"locId": "WAYI",
+"city": "BILAI",
+"arp": "0344S13650E",
+"fir": "WAAF"
+},
+{
+"name": "BILORAI",
+"locId": "WAYB",
+"city": "INTAN JAYA",
+"arp": "0344S13702E",
+"fir": "WAAF"
+},
+{
+"name": "BIME",
+"locId": "WAJH",
+"city": "BIME PAPUA",
+"arp": "0430S14009E",
+"fir": "WAAF"
+},
+{
+"name": "BINTUNI",
+"locId": "WAUB",
+"city": "TELUK BINTUNI",
+"arp": "0206S13331E",
+"fir": "WAAF"
+},
+{
+"name": "BINUANG",
+"locId": "WAQG",
+"city": "BINUANG",
+"arp": "0343N11552E",
+"fir": "WAAF"
+},
+{
+"name": "BIRI",
+"locId": "WABK",
+"city": "BIRI PAPUA",
+"arp": "0253S13746E",
+"fir": "WAAF"
+},
+{
+"name": "BLANGKEJEREN",
+"locId": "WIMG",
+"city": "GAYO LUES",
+"arp": "0357N09722E",
+"fir": "WIIF"
+},
+{
+"name": "BOMAKIA",
+"locId": "WAKL",
+"city": "BOMAKIA",
+"arp": "0559S13952E",
+"fir": "WAAF"
+},
+{
+"name": "BOMELA",
+"locId": "WREN",
+"city": "BOMELA PAPUA",
+"arp": "0443S13954E",
+"fir": "WAAF"
+},
+{
+"name": "BONGGO",
+"locId": "WREC",
+"city": "ARMOPA",
+"arp": "0217S13939E",
+"fir": "WAAF"
+},
+{
+"name": "BORME",
+"locId": "WAJY",
+"city": "BORME",
+"arp": "0424S14026E",
+"fir": "WAAF"
+},
+{
+"name": "BUGALAGA",
+"locId": "WRLA",
+"city": "BUGALAGA PAPUA",
+"arp": "0339S13636E",
+"fir": "WAAF"
+},
+{
+"name": "BUNYU",
+"locId": "WAQB",
+"city": "BUNYU EAST KALIMANTAN",
+"arp": "0228N11752E",
+"fir": "WAAF"
+},
+{
+"name": "BURUMESO",
+"locId": "WABP",
+"city": "BURUMESO PAPUA",
+"arp": "0220S13803E",
+"fir": "WAAF"
+},
+{
+"name": "BUTIPTIRI",
+"locId": "WRMB",
+"city": "BUTIPTIRI PAPUA",
+"arp": "0525S14039E",
+"fir": "WAAF"
+},
+{
+"name": "BUYUEM",
+"locId": "WRMC",
+"city": "BUYUEM PAPUA",
+"arp": "0617S13834E",
+"fir": "WAAF"
+},
+{
+"name": "CAKRABHUWANA",
+"locId": "WICD",
+"city": "CIREBON",
+"arp": "0645S10832E",
+"fir": "WIIF"
+},
+{
+"name": "DABRA",
+"locId": "WAJC",
+"city": "DABRA PAPUA",
+"arp": "0316S13837E",
+"fir": "WAAF"
+},
+{
+"name": "DAGAI",
+"locId": "WRLB",
+"city": "DAGAI PAPUA",
+"arp": "0320S13800E",
+"fir": "WAAF"
+},
+{
+"name": "DANAU BIRA",
+"locId": "WABQ",
+"city": "DANAU BIRA PAPUA",
+"arp": "0228S13801E",
+"fir": "WAAF"
+},
+{
+"name": "DARIT",
+"locId": "WIAI",
+"city": "DARIT WEST KALIMANTAN",
+"arp": "0018N10938E",
+"fir": "WIIF"
+},
+{
+"name": "DATAH BILANG",
+"locId": "WAGD",
+"city": "DATAH BILANG EAST KALIMANTAN",
+"arp": "0015N11529E",
+"fir": "WAAF"
+},
+{
+"name": "DATAH DAWAI",
+"locId": "WALJ",
+"city": "DATAH DAWAI",
+"arp": "0048N11432E",
+"fir": "WAAF"
+},
+{
+"name": "DATAH DIAN",
+"locId": "WALO",
+"city": "DATAH DIAN",
+"arp": "0158N11503E",
+"fir": "WAAF"
+},
+{
+"name": "DAUFO",
+"locId": "WABR",
+"city": "DAUFO PAPUA",
+"arp": "0312S13716E",
+"fir": "WAAF"
+},
+{
+"name": "DERAPOS",
+"locId": "WABV",
+"city": "DERAPOS PAPUA",
+"arp": "0301S13717E",
+"fir": "WAAF"
+},
+{
+"name": "DIMBA",
+"locId": "WRET",
+"city": "DIMBA PAPUA",
+"arp": "0352S 13833E",
+"fir": "WAAF"
+},
+{
+"name": "DOFA BENJINA FALABISAHAYA",
+"locId": "WAEO",
+"city": "SULA ISLAND",
+"arp": "0147S12529E",
+"fir": "WAAF"
+},
+{
+"name": "DOU",
+"locId": "WRXX",
+"city": "DOU PAPUA",
+"arp": "0319S13810E",
+"fir": "WAAF"
+},
+{
+"name": "DOYOBARU",
+"locId": "WREX",
+"city": "DOYOBARU PAPUA",
+"arp": "0231S14028E",
+"fir": "WAAF"
+},
+{
+"name": "DUMA",
+"locId": "WABE",
+"city": "DUMA PAPUA",
+"arp": "0406S13644E",
+"fir": "WAAF"
+},
+{
+"name": "EAOPOTO",
+"locId": "WRLD",
+"city": "EAOPOTO PAPUA",
+"arp": "0358S13621E",
+"fir": "WAAF"
+},
+{
+"name": "EIPOMEK",
+"locId": "WRFB",
+"city": "EIPOMEK PAPUA",
+"arp": "0426S13958E",
+"fir": "WAAF"
+},
+{
+"name": "ELELIM",
+"locId": "WAVE",
+"city": "YALIMO",
+"arp": "0347S13923E",
+"fir": "WAAF"
+},
+{
+"name": "EMALAMO",
+"locId": "WAES",
+"city": "SANANA",
+"arp": "0206S12558E",
+"fir": "WAAF"
+},
+{
+"name": "EMDOMEN",
+"locId": "WRFC",
+"city": "EMDOMEN PAPUA",
+"arp": "0412S13952E",
+"fir": "WAAF"
+},
+{
+"name": "ENAROTALI",
+"locId": "WAYE",
+"city": "PANIAI",
+"arp": "0356S13623E",
+"fir": "WAAF"
+},
+{
+"name": "ENDOYA",
+"locId": "WIAJ",
+"city": "ENDOYA WEST KALIMANTAN",
+"arp": "0018N10050E",
+"fir": "WIIF"
+},
+{
+"name": "EPAMANI",
+"locId": "WRLF",
+"city": "EPAMANI PAPUA",
+"arp": "0343S13601E",
+"fir": "WAAF"
+},
+{
+"name": "ERI",
+"locId": "WRFH",
+"city": "ERI PAPUA",
+"arp": "0237S13810E",
+"fir": "WAAF"
+},
+{
+"name": "FAOWI",
+"locId": "WRLG",
+"city": "FAOWI PAPUA",
+"arp": "0318S13731E",
+"fir": "WAAF"
+},
+{
+"name": "FLORES",
+"locId": "WATI",
+"city": "MBAI",
+"arp": "0832S11545E",
+"fir": "WAAF"
+},
+{
+"name": "FOAO",
+"locId": "WRFJ",
+"city": "FOAO PAPUA",
+"arp": "0303S13904E",
+"fir": "WAAF"
+},
+{
+"name": "FRUATA",
+"locId": "WASR",
+"city": "FRUATA PAPUA",
+"arp": "0259S13338E",
+"fir": "WAAF"
+},
+{
+"name": "GALELA",
+"locId": "WIAK",
+"city": "GALELA WEST KALIMANTAN",
+"arp": "0021N11103E",
+"fir": "WIIF"
+},
+{
+"name": "GEBE",
+"locId": "WAEJ",
+"city": "GEBE ISLAND",
+"arp": "0005S12927E",
+"fir": "WAAF"
+},
+{
+"name": "GEMAR BARU",
+"locId": "WALP",
+"city": "GEMAR BARU EAST KALIMANTAN",
+"arp": "0039N11600E",
+"fir": "WAAF"
+},
+{
+"name": "GERAI",
+"locId": "WIAL",
+"city": "GERAI",
+"arp": "0036N11103E",
+"fir": "WIIF"
+},
+{
+"name": "GEYAREK",
+"locId": "WRFL",
+"city": "GEYAREK PAPUA",
+"arp": "0437S13847S",
+"fir": "WAAF"
+},
+{
+"name": "GILGAL",
+"locId": "WIAM",
+"city": "GILGAL WEST KALIMANTAN",
+"arp": "0036N11103E",
+"fir": "WIIF"
+},
+{
+"name": "GUAY",
+"locId": "WRFP",
+"city": "GUAY PAPUA",
+"arp": "0242S13942E",
+"fir": "WAAF"
+},
+{
+"name": "GUNUNG BATIN",
+"locId": "WILG",
+"city": "GUNUNG MADU PLANTATION",
+"arp": "0441S10516E",
+"fir": "WIIF"
+},
+{
+"name": "GUSIMAWA",
+"locId": "WASJ",
+"city": "GUSIMAWA PAPUA",
+"arp": "0303S13353E",
+"fir": "WAAF"
+},
+{
+"name": "HARUN THOHIR",
+"locId": "WARW",
+"city": "BAWEAN",
+"arp": "0543S11241E",
+"fir": "WAAF"
+},
+{
+"name": "HASAN",
+"locId": "WAVW",
+"city": "PANGEMA",
+"arp": "0409S13920E",
+"fir": "WAAF"
+},
+{
+"name": "HAYA",
+"locId": "WRFR",
+"city": "HAYA PAPUA",
+"arp": "0251S13810E",
+"fir": "WAAF"
+},
+{
+"name": "HEBRON",
+"locId": "WIAN",
+"city": "HEBRON WEST KALIMANTAN",
+"arp": "0027N11123E",
+"fir": "WIIF"
+},
+{
+"name": "HITADIPA",
+"locId": "WRLH",
+"city": "HITADIPA PAPUA",
+"arp": "0345S13708E",
+"fir": "WAAF"
+},
+{
+"name": "HOLMES",
+"locId": "WRPQ",
+"city": "LAKE",
+"arp": "0345S13708E",
+"fir": "WAAF"
+},
+{
+"name": "HULU ATAS",
+"locId": "WRFT",
+"city": "HULU ATAS PAPUA",
+"arp": "0347S14030E",
+"fir": "WAAF"
+},
+{
+"name": "HULU TAYAN",
+"locId": "WIAO",
+"city": "HULU TAYAN WEST KALIMANTAN",
+"arp": "0013N11009E",
+"fir": "WIIF"
+},
+{
+"name": "HULUWON",
+"locId": "WAVP",
+"city": "HULUWON PAPUA",
+"arp": "0429S13915E",
+"fir": "WAAF"
+},
+{
+"name": "IBELE",
+"locId": "WRFU",
+"city": "IBELE PAPUA",
+"arp": "0404S13845E",
+"fir": "WAAF"
+},
+{
+"name": "ILAGA",
+"locId": "WAYL",
+"city": "PUNCAK",
+"arp": "0359S13737E",
+"fir": "WAAF"
+},
+{
+"name": "ILLAGA III",
+"locId": "WRLI",
+"city": "ILLAGA III PAPUA",
+"arp": "0403S13740E",
+"fir": "WAAF"
+},
+{
+"name": "ILU",
+"locId": "WAVC",
+"city": "PUNCAK JAYA",
+"arp": "0343S13812E",
+"fir": "WAAF"
+},
+{
+"name": "ILUGWA",
+"locId": "WRFV",
+"city": "ILUGWA PAPUA",
+"arp": "0351S13855E",
+"fir": "WAAF"
+},
+{
+"name": "INANWATAN",
+"locId": "WASI",
+"city": "INANWATAN",
+"arp": "0208S13210E",
+"fir": "WAAF"
+},
+{
+"name": "IRATOI",
+"locId": "WRLJ",
+"city": "IRATOI PAPUA",
+"arp": "0314S13721E",
+"fir": "WAAF"
+},
+{
+"name": "IRAY",
+"locId": "WRLK",
+"city": "IRAY PAPUA",
+"arp": "0120S13355E",
+"fir": "WAAF"
+},
+{
+"name": "IWUR",
+"locId": "WAJV",
+"city": "IWUR PAPUA",
+"arp": "0508S14042E",
+"fir": "WAAF"
+},
+{
+"name": "JAYAWIJAYA",
+"locId": "WAVB",
+"city": "BOKONDINI",
+"arp": "0341S13841E",
+"fir": "WAAF"
+},
+{
+"name": "JILA",
+"locId": "WAYJ",
+"city": "JILA PAPUA",
+"arp": "0415S13738E",
+"fir": "WAAF"
+},
+{
+"name": "JITA",
+"locId": "WAYN",
+"city": "JITA PAPUA",
+"arp": "0404S13738E",
+"fir": "WAAF"
+},
+{
+"name": "JOHN BECKER",
+"locId": "WATQ",
+"city": "KISAR ISLAND",
+"arp": "0801S12712E",
+"fir": "WAAF"
+},
+{
+"name": "KABIR",
+"locId": "WATP",
+"city": "PANTAR",
+"arp": "0815S12413E",
+"fir": "WAAF"
+},
+{
+"name": "KABURAU",
+"locId": "WALR",
+"city": "KABURAU",
+"arp": "0232N11724E",
+"fir": "WAAF"
+},
+{
+"name": "KAIY",
+"locId": "WRGA",
+"city": "KAIY PAPUA",
+"arp": "0301S13810E",
+"fir": "WAAF"
+},
+{
+"name": "KAMPUNG BARU",
+"locId": "WALV",
+"city": "KAMPUNG BARU",
+"arp": "0353N11543E",
+"fir": "WAAF"
+},
+{
+"name": "KANGGIME",
+"locId": "WRGC",
+"city": "KANGGIME PAPUA",
+"arp": "0343S13820E",
+"fir": "WAAF"
+},
+{
+"name": "KARAS",
+"locId": "WRLL",
+"city": "KARAS PAPUA",
+"arp": "0328S13252E",
+"fir": "WAAF"
+},
+{
+"name": "KARUBAGA",
+"locId": "WAVG",
+"city": "KARUBAGA",
+"arp": "0341S13829E",
+"fir": "WAAF"
+},
+{
+"name": "KASONAWEJA",
+"locId": "WABG",
+"city": "KASONAWEJA PAPUA",
+"arp": "0218S13803E",
+"fir": "WAAF"
+},
+{
+"name": "KATINGAN",
+"locId": "WAGT",
+"city": "TUMBANG SAMBA",
+"arp": "0128S11305E",
+"fir": "WAAF"
+},
+{
+"name": "KAURE",
+"locId": "WRGD",
+"city": "KAURE PAPUA",
+"arp": "0328S14018E",
+"fir": "WAAF"
+},
+{
+"name": "KEBAR",
+"locId": "WAUK",
+"city": "KEBAR",
+"arp": "0049S13303E",
+"fir": "WAAF"
+},
+{
+"name": "KEBO",
+"locId": "WAYM",
+"city": "KEBO",
+"arp": "0349S13623E",
+"fir": "WAAF"
+},
+{
+"name": "KEDER",
+"locId": "WAUD",
+"city": "KEDER PAPUA",
+"arp": "0201S13404E",
+"fir": "WAAF"
+},
+{
+"name": "KEGATA",
+"locId": "WRLM",
+"city": "KEGATA PAPUA",
+"arp": "0402S13533E",
+"fir": "WAAF"
+},
+{
+"name": "KELILA",
+"locId": "WAVL",
+"city": "KELILA PAPUA",
+"arp": "0345S13845E",
+"fir": "WAAF"
+},
+{
+"name": "KENEYAN",
+"locId": "WRGG",
+"city": "KENEYAN PAPUA",
+"arp": "0439S13821E",
+"fir": "WAAF"
+},
+{
+"name": "KIMAAM",
+"locId": "WAKJ",
+"city": "MERAUKE",
+"arp": "0758S13851E",
+"fir": "WAAF"
+},
+{
+"name": "KIWI",
+"locId": "WRGK",
+"city": "KIWI PAPUA",
+"arp": "0443S14046E",
+"fir": "WAAF"
+},
+{
+"name": "KIWIROK",
+"locId": "WAJK",
+"city": "PEGUNUNGAN BINTANG",
+"arp": "0442S14048E",
+"fir": "WAAF"
+},
+{
+"name": "KOBAKMA",
+"locId": "WAVK",
+"city": "KOBAKMA PAPUA",
+"arp": "0340S13902E",
+"fir": "WAAF"
+},
+{
+"name": "KOKONAO",
+"locId": "WAYK",
+"city": "MIMIKA",
+"arp": "0443S13626E",
+"fir": "WAAF"
+},
+{
+"name": "KOMOPA",
+"locId": "WRLN",
+"city": "KOMOPA PAPUA",
+"arp": "0348S13629E",
+"fir": "WAAF"
+},
+{
+"name": "KONO",
+"locId": "WRGO",
+"city": "KONO PAPUA",
+"arp": "0418S13943E",
+"fir": "WAAF"
+},
+{
+"name": "KORODESI",
+"locId": "WRLO",
+"city": "KORODESI PAPUA",
+"arp": "0429S13938E",
+"fir": "WAAF"
+},
+{
+"name": "KOROPUN",
+"locId": "WRGP",
+"city": "KOROPUN PAPUA",
+"arp": "0429S13938E",
+"fir": "WAAF"
+},
+{
+"name": "KOSOREK",
+"locId": "WRGQ",
+"city": "KOSOREK PAPUA",
+"arp": "0408S13930E",
+"fir": "WAAF"
+},
+{
+"name": "KOTA BARU",
+"locId": "WAOH",
+"city": "MEKAR PUTIH",
+"arp": "0400S11606E",
+"fir": "WAAF"
+},
+{
+"name": "KOUH",
+"locId": "WRMF",
+"city": "KOUH PAPUA",
+"arp": "0549S14012E",
+"fir": "WAAF"
+},
+{
+"name": "KRAPAH",
+"locId": "WIAP",
+"city": "KRAPAH WEST KALIMANTAN",
+"arp": "0012N11146E",
+"fir": "WIIF"
+},
+{
+"name": "KUALA BATEE",
+"locId": "WITO",
+"city": "BLANGPIDIE",
+"arp": "0344N09648E",
+"fir": "WIIF"
+},
+{
+"name": "KUALA KURUN",
+"locId": "WAGA",
+"city": "GUNUNG MAS",
+"arp": "0108S11352E",
+"fir": "WAAF"
+},
+{
+"name": "KUALA PEMBUANG",
+"locId": "WAGF",
+"city": "SERUYAN",
+"arp": "0323S11233E",
+"fir": "WAAF"
+},
+{
+"name": "KUALA RANDAU",
+"locId": "WIAQ",
+"city": "KUALA RANDAU WEST KALIMANTAN",
+"arp": "0033N11028E",
+"fir": "WIIF"
+},
+{
+"name": "KUFAR",
+"locId": "WAPU",
+"city": "SERAM BAGIAN TIMUR",
+"arp": "0328S13047E",
+"fir": "WAAF"
+},
+{
+"name": "KURID",
+"locId": "WALX",
+"city": "KURID",
+"arp": "0347N11542E",
+"fir": "WAAF"
+},
+{
+"name": "KUSTERA",
+"locId": "WABL",
+"city": "KUSTERA PAPUA",
+"arp": "0247S13753E",
+"fir": "WAAF"
+},
+{
+"name": "KWELAMDUA",
+"locId": "WRGS",
+"city": "KWELAMDUA PAPUA",
+"arp": "0438S13947E",
+"fir": "WAAF"
+},
+{
+"name": "KWERBA",
+"locId": "WRPO",
+"city": "KWERBA PAPUA",
+"arp": "0246S13826E",
+"fir": "WAAF"
+},
+{
+"name": "KWIYAWAGI",
+"locId": "WRGT",
+"city": "KWIYAWAGI PAPUA",
+"arp": "0404S13811E",
+"fir": "WAAF"
+},
+{
+"name": "LAMDITMA",
+"locId": "WRGX",
+"city": "LAMDITMA PAPUA",
+"arp": "0350S13913E",
+"fir": "WAAF"
+},
+{
+"name": "LANGDA",
+"locId": "WRHA",
+"city": "LANGDA PAPUA",
+"arp": "0439S13958E",
+"fir": "WAAF"
+},
+{
+"name": "LARAT",
+"locId": "WAPO",
+"city": "LARAT",
+"arp": "0708S13146E",
+"fir": "WAAF"
+},
+{
+"name": "LEMBUDUD",
+"locId": "WALM",
+"city": "LEMBUDUD",
+"arp": "0347N11538E",
+"fir": "WAAF"
+},
+{
+"name": "LEREH",
+"locId": "WAJL",
+"city": "LEREH PAPUA",
+"arp": "0303S13957E",
+"fir": "WAAF"
+},
+{
+"name": "LETKOL WISNU",
+"locId": "WADE",
+"city": "BULELENG",
+"arp": "0808S11437E",
+"fir": "WAAF"
+},
+{
+"name": "LETUNG",
+"locId": "WIDL",
+"city": "ANAMBAS",
+"arp": "0257N10544E",
+"fir": "WIIF"
+},
+{
+"name": "LIKU",
+"locId": "WIOH",
+"city": "PALOH",
+"arp": "0142N10918E",
+"fir": "WIIF"
+},
+{
+"name": "LNG BADAK",
+"locId": "WALC",
+"city": "BONTANG",
+"arp": "0007N11728E",
+"fir": "WAAF"
+},
+{
+"name": "LOBO",
+"locId": "WAUL",
+"city": "LOBO PAPUA",
+"arp": "0345S13407E",
+"fir": "WAAF"
+},
+{
+"name": "LOKOK",
+"locId": "WIAS",
+"city": "LOKOK WEST KALIMANTAN",
+"arp": "0103N11005E",
+"fir": "WIIF"
+},
+{
+"name": "LONG ALANGO",
+"locId": "WAQE",
+"city": "LONG ALANGO",
+"arp": "0252N11550E",
+"fir": "WAAF"
+},
+{
+"name": "LONG APARI",
+"locId": "WAGL",
+"city": "LONG APARI",
+"arp": "0305N11626E",
+"fir": "WAAF"
+},
+{
+"name": "LONG APUNG",
+"locId": "WAQL",
+"city": "MALINAU",
+"arp": "0103N11458E",
+"fir": "WAAF"
+},
+{
+"name": "LONG ARAN",
+"locId": "WAQR",
+"city": "LONG ARAN",
+"arp": "0232N11550E",
+"fir": "WAAF"
+},
+{
+"name": "LONG BANAL",
+"locId": "WAOJ",
+"city": "LONG BANAL",
+"arp": "0120N11520E",
+"fir": "WAAF"
+},
+{
+"name": "LONG BIA",
+"locId": "WAQI",
+"city": "LONG BIA",
+"arp": "0242N11608E",
+"fir": "WAAF"
+},
+{
+"name": "LONG LAYU",
+"locId": "WAQU",
+"city": "LONG LAYU",
+"arp": "0353N11628E",
+"fir": "WAAF"
+},
+{
+"name": "LONG LEBUSAN",
+"locId": "WAQS",
+"city": "LONG LEBUSAN EAST KALIMANTAN",
+"arp": "0121N11531E",
+"fir": "WAAF"
+},
+{
+"name": "LONG LEES",
+"locId": "WAOF",
+"city": "LONG LEES EAST KALIMANTAN",
+"arp": "0050N11631E",
+"fir": "WAAF"
+},
+{
+"name": "LONG NAWANG",
+"locId": "WALN",
+"city": "LONG NAWANG EAST KALIMANTAN",
+"arp": "0148N11609E",
+"fir": "WAAF"
+},
+{
+"name": "LONG PALA",
+"locId": "WAQP",
+"city": "LONG PALA",
+"arp": "0403N11609E",
+"fir": "WAAF"
+},
+{
+"name": "LONG PUJUNGAN",
+"locId": "WAQV",
+"city": "LONG PUJUNGAN",
+"arp": "0234N11547E",
+"fir": "WAAF"
+},
+{
+"name": "LONG RUNGAN",
+"locId": "WAQH",
+"city": "LONG RUNGAN",
+"arp": "0335N11547E",
+"fir": "WAAF"
+},
+{
+"name": "LONG SEGAR",
+"locId": "WAOE",
+"city": "LONG SEGAR EAST KALIMANTAN",
+"arp": "0048N11649E",
+"fir": "WAAF"
+},
+{
+"name": "LONG SEIBARANG",
+"locId": "WAOS",
+"city": "LONG SEIBARANG EAST KALIMANTAN",
+"arp": "0145N11543E",
+"fir": "WAAF"
+},
+{
+"name": "LONG SULEH",
+"locId": "WAQW",
+"city": "LONG SULEH",
+"arp": "0120N11543E",
+"fir": "WAAF"
+},
+{
+"name": "LONG UMUNG",
+"locId": "WAQF",
+"city": "LONG UMUNG",
+"arp": "0357N11546E",
+"fir": "WAAF"
+},
+{
+"name": "LUMAR",
+"locId": "WIAT",
+"city": "LUMAR WEST KALIMANTAN",
+"arp": "0048N10958E",
+"fir": "WIIF"
+},
+{
+"name": "LUMBIS",
+"locId": "WAQO",
+"city": "LUMBIS",
+"arp": "0418N11613E",
+"fir": "WAAF"
+},
+{
+"name": "LUMO",
+"locId": "WRLQ",
+"city": "LUMO PAPUA",
+"arp": "0341S13750E",
+"fir": "WAAF"
+},
+{
+"name": "LUNYUK",
+"locId": "WADU",
+"city": "SUMBAWA",
+"arp": "0838S11724E",
+"fir": "WAAF"
+},
+{
+"name": "MA BENGKAL",
+"locId": "WALF",
+"city": "BATU AMPAR",
+"arp": "0040N11650E",
+"fir": "WAAF"
+},
+{
+"name": "MADYA RAYA",
+"locId": "WIAU",
+"city": "MADYA RAYA WEST KALIMANTAN",
+"arp": "0053N11104E",
+"fir": "WIIF"
+},
+{
+"name": "MAGODA",
+"locId": "WRPS",
+"city": "MAGODA PAPUA",
+"arp": "0358S13552E",
+"fir": "WAAF"
+},
+{
+"name": "MAHAK BARU",
+"locId": "WAEA",
+"city": "MAHAK BARU EAST KALIMANTAN",
+"arp": "0120N11518E",
+"fir": "WAAF"
+},
+{
+"name": "MAKKI",
+"locId": "WRHC",
+"city": "MAKKI PAPUA",
+"arp": "0359S13837E",
+"fir": "WAAF"
+},
+{
+"name": "MAMIT",
+"locId": "WAVS",
+"city": "MAMIT PAPUA",
+"arp": "0339S13823E",
+"fir": "WAAF"
+},
+{
+"name": "MANGGELUM",
+"locId": "WAVM",
+"city": "BOVEN DIGOEL",
+"arp": "0525S14026E",
+"fir": "WAAF"
+},
+{
+"name": "MANGKAJANG",
+"locId": "WAQK",
+"city": "MANGKAJANG",
+"arp": "0200N11745E",
+"fir": "WAAF"
+},
+{
+"name": "MAPANDUMA",
+"locId": "WAYH",
+"city": "MAPANDUMA PAPUA",
+"arp": "0420S13813E",
+"fir": "WAAF"
+},
+{
+"name": "MARANATHA",
+"locId": "WIAV",
+"city": "MARANATHA WEST KALIMANTAN",
+"arp": "0030N11108E",
+"fir": "WIIF"
+},
+{
+"name": "MARANGGO",
+"locId": "WAWC",
+"city": "TOMIA SOUTH SULAWESI",
+"arp": "0546S12355E",
+"fir": "WAAF"
+},
+{
+"name": "MARARENA",
+"locId": "WAJI",
+"city": "SARMI",
+"arp": "0152S13845E",
+"fir": "WAAF"
+},
+{
+"name": "MARIMOI",
+"locId": "WAEB",
+"city": "NORTH HALMAHERA",
+"arp": "0106N12742E",
+"fir": "WAAF"
+},
+{
+"name": "MASKOLEN",
+"locId": "WATF",
+"city": "MASKOLEN EAST NUSA TENGGARA",
+"arp": "NIL",
+"fir": "WAAF"
+},
+{
+"name": "MATAK",
+"locId": "WIDM",
+"city": "ANAMBAS ISLAND",
+"arp": "0321N10645E",
+"fir": "WIIF"
+},
+{
+"name": "MAYADO",
+"locId": "WRRP",
+"city": "MAYADO PAPUA",
+"arp": "0152S13310E",
+"fir": "WAAF"
+},
+{
+"name": "MBUWA",
+"locId": "WRHD",
+"city": "MBUWA PAPUA",
+"arp": "0416S13828E",
+"fir": "WAAF"
+},
+{
+"name": "MELALAN MELAK",
+"locId": "WALE",
+"city": "KUTAI BARAT",
+"arp": "0013S11546E",
+"fir": "WAAF"
+},
+{
+"name": "MENJALIN",
+"locId": "WIAW",
+"city": "MENJALIN WEST KALIMANTAN",
+"arp": "0028N10918E",
+"fir": "WIIF"
+},
+{
+"name": "MERDEY",
+"locId": "WAUM",
+"city": "MERDEY",
+"arp": "0135S13318E",
+"fir": "WAAF"
+},
+{
+"name": "MERDEY",
+"locId": "WAUI",
+"city": "MESINA",
+"arp": "0120S13316E",
+"fir": "WAAF"
+},
+{
+"name": "MEREM",
+"locId": "WRHE",
+"city": "MEREM PAPUA",
+"arp": "0237S14014E",
+"fir": "WAAF"
+},
+{
+"name": "MEYAMBO",
+"locId": "WAUY",
+"city": "MEYAMBO PAPUA",
+"arp": "0107S13337E",
+"fir": "WAAF"
+},
+{
+"name": "MIARO",
+"locId": "WRMH",
+"city": "MIARO PAPUA",
+"arp": "0611S13901E",
+"fir": "WAAF"
+},
+{
+"name": "MINDIPTANAH",
+"locId": "WAKD",
+"city": "BOVEN DIGOEL",
+"arp": "0548S14042E",
+"fir": "WAAF"
+},
+{
+"name": "MINIA",
+"locId": "WATH",
+"city": "SABU",
+"arp": "1025S12155E",
+"fir": "WAAF"
+},
+{
+"name": "MOANAMANI",
+"locId": "WABD",
+"city": "DOGIYAI",
+"arp": "0401S13602E",
+"fir": "WAAF"
+},
+{
+"name": "MODIO",
+"locId": "WRLR",
+"city": "MODIO PAPUA",
+"arp": "0404S 13547E",
+"fir": "WAAF"
+},
+{
+"name": "MOKWAN",
+"locId": "WAUO",
+"city": "MOKWAN PAPUA",
+"arp": "0116S13356E",
+"fir": "WAAF"
+},
+{
+"name": "MOLOF",
+"locId": "WAJM",
+"city": "MOLOF PAPUA",
+"arp": "0326S1403E",
+"fir": "WAAF"
+},
+{
+"name": "MT. MORO",
+"locId": "WAOM",
+"city": "MENSALONG",
+"arp": "0315N11642E",
+"fir": "WAAF"
+},
+{
+"name": "MUARA WAHAU",
+"locId": "WALW",
+"city": "MUARA WAHAU EAST KALIMANTAN",
+"arp": "0107N11650E",
+"fir": "WAAF"
+},
+{
+"name": "MUASAI",
+"locId": "WRHF",
+"city": "MUASAI PAPUA",
+"arp": "0203S13836E",
+"fir": "WAAF"
+},
+{
+"name": "MUDIAY",
+"locId": "WRHG",
+"city": "MUDIAY PAPUA",
+"arp": "0313S13859E",
+"fir": "WAAF"
+},
+{
+"name": "MUHAMMAD TAUFIK KIEMAS",
+"locId": "WILP",
+"city": "LAMPUNG",
+"arp": "0513S10356E",
+"fir": "WIIF"
+},
+{
+"name": "MULIA",
+"locId": "WAVA",
+"city": "PUNCAK JAYA",
+"arp": "0342S13758E",
+"fir": "WAAF"
+},
+{
+"name": "MUNUKANIA",
+"locId": "WRHH",
+"city": "MUNUKANIA PAPUA",
+"arp": "0202S13837E",
+"fir": "WAAF"
+},
+{
+"name": "MUTING",
+"locId": "WRMI",
+"city": "MUTING PAPUA",
+"arp": "0720S14033E",
+"fir": "WAAF"
+},
+{
+"name": "NALCA",
+"locId": "WRHI",
+"city": "NALCA PAPUA",
+"arp": "0422S13948E",
+"fir": "WAAF"
+},
+{
+"name": "NAMLEA",
+"locId": "WAPR",
+"city": "BURU ISLAND",
+"arp": "0314S12706E",
+"fir": "WAAF"
+},
+{
+"name": "NAMROLE",
+"locId": "WAPG",
+"city": "SOUTH BURU ISLAND",
+"arp": "0351S12642E",
+"fir": "WAAF"
+},
+{
+"name": "NANGA ERAK",
+"locId": "WIAX",
+"city": "NANGA ERAK WEST KALIMANTAN",
+"arp": "0048N11307E",
+"fir": "WIIF"
+},
+{
+"name": "NANGA LEBANG",
+"locId": "WIFA",
+"city": "NANGA LEBANG WEST KALIMANTAN",
+"arp": "0012N11139E",
+"fir": "WIIF"
+},
+{
+"name": "NANGA MAWONG",
+"locId": "WIFB",
+"city": "NANGA MAWONG WEST KALIMANTAN",
+"arp": "",
+"fir": "WIIF"
+},
+{
+"name": "NANGA NYABU",
+"locId": "WIFD",
+"city": "NANGA NYABU WEST KALIMANTAN",
+"arp": "0026N11221E",
+"fir": "WIIF"
+},
+{
+"name": "NANGA PINOH",
+"locId": "WIOG",
+"city": "MELAWI",
+"arp": "0021S11145E",
+"fir": "WIIF"
+},
+{
+"name": "NANGA PINOH II",
+"locId": "WIFE",
+"city": "NANGA PINOH WEST KALIMANTAN",
+"arp": "0022S11145E",
+"fir": "WIIF"
+},
+{
+"name": "NANGA RAUN",
+"locId": "WIFH",
+"city": "NANGA RAUN WEST KALIMANTAN",
+"arp": "0035N11310E",
+"fir": "WIIF"
+},
+{
+"name": "NANGA SEPATU",
+"locId": "WIFG",
+"city": "NANGA SEPATU WEST KALIMANTAN",
+"arp": "0039N11127E",
+"fir": "WIIF"
+},
+{
+"name": "NENEI",
+"locId": "WRHK",
+"city": "NENEI PAPUA",
+"arp": "0422S13917E",
+"fir": "WAAF"
+},
+{
+"name": "NIAN BARU",
+"locId": "WAEC",
+"city": "NIAN BARU EAST KALIMANTAN",
+"arp": "0123E11516E",
+"fir": "WAAF"
+},
+{
+"name": "NINIA",
+"locId": "WAVI",
+"city": "NINIA PAPUA",
+"arp": "0423S13916E",
+"fir": "WAAF"
+},
+{
+"name": "NIPSAN",
+"locId": "WRHL",
+"city": "NIPSAN PAPUA",
+"arp": "0410S13836E",
+"fir": "WAAF"
+},
+{
+"name": "NOIADI",
+"locId": "WRQO",
+"city": "NOIADI PAPUA",
+"arp": "0246S13746E",
+"fir": "WAAF"
+},
+{
+"name": "OBANO",
+"locId": "WAYO",
+"city": "OBANO",
+"arp": "0355S13613E",
+"fir": "WAAF"
+},
+{
+"name": "OBOGWY",
+"locId": "WRLS",
+"city": "OBOGWY PAPUA",
+"arp": "0251S13759E",
+"fir": "WAAF"
+},
+{
+"name": "OKABA",
+"locId": "WAKO",
+"city": "MERAUKE",
+"arp": "0806S13942E",
+"fir": "WAAF"
+},
+{
+"name": "OKBAB",
+"locId": "WAJQ",
+"city": "OKBAB PAPUA",
+"arp": "0436S14026E",
+"fir": "WAAF"
+},
+{
+"name": "OKLIP",
+"locId": "WAJP",
+"city": "OKLIP PAPUA",
+"arp": "0447S14053E",
+"fir": "WAAF"
+},
+{
+"name": "OKYAP",
+"locId": "WAJW",
+"city": "OKYAP PAPUA",
+"arp": "0442S14055E",
+"fir": "WAAF"
+},
+{
+"name": "OMBAN",
+"locId": "WRLT",
+"city": "OMBAN PAPUA",
+"arp": "0425S14024E",
+"fir": "WAAF"
+},
+{
+"name": "PAGAI",
+"locId": "WRHO",
+"city": "PAGAI PAPUA",
+"arp": "0330S13944E",
+"fir": "WAAF"
+},
+{
+"name": "PAGERUNGAN",
+"locId": "WARP",
+"city": "PULAU PAGERUNGAN BESAR",
+"arp": "0657S11556E",
+"fir": "WAAF"
+},
+{
+"name": "PANUA POHUWATO",
+"locId": "WAFZ",
+"city": "POHUWATO",
+"arp": "0236S11901E",
+"fir": "WAAF"
+},
+{
+"name": "PAPASENA",
+"locId": "WRHP",
+"city": "PAPASENA PAPUA",
+"arp": "0255S13836E",
+"fir": "WAAF"
+},
+{
+"name": "PARE",
+"locId": "WIFI",
+"city": "PARE WEST KALIMANTAN",
+"arp": "",
+"fir": "WIIF"
+},
+{
+"name": "PASINA",
+"locId": "WRHQ",
+"city": "PASINA PAPUA",
+"arp": "0426S13906E",
+"fir": "WAAF"
+},
+{
+"name": "PASIR MAYANG",
+"locId": "WIPI",
+"city": "MUARA BUNGO",
+"arp": "0108S10209E",
+"fir": "WIIF"
+},
+{
+"name": "PASSVALEY",
+"locId": "WRHR",
+"city": "PASSVALEY PAPUA",
+"arp": "0352S13904E",
+"fir": "WAAF"
+},
+{
+"name": "PATRA",
+"locId": "WAGN",
+"city": "PATRA EAST KALIMANTAN",
+"arp": "0337N11544E",
+"fir": "WAAF"
+},
+{
+"name": "PA`UPAN",
+"locId": "WAQY",
+"city": "PA`UPAN",
+"arp": "0323N11549E",
+"fir": "WAAF"
+},
+{
+"name": "PELAIK",
+"locId": "WIFJ",
+"city": "PELAIK WEST KALIMANTAN",
+"arp": "0007N11147E",
+"fir": "WIIF"
+},
+{
+"name": "PELIMO",
+"locId": "WRHS",
+"city": "PELIMO PAPUA",
+"arp": "0419S13901E",
+"fir": "WAAF"
+},
+{
+"name": "PENDOLO",
+"locId": "WAFX",
+"city": "PENDOLO CENTRAL SULAWESI",
+"arp": "0206S12051E",
+"fir": "WAAF"
+},
+{
+"name": "PENIEL",
+"locId": "WIFK",
+"city": "PENIEL WEST KALIMANTAN",
+"arp": "0007N11102E",
+"fir": "WIIF"
+},
+{
+"name": "PIRAMID",
+"locId": "WRHV",
+"city": "PIRAMID PAPUA",
+"arp": "0357S13844E",
+"fir": "WAAF"
+},
+{
+"name": "PITRIVER",
+"locId": "WRIB",
+"city": "PITRIVER PAPUA",
+"arp": "0400S13831E",
+"fir": "WAAF"
+},
+{
+"name": "POGA",
+"locId": "WRIC",
+"city": "POGA PAPUA",
+"arp": "0350S13833E",
+"fir": "WAAF"
+},
+{
+"name": "POGAPA",
+"locId": "WAYS",
+"city": "POGAPA PAPUA",
+"arp": "0346S13651E",
+"fir": "WAAF"
+},
+{
+"name": "POLIMO",
+"locId": "WRID",
+"city": "POLIMO PAPUA",
+"arp": "0414S13900E",
+"fir": "WAAF"
+},
+{
+"name": "POTOWAIBURU",
+"locId": "WAYP",
+"city": "MIMIKA",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "PRONGKOLI",
+"locId": "WRIE",
+"city": "PRONGKOLI PAPUA",
+"arp": "0411S13919E",
+"fir": "WAAF"
+},
+{
+"name": "PROYAM",
+"locId": "WRFE",
+"city": "ERGAYAM",
+"arp": "0343S13844E",
+"fir": "WAAF"
+},
+{
+"name": "PUJUNGAN",
+"locId": "WALQ",
+"city": "MUARA BADAK",
+"arp": "0018S11725E",
+"fir": "WAAF"
+},
+{
+"name": "PUL DAMAT",
+"locId": "WRIF",
+"city": "PUL DAMAT PAPUA",
+"arp": "0421S13952E",
+"fir": "WAAF"
+},
+{
+"name": "PULAI",
+"locId": "WIBI",
+"city": "INDRAGIRI HILIR",
+"arp": "0013N10310E",
+"fir": "WIIF"
+},
+{
+"name": "PULAU PANJANG",
+"locId": "WIHG",
+"city": "JAKARTA",
+"arp": "0537S10635E",
+"fir": "WIIF"
+},
+{
+"name": "PULAU SAPI",
+"locId": "WAQX",
+"city": "PULAU SAPI",
+"arp": "0331N11633E",
+"fir": "WAAF"
+},
+{
+"name": "PURUKCAHU",
+"locId": "WAGP",
+"city": "DIRUNG",
+"arp": "0041S11427E",
+"fir": "WAAF"
+},
+{
+"name": "RAMPI",
+"locId": "WAFK",
+"city": "RAMPI",
+"arp": "0207S12017E",
+"fir": "WAAF"
+},
+{
+"name": "RANTAU SENTOSA",
+"locId": "WAGO",
+"city": "RANTAU SENTOSA EAST KALIMANTAN",
+"arp": "0064N11635E",
+"fir": "WAAF"
+},
+{
+"name": "RIAM BATU",
+"locId": "WIFL",
+"city": "RIAM BATU",
+"arp": "0130N11041E",
+"fir": "WIIF"
+},
+{
+"name": "RIAM SEJAWAK",
+"locId": "WIFM",
+"city": "RIAM SEJAWAK WEST KALIMANTAN",
+"arp": "0028N11103E",
+"fir": "WIIF"
+},
+{
+"name": "RIBANG RABING",
+"locId": "WIFN",
+"city": "RIBANG RABING WEST KALIMANTAN",
+"arp": "0046N11135E",
+"fir": "WIIF"
+},
+{
+"name": "ROS BORI",
+"locId": "WRLU",
+"city": "ROS BORI PAPUA",
+"arp": "0140S13607E",
+"fir": "WAAF"
+},
+{
+"name": "SALAKANAGARA TANJUNG LESUNG",
+"locId": "WIHI",
+"city": "PANDEGLANG",
+"arp": "0630S10540E",
+"fir": "WIIF"
+},
+{
+"name": "SAMANENTE",
+"locId": "WRIG",
+"city": "SAMANENTE PAPUA",
+"arp": "0210S13900E",
+"fir": "WAAF"
+},
+{
+"name": "SANGGOLEDO",
+"locId": "WIOI",
+"city": "SINGKAWANG II",
+"arp": "0105S10942E",
+"fir": "WIIF"
+},
+{
+"name": "SANGGU",
+"locId": "WAGM",
+"city": "BUNTOK",
+"arp": "0140S11454E",
+"fir": "WAAF"
+},
+{
+"name": "SANGKIMAH",
+"locId": "WALA",
+"city": "SANGATA",
+"arp": "0030N11732E",
+"fir": "WAAF"
+},
+{
+"name": "SANGKULIRANG",
+"locId": "WALU",
+"city": "SANGKULIRANG EAST KALIMANTAN",
+"arp": "0115N11741E",
+"fir": "WAAF"
+},
+{
+"name": "SAPE",
+"locId": "WRIH",
+"city": "SAPE PAPUA",
+"arp": "0446S14027E",
+"fir": "WAAF"
+},
+{
+"name": "SEBADU",
+"locId": "WIFO",
+"city": "SEBADU WEST KALIMANTAN",
+"arp": "0026N10929E",
+"fir": "WIIF"
+},
+{
+"name": "SEBAH",
+"locId": "WIFP",
+"city": "SEBAH WEST KALIMANTAN",
+"arp": "0001N10958E",
+"fir": "WIIF"
+},
+{
+"name": "SEBUKU",
+"locId": "WAOG",
+"city": "SEKAPUNG",
+"arp": "0338S11622E",
+"fir": "WAAF"
+},
+{
+"name": "SEI PAKNING",
+"locId": "WIBS",
+"city": "BENGKALIS",
+"arp": "0123N10209E",
+"fir": "WIIF"
+},
+{
+"name": "SEKO",
+"locId": "WAFN",
+"city": "SEKO",
+"arp": "0216S11954E",
+"fir": "WAAF"
+},
+{
+"name": "SELA",
+"locId": "WRIJ",
+"city": "SELA PAPUA",
+"arp": "0432S13943E",
+"fir": "WAAF"
+},
+{
+"name": "SELUK BETUNG",
+"locId": "WIFQ",
+"city": "SELUK BETUNG WEST KALIMANTAN",
+"arp": "0007N11053E",
+"fir": "WIIF"
+},
+{
+"name": "SEMADAI",
+"locId": "WIFR",
+"city": "SEMADAI WEST KALIMANTAN",
+"arp": "0006N11200E",
+"fir": "WIIF"
+},
+{
+"name": "SENGGEH",
+"locId": "WAJS",
+"city": "KEEROM",
+"arp": "0325S14047E",
+"fir": "WAAF"
+},
+{
+"name": "SENGGO",
+"locId": "WAKQ",
+"city": "SENGGO",
+"arp": "0541S13923E",
+"fir": "WAAF"
+},
+{
+"name": "SERADALA",
+"locId": "WAVU",
+"city": "SERADALA PAPUA",
+"arp": "0456S13954E",
+"fir": "WAAF"
+},
+{
+"name": "SERIMBU",
+"locId": "WIFS",
+"city": "SERIMBU WEST KALIMANTAN",
+"arp": "0051N11006E",
+"fir": "WIIF"
+},
+{
+"name": "SERUKAM",
+"locId": "WIFT",
+"city": "SERUKAM WEST KALIMANTAN",
+"arp": "0051N10920E",
+"fir": "WIIF"
+},
+{
+"name": "SIDUK",
+"locId": "WIFU",
+"city": "SIDUK WEST KALIMANTAN",
+"arp": "0120N11013E",
+"fir": "WIIF"
+},
+{
+"name": "SIKARI",
+"locId": "WRIL",
+"city": "SIKARI PAPUA",
+"arp": "0245S13823E",
+"fir": "WAAF"
+},
+{
+"name": "SILIMO",
+"locId": "WAVJ",
+"city": "SILIMO PAPUA",
+"arp": "0425S13854E",
+"fir": "WAAF"
+},
+{
+"name": "SILOAM",
+"locId": "WIFV",
+"city": "SILOAM WEST KALIMANTAN",
+"arp": "0021N11056E",
+"fir": "WIIF"
+},
+{
+"name": "SILOH",
+"locId": "WIFW",
+"city": "SILOH WEST KALIMANTAN",
+"arp": "0025N11109E",
+"fir": "WIIF"
+},
+{
+"name": "SINAK",
+"locId": "WABS",
+"city": "PUNCAK",
+"arp": "0349S13750E",
+"fir": "WAAF"
+},
+{
+"name": "SIRANG",
+"locId": "WIOA",
+"city": "SIRANG",
+"arp": "0003S11107E",
+"fir": "WIIF"
+},
+{
+"name": "SIRIWO",
+"locId": "WABC",
+"city": "SIRIWO PAPUA",
+"arp": "0331S13507E",
+"fir": "WAAF"
+},
+{
+"name": "SIRU",
+"locId": "WRIN",
+"city": "SIRU PAPUA",
+"arp": "0456S13852E",
+"fir": "WAAF"
+},
+{
+"name": "SITARO",
+"locId": "WAMO",
+"city": "SIAU",
+"arp": "0239N12525E",
+"fir": "WAAF"
+},
+{
+"name": "SMART SEMELAGI",
+"locId": "WISA",
+"city": "SINGKAWANG",
+"arp": "0100N10903E",
+"fir": "WIIF"
+},
+{
+"name": "SOBA",
+"locId": "WRIP",
+"city": "SOBA PAPUA",
+"arp": "0423S13904E",
+"fir": "WAAF"
+},
+{
+"name": "SOMANENTE",
+"locId": "WRIQ",
+"city": "SOMANENTE PAPUA",
+"arp": "0213S13853E",
+"fir": "WAAF"
+},
+{
+"name": "SOROAKO",
+"locId": "WAWS",
+"city": "SOROAKO SOUTH SULAWESI",
+"arp": "0232S12121E",
+"fir": "WAAF"
+},
+{
+"name": "SUKUBATOM",
+"locId": "WRIR",
+"city": "SUKUBATOM PAPUA",
+"arp": "0426S14054E",
+"fir": "WAAF"
+},
+{
+"name": "SULAIMAN",
+"locId": "WICK",
+"city": "MARGAHAYU",
+"arp": "0659S10734E",
+"fir": "WIIF"
+},
+{
+"name": "SUMARORONG",
+"locId": "WAFS",
+"city": "MAMASA",
+"arp": "0308S11918E",
+"fir": "WAAF"
+},
+{
+"name": "SUMO",
+"locId": "WRIS",
+"city": "SUMO PAPUA",
+"arp": "0446S13920E",
+"fir": "WAAF"
+},
+{
+"name": "SUNGAI BARANG",
+"locId": "WAGQ",
+"city": "SUNGAI BARANG EAST KALIMANTAN",
+"arp": "0145N11507E",
+"fir": "WAAF"
+},
+{
+"name": "SUNGAI DAMPAK",
+"locId": "WIOT",
+"city": "SUNGAI DAMPAK WEST KALIMANTAN",
+"arp": "0027S11212E",
+"fir": "WIIF"
+},
+{
+"name": "SUNGAI KUNYIT",
+"locId": "WIOU",
+"city": "SUNGAI KUNYIT WEST KALIMANTAN",
+"arp": "0001S10920E",
+"fir": "WIIF"
+},
+{
+"name": "SUNGAI TONTANG",
+"locId": "WIOF",
+"city": "SUNGAI TONTANG WEST KALIMANTAN",
+"arp": "0035S11028E",
+"fir": "WIIF"
+},
+{
+"name": "SUSWA",
+"locId": "WASW",
+"city": "SUSWA PAPUA",
+"arp": "0100S13215E",
+"fir": "WAAF"
+},
+{
+"name": "SUTI",
+"locId": "WIOY",
+"city": "SUTI WEST KALIMANTAN",
+"arp": "0053N10950E",
+"fir": "WIIF"
+},
+{
+"name": "SYEKH HAMZAH FANSHURI",
+"locId": "WIMI",
+"city": "ACEH SINGKIL",
+"arp": "0216N09758E",
+"fir": "WIIF"
+},
+{
+"name": "SYNOPI",
+"locId": "WAUS",
+"city": "SYNOPI PAPUA",
+"arp": "0045S13250E",
+"fir": "WAAF"
+},
+{
+"name": "TABANG",
+"locId": "WAGR",
+"city": "TABANG EAST KALIMANTAN",
+"arp": "0034N11658E",
+"fir": "WAAF"
+},
+{
+"name": "TAIYEVE",
+"locId": "WAVZ",
+"city": "TAIYEVE PAPUA",
+"arp": "0314S13827E",
+"fir": "WAAF"
+},
+{
+"name": "TAKAR",
+"locId": "WRIU",
+"city": "TAKAR PAPUA",
+"arp": "0203S13908E",
+"fir": "WAAF"
+},
+{
+"name": "TALIPAN",
+"locId": "WAFR",
+"city": "TALIPAN CENTRAL SULAWESI",
+"arp": "0159S12100E",
+"fir": "WAAF"
+},
+{
+"name": "TALISAYAM",
+"locId": "WALD",
+"city": "BATU PUTIH",
+"arp": "0123N11825E",
+"fir": "WAAF"
+},
+{
+"name": "TAMBELAN",
+"locId": "WIDB",
+"city": "KEPULAUAN RIAU",
+"arp": "0059N10734E",
+"fir": "WIIF"
+},
+{
+"name": "TAMLING",
+"locId": "WILB",
+"city": "TAMAN BELIMBING",
+"arp": "0555S10434E",
+"fir": "WIIF"
+},
+{
+"name": "TANAH GROGOT",
+"locId": "WALH",
+"city": "TANAH GROGOT",
+"arp": "0152S11630E",
+"fir": "WAAF"
+},
+{
+"name": "TANGMA",
+"locId": "WRIW",
+"city": "TANGMA PAPUA",
+"arp": "0418S13900E",
+"fir": "WAAF"
+},
+{
+"name": "TANJUNG BARA",
+"locId": "WALB",
+"city": "KUTA TIMUR",
+"arp": "0034N11739E",
+"fir": "WAAF"
+},
+{
+"name": "TANJUNG BERINGIN",
+"locId": "WIOE",
+"city": "TANJUNG BERINGIN WEST KALIMANTAN",
+"arp": "0020S11210E",
+"fir": "WIIF"
+},
+{
+"name": "TANJUNG LOKANG",
+"locId": "WIOL",
+"city": "TANJUNG LOKANG WEST KALIMANTAN",
+"arp": "0047N11340E",
+"fir": "WIIF"
+},
+{
+"name": "TANJUNG MAJU",
+"locId": "WIOC",
+"city": "TANJUNG MAJU WEST KALIMANTAN",
+"arp": "0040S11029E",
+"fir": "WIIF"
+},
+{
+"name": "TANJUNG RIMBA",
+"locId": "WIOR",
+"city": "TANJUNG RIMBA WEST KALIMANTAN",
+"arp": "0025S11028E",
+"fir": "WIIF"
+},
+{
+"name": "TANJUNG SANTAN",
+"locId": "WALT",
+"city": "TANJUNG SANTAN",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "TARDAMU",
+"locId": "WATS",
+"city": "SABU",
+"arp": "1030S12151E",
+"fir": "WAAF"
+},
+{
+"name": "TAYAYI",
+"locId": "WRLW",
+"city": "TAYAYI PAPUA",
+"arp": "0304S13738E",
+"fir": "WAAF"
+},
+{
+"name": "TEMBAGA",
+"locId": "WIQB",
+"city": "TEMBAGA WEST KALIMANTAN",
+"arp": "0032S11042E",
+"fir": "WIIF"
+},
+{
+"name": "TEMINABUAN",
+"locId": "WAST",
+"city": "TEMINABUAN",
+"arp": "0127S13201E",
+"fir": "WAAF"
+},
+{
+"name": "TEMPUNAK",
+"locId": "WIQC",
+"city": "TEMPUNAK WEST KALIMANTAN",
+"arp": "0010S11120E",
+"fir": "WIIF"
+},
+{
+"name": "TENTENA",
+"locId": "WAFC",
+"city": "TENTENA CENTRAL SULAWESI",
+"arp": "0215S12038E",
+"fir": "WAAF"
+},
+{
+"name": "TERATAI",
+"locId": "WIQD",
+"city": "TERATAI WEST KALIMANTAN",
+"arp": "0024N11045E",
+"fir": "WIIF"
+},
+{
+"name": "TESTEGA",
+"locId": "WASY",
+"city": "TESTEGA PAPUA",
+"arp": "0122S13312E",
+"fir": "WAAF"
+},
+{
+"name": "TEUKU CUT ALI",
+"locId": "WIMT",
+"city": "TAPAK TUAN",
+"arp": "0310N09717E",
+"fir": "WIIF"
+},
+{
+"name": "TIGI",
+"locId": "WRLX",
+"city": "TIGI PAPUA",
+"arp": "0402S13614E",
+"fir": "WAAF"
+},
+{
+"name": "TIMEPA",
+"locId": "WRLY",
+"city": "TIMEPA PAPUA",
+"arp": "0358S13547E",
+"fir": "WAAF"
+},
+{
+"name": "TINGGI NAMBUT",
+"locId": "WRJC",
+"city": "TINGGI NAMBUT PAPUA",
+"arp": "0345S13804E",
+"fir": "WAAF"
+},
+{
+"name": "TINOMBO",
+"locId": "WAMT",
+"city": "TINOMBO CENTRAL SULAWESI",
+"arp": "0030N12010E",
+"fir": "WAAF"
+},
+{
+"name": "TIOM",
+"locId": "WAVT",
+"city": "TIOM",
+"arp": "0355S13827E",
+"fir": "WAAF"
+},
+{
+"name": "TUANKU TAMBUSAI",
+"locId": "WIBG",
+"city": "PASIR PANGARAIAN",
+"arp": "0050N10022E",
+"fir": "WIIF"
+},
+{
+"name": "TURIMO",
+"locId": "WRNA",
+"city": "TURIMO PAPUA",
+"arp": "0317S13731E",
+"fir": "WAAF"
+},
+{
+"name": "UBRUB",
+"locId": "WAJU",
+"city": "UBRUB PAPUA",
+"arp": "0340S14051E",
+"fir": "WAAF"
+},
+{
+"name": "UEBONE",
+"locId": "WAEF",
+"city": "UEBONE CENTRAL SULAWESI",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "UETANGKO",
+"locId": "WAMK",
+"city": "UETANGKO CENTRAL SULAWESI",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "ULAK MUID",
+"locId": "WIQE",
+"city": "ULAK MUID WEST KALIMANTAN",
+"arp": "",
+"fir": "WIIF"
+},
+{
+"name": "URES",
+"locId": "WRJG",
+"city": "URES PAPUA",
+"arp": "0258S13934E",
+"fir": "WAAF"
+},
+{
+"name": "WAFF",
+"locId": "WRSJ",
+"city": "WAFF PAPUA",
+"arp": "0218S13846E",
+"fir": "WAAF"
+},
+{
+"name": "WAHAI",
+"locId": "WAPV",
+"city": "WAHAI",
+"arp": "0249S12929E",
+"fir": "WAAF"
+},
+{
+"name": "WAKDE",
+"locId": "WAJD",
+"city": "WAKDE",
+"arp": "0156S13901E",
+"fir": "WAAF"
+},
+{
+"name": "WALEREK",
+"locId": "WRJK",
+"city": "WALEREK PAPUA",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "WALMA",
+"locId": "WRJL",
+"city": "WALMA PAPUA",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "WAMARIRI",
+"locId": "WRJM",
+"city": "WAMARIRI PAPUA",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "WANAM MERAUKE",
+"locId": "WAKW",
+"city": "MINA WANAM",
+"arp": "073242S1390707E",
+"fir": "WAAF"
+},
+{
+"name": "WANDAMA",
+"locId": "WRJO",
+"city": "WANDAMA PAPUA",
+"arp": "0433S13833E",
+"fir": "WAAF"
+},
+{
+"name": "WAPOGA",
+"locId": "WRLV",
+"city": "SIEWA",
+"arp": "030210S1361232E",
+"fir": "WAAF"
+},
+{
+"name": "WAREN",
+"locId": "WAYW",
+"city": "WAREN PAPUA",
+"arp": "0216S13623E",
+"fir": "WAAF"
+},
+{
+"name": "WARIS",
+"locId": "WAJR",
+"city": "WARIS PAPUA",
+"arp": "0314S14058E",
+"fir": "WAAF"
+},
+{
+"name": "WASIOR",
+"locId": "WAUW",
+"city": "TELUK WONDAMA",
+"arp": "0243S13430E",
+"fir": "WAAF"
+},
+{
+"name": "WATUSONGO",
+"locId": "WAMW",
+"city": "WATUSONGO CENTRAL SULAWESI",
+"arp": "",
+"fir": "WAAF"
+},
+{
+"name": "WAY JEPARA",
+"locId": "WILW",
+"city": "WAY KAMBAS",
+"arp": "050256S1053908E",
+"fir": "WIIF"
+},
+{
+"name": "WERI",
+"locId": "WRNB",
+"city": "WERI PAPUA",
+"arp": "0323S13753E",
+"fir": "WAAF"
+},
+{
+"name": "WILADATIKA",
+"locId": "WIHC",
+"city": "CIBUBUR",
+"arp": "062125S1065349E",
+"fir": "WIIF"
+},
+{
+"name": "WOGI",
+"locId": "WRJQ",
+"city": "WOGI PAPUA",
+"arp": "0358S13849E",
+"fir": "WAAF"
+},
+{
+"name": "WOLO",
+"locId": "WRJR",
+"city": "WOLO PAPUA",
+"arp": "0352S13852E",
+"fir": "WAAF"
+},
+{
+"name": "WUASA",
+"locId": "WAMU",
+"city": "WUASA CENTRAL SULAWESI",
+"arp": "0125S12019E",
+"fir": "WAAF"
+},
+{
+"name": "WUNIN",
+"locId": "WRJS",
+"city": "WUNIN PAPUA",
+"arp": "0341S13853E",
+"fir": "WAAF"
+},
+{
+"name": "WUNOPITO",
+"locId": "WATW",
+"city": "LEWOLEBA",
+"arp": "0822S12326E",
+"fir": "WAAF"
+},
+{
+"name": "YANIRUMA",
+"locId": "WAKC",
+"city": "YANIRUMA PAPUA",
+"arp": "0535S13949E",
+"fir": "WAAF"
+},
+{
+"name": "YAOSAKOR",
+"locId": "WRMJ",
+"city": "YAOSAKOR PAPUA",
+"arp": "0556S13827E",
+"fir": "WAAF"
+},
+{
+"name": "YAPIL",
+"locId": "WRJU",
+"city": "YAPIL PAPUA",
+"arp": "0332S14032E",
+"fir": "WAAF"
+},
+{
+"name": "YIGI",
+"locId": "WRJV",
+"city": "YIGI PAPUA",
+"arp": "0417S13823E",
+"fir": "WAAF"
+},
+{
+"name": "YOGOSEM",
+"locId": "WRKA",
+"city": "YOGOSEM PAPUA",
+"arp": "0415S13909E",
+"fir": "WAAF"
+},
+{
+"name": "YUGWA",
+"locId": "WREP",
+"city": "DANIME",
+"arp": "0415S13909E",
+"fir": "WAAF"
+},
+{
+"name": "YURUF",
+"locId": "WAJE",
+"city": "YURUF PAPUA",
+"arp": "0356S13056E",
+"fir": "WAAF"
+}
+]

@@ -1,0 +1,42 @@
+/* Adegan menara ATC dan layar radar. Animasi hanya bila pengguna tidak meminta pengurangan gerak. */
+.scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.mark { display: inline-flex; flex: none; align-items: center; justify-content: center; border-radius: 28%; background: linear-gradient(145deg, #13315c, #0b2545); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); }
+.mark img { display: block; width: 80%; height: 80%; object-fit: contain; }
+.radar { width: 100%; height: auto; display: block; filter: drop-shadow(0 18px 40px rgba(2, 8, 20, .55)); }
+.radar .rd-cardinal { fill: #8ff0c4; font: 600 12px var(--mono); opacity: .8; }
+.radar .rd-tag { fill: #8ff0c4; font: 600 9.5px var(--mono); letter-spacing: .02em; }
+.radar .rd-dim { fill: #3ddc97; opacity: .85; }
+.radar .rd-blip { opacity: .9; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sc-star { animation: sc-twinkle 3.6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  .sc-cloud { animation: sc-drift var(--t, 120s) linear infinite; animation-delay: var(--d, 0s); }
+  .sc-blink { animation: sc-blink 1.5s steps(1, end) infinite; }
+  .sc-flicker { animation: sc-flicker 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  .sc-rwy { animation: sc-rwy 1.5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  .sc-dish { transform-box: fill-box; transform-origin: center; animation: sc-dish 3.2s linear infinite; }
+  .sc-ring { transform-box: fill-box; transform-origin: center; animation: sc-ring 6s ease-out infinite; animation-delay: var(--d, 0s); opacity: 0; }
+  .radar .rd-sweep { transform-origin: 200px 200px; animation: rd-spin 6s linear infinite; }
+  .radar .rd-blip { animation: rd-blip 6s linear infinite; }
+}
+.sc-rwy { opacity: .85; }
+
+@keyframes sc-twinkle { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+@keyframes sc-drift { from { transform: translateX(-300px); } to { transform: translateX(1900px); } }
+@keyframes sc-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: .1; } }
+@keyframes sc-flicker { 0%, 100% { opacity: .55; } 40% { opacity: .35; } 55% { opacity: .75; } 80% { opacity: .5; } }
+@keyframes sc-rwy { 0%, 100% { opacity: .22; } 45% { opacity: 1; } }
+@keyframes sc-dish { 0% { transform: scaleX(1); } 50% { transform: scaleX(-1); } 100% { transform: scaleX(1); } }
+@keyframes sc-ring { from { transform: scale(.03); opacity: .65; } to { transform: scale(1); opacity: 0; } }
+@keyframes rd-spin { to { transform: rotate(360deg); } }
+@keyframes rd-blip { 0% { opacity: 1; } 70% { opacity: .18; } 100% { opacity: .06; } }
+
+/* Logo mitra: dipakai di header aplikasi, login, dan landing */
+.partners { display: flex; align-items: center; }
+.partner { display: flex; align-items: center; }
+.partner img { height: 34px; width: auto; display: block; object-fit: contain; }
+.partner .sep { width: 1px; height: 26px; margin: 0 13px; background: var(--line-strong); }
+.partners.dark { background: rgba(255, 255, 255, .96); border-radius: 14px; padding: 6px 15px; box-shadow: 0 8px 28px rgba(2, 8, 20, .32); }
+.partners.dark .sep { background: #d4dce8; }
+@media (max-width: 860px) { .partner img { height: 28px; } .partner .sep { margin: 0 9px; height: 20px; } }
+@media (max-width: 520px) { .partner img { height: 23px; } .partner .sep { margin: 0 7px; height: 17px; } .partners.dark { padding: 5px 10px; } }
