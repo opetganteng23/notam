@@ -163,7 +163,7 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
               <option value="ATS">Kirim ke ATS</option>
               <option value="PIA">Langsung ke PIA</option>
             </select>
-            <button disabled={busy} onClick={() => act(async () => {
+            <button disabled={busy || last.validation?.status === 'failed'} title={last.validation?.status === 'failed' ? 'Perbaiki error validasi lalu Generate ulang' : undefined} onClick={() => act(async () => {
               if (!confirm(`Submit ke ${route}? Pastikan jalur sudah benar.`)) return;
               await api('POST', `/requests/${id}/submit`, { route }); done();
             })}>Submit</button>

@@ -57,7 +57,7 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
     if (!Q_LINE.test(it.Q)) err('Q_FORMAT', 'Format Q) tidak sesuai pola FIR/QXXXX/traffic/purpose/scope/lower/upper/koordinat+radius');
     else if (airport && it.Q.split('/')[0] !== airport.fir) warn('Q_FIR', `FIR di Q) (${it.Q.split('/')[0]}) berbeda dari FIR master bandara (${airport.fir})`);
   }
-  if (it.A && it.A !== airportLocId) err('A_MISMATCH', `A) (${it.A}) tidak sama dengan bandara pengajuan (${airportLocId})`);
+  if (it.A && it.A !== airportLocId) err('A_MISMATCH', `A) (${it.A}) tidak sama dengan locator pengajuan (${airportLocId}). Periksa apakah locator atau narasi yang keliru`);
 
   const b = it.B ? parseTime(it.B) : null;
   if (it.B && b === null) err('B_FORMAT', 'B) harus YYMMDDHHMM dengan tanggal yang valid');

@@ -23,6 +23,16 @@ export function mentionedLocators(text: string): string[] {
   return [...found];
 }
 
+// Nama bandara lain yang disebut di teks, mis. "Bandar Udara Juanda" (WARR). Nama pendek (< 5 huruf) diabaikan agar tidak salah cocok.
+const normName = (s: string) => ` ${s.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim()} `;
+const named = airports.filter((a) => a.name && normName(a.name).trim().length >= 5).map((a) => ({ a, n: normName(a.name) }));
+export function mentionedAirportNames(text: string, ownLocId: string): Airport[] {
+  const t = normName(text);
+  const own = normName(byLoc.get(ownLocId)?.name ?? '');
+  const seen = new Set<string>();
+  return named.filter(({ a, n }) => a.locId !== ownLocId && n !== own && !own.includes(n) && t.includes(n) && !seen.has(a.locId) && !!seen.add(a.locId)).map((x) => x.a);
+}
+
 // ARP "0616S10653E" -> "0616S10653E" bila formatnya valid; selain itu null (data master tidak standar).
 export const validArp = (a: Airport) => (/^\d{4}[NS]\d{5}[EW]$/.test(a.arp) ? a.arp : null);
 

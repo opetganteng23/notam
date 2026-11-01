@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthUser } from '../auth/auth';
 import { NOTAM_GENERATOR, NotamGenerator } from '../generator/generator';
-import { findAirport, mentionedLocators } from '../master/airports';
+import { endBeforeStart } from './input-check';
+import { findAirport, mentionedAirportNames, mentionedLocators } from '../master/airports';
 import { Action, Route, WorkflowError, transition } from '../workflow/workflow';
 import { AuditService } from '../audit/audit.service';
 import { OpsService } from '../ops/ops.service';
@@ -67,6 +68,9 @@ export class RequestsService {
     if (RELATIVE_DATE.test(freeText)) throw new BadRequestException('Tanggal harus spesifik, bukan "hari ini"/"besok"');
     const other = mentionedLocators(freeText).filter((l) => l !== airport);
     if (other.length) throw new BadRequestException(`Locator di teks (${other.join(', ')}) tidak sama dengan bandara ${airport}`);
+    if (endBeforeStart(freeText)) throw new BadRequestException('Tanggal atau jam selesai lebih awal dari waktu mulai. Periksa kembali tanggalnya.');
+    const named = mentionedAirportNames(freeText, airport);
+    if (named.length) throw new BadRequestException(`Teks menyebut bandara ${named.map((a) => `${a.name} (${a.locId})`).join(', ')}, tetapi locator pengajuan adalah ${airport}. Perbaiki locator atau teksnya.`);
   }
 
   async create(user: AuthUser, airport: string, freeText: string, reuseOf?: string) {
@@ -112,6 +116,8 @@ export class RequestsService {
   async act(user: AuthUser, id: string, action: Action, opts: { route?: Route; note?: string }) {
     const doc = await this.load(id);
     if (action === 'SUBMIT' && doc.originator !== user.username) throw new ForbiddenException();
+    if (action === 'SUBMIT' && doc.versions[doc.versions.length - 1]?.validation?.status === 'failed')
+      throw new BadRequestException('Draf belum lolos validasi (ada error). Perbaiki teks atau locator lalu Generate ulang sebelum Submit.');
     let res;
     try {
       res = transition({ status: doc.status, action, role: user.role, route: opts.route, note: opts.note, piaRevisionCount: doc.piaRevisionCount });
