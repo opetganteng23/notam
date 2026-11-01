@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { AuthUser } from '../auth/auth';
 import { NOTAM_GENERATOR, NotamGenerator } from '../generator/generator';
 import { endBeforeStart, hasDate } from './input-check';
-import { findAirport, mentionedAirportNames, mentionedLocators } from '../master/airports';
+import { detectAirports, findAirport, mentionedAirportNames, mentionedLocators } from '../master/airports';
 import { Action, Route, WorkflowError, transition } from '../workflow/workflow';
 import { AuditService } from '../audit/audit.service';
 import { OpsService } from '../ops/ops.service';
@@ -77,7 +77,14 @@ export class RequestsService {
     if (named.length) throw new BadRequestException(`Teks menyebut bandara ${named.map((a) => `${a.name} (${a.locId})`).join(', ')}, tetapi locator pengajuan adalah ${airport}. Perbaiki locator atau teksnya.`);
   }
 
-  async create(user: AuthUser, airport: string, freeText: string, reuseOf?: string) {
+  async create(user: AuthUser, airport: string | undefined, freeText: string, reuseOf?: string) {
+    if (!airport) {
+      if (!freeText?.trim()) throw new BadRequestException('Teks freeform wajib diisi');
+      const found = detectAirports(freeText);
+      if (!found.length) throw new BadRequestException('Nama bandara tidak dikenali di narasi. Tulis nama bandara lengkap, misalnya "Bandar Udara Halim Perdanakusuma".');
+      if (found.length > 1) throw new BadRequestException(`Narasi menyebut lebih dari satu bandara: ${found.map((a) => `${a.name} (${a.locId})`).join(', ')}. Satu pengajuan hanya untuk satu bandara.`);
+      airport = found[0].locId;
+    }
     if (!findAirport(airport)) throw new BadRequestException('Locator bandara tidak ada di master data');
     this.checkInput(freeText, airport);
     if (reuseOf) {

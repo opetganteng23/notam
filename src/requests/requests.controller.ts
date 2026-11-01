@@ -9,7 +9,7 @@ export class RequestsController {
   constructor(private svc: RequestsService) {}
 
   @Roles('ORIGINATOR') @Post()
-  create(@CurrentUser() u: AuthUser, @Body() b: { airport: string; freeText: string; reuseOf?: string }) {
+  create(@CurrentUser() u: AuthUser, @Body() b: { airport?: string; freeText: string; reuseOf?: string }) {
     return this.svc.create(u, b.airport, b.freeText, b.reuseOf);
   }
 

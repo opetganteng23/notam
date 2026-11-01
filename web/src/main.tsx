@@ -55,21 +55,29 @@ function Login({ onDone, onBack }: { onDone: () => void; onBack: () => void }) {
   );
 }
 
-interface Prefill { airport: string; freeText: string; reuseOf?: string; n: number }
+interface Prefill { freeText: string; reuseOf?: string; n: number }
 
 const BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 const tgl = (plus: number) => { const d = new Date(Date.now() + plus * 86_400_000); return `${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`; };
 // Contoh pesan dengan tanggal spesifik (mulai 3 hari lagi) agar langsung lolos aturan "bukan tanggal relatif".
 const examples = () => [
-  { label: 'Penutupan runway', airport: 'WIHH', text: `Landasan pacu 06/24 di Bandar Udara Halim Perdanakusuma ditutup karena pekerjaan mulai tanggal ${tgl(3)} pukul 08.00 WIB sampai tanggal ${tgl(4)} pukul 12.00 WIB` },
-  { label: 'Taxiway tidak dapat digunakan', airport: 'WADD', text: `Taxiway A di Bandar Udara I Gusti Ngurah Rai tidak dapat digunakan karena pekerjaan pelapisan mulai tanggal ${tgl(3)} pukul 22.00 WITA sampai tanggal ${tgl(5)} pukul 05.00 WITA` },
-  { label: 'PAPI tidak beroperasi', airport: 'WIHH', text: `PAPI runway 24 di Bandar Udara Halim Perdanakusuma tidak beroperasi mulai tanggal ${tgl(3)} pukul 00.00 UTC sampai tanggal ${tgl(4)} pukul 05.00 UTC` },
-  { label: 'Apron ditutup', airport: 'WARR', text: `Apron di Bandar Udara Juanda ditutup karena pekerjaan mulai tanggal ${tgl(3)} pukul 08.00 WIB sampai tanggal ${tgl(3)} pukul 17.00 WIB` },
+  { label: 'Penutupan runway', text: `Landasan pacu 06/24 di Bandar Udara Halim Perdanakusuma ditutup karena pekerjaan mulai tanggal ${tgl(3)} pukul 08.00 WIB sampai tanggal ${tgl(4)} pukul 12.00 WIB` },
+  { label: 'Taxiway tidak dapat digunakan', text: `Taxiway A di Bandar Udara I Gusti Ngurah Rai tidak dapat digunakan karena pekerjaan pelapisan mulai tanggal ${tgl(3)} pukul 22.00 WITA sampai tanggal ${tgl(5)} pukul 05.00 WITA` },
+  { label: 'PAPI tidak beroperasi', text: `PAPI runway 24 di Bandar Udara Halim Perdanakusuma tidak beroperasi mulai tanggal ${tgl(3)} pukul 00.00 UTC sampai tanggal ${tgl(4)} pukul 05.00 UTC` },
+  { label: 'Apron ditutup', text: `Apron di Bandar Udara Juanda ditutup karena pekerjaan mulai tanggal ${tgl(3)} pukul 08.00 WIB sampai tanggal ${tgl(3)} pukul 17.00 WIB` },
 ];
 
 function Create({ prefill, onDone }: { prefill: Prefill; onDone: () => void }) {
-  const [airport, setAirport] = useState(prefill.airport);
   const [freeText, setText] = useState(prefill.freeText);
+  const [found, setFound] = useState<{ locId: string; name: string; city: string }[]>([]);
+  useEffect(() => {
+    if (!freeText.trim()) { setFound([]); return; }
+    const t = setTimeout(() => {
+      api<{ airports: { locId: string; name: string; city: string }[] }>('GET', `/suggest/airport?text=${encodeURIComponent(freeText.slice(0, 2000))}`)
+        .then((r) => setFound(r.airports)).catch(() => setFound([]));
+    }, 300);
+    return () => clearTimeout(t);
+  }, [freeText]);
   const [busy, setBusy] = useState(false);
   const [gate, setGate] = useState<{ open: boolean; reason: string; dailyLimit: number } | null>(null);
   const { error, run } = useAsync();
@@ -90,17 +98,22 @@ function Create({ prefill, onDone }: { prefill: Prefill; onDone: () => void }) {
       {!prefill.reuseOf && (
         <div className="examples">
           <span>Pilih contoh pesan</span>
-          {examples().map((x) => <button key={x.label} type="button" className="chip" onClick={() => { setAirport(x.airport); setText(x.text); }}>{x.label}</button>)}
+          {examples().map((x) => <button key={x.label} type="button" className="chip" onClick={() => setText(x.text)}>{x.label}</button>)}
         </div>
       )}
       <div className="row">
-        <input placeholder="Locator (mis. WIHH)" value={airport} maxLength={4} onChange={(e) => setAirport(e.target.value.toUpperCase())} />
-        <NarrativeInput placeholder="Tulis kondisi bandara dengan tanggal spesifik" value={freeText} onChange={setText} />
+        <NarrativeInput placeholder="Tulis kondisi, nama bandara, dan tanggal spesifik" value={freeText} onChange={setText} />
         <button disabled={busy || closed} onClick={() => run(async () => {
           setBusy(true);
-          try { await api('POST', '/requests', { airport, freeText, reuseOf: prefill.reuseOf }); setText(''); onDone(); } finally { setBusy(false); }
+          try { await api('POST', '/requests', { freeText, reuseOf: prefill.reuseOf }); setText(''); onDone(); } finally { setBusy(false); }
         })}>{busy ? `Memproses… ${fmtMs(elapsed)}` : 'Generate'}</button>
       </div>
+      <p className="muted" aria-live="polite">
+        {!freeText.trim() ? 'Bandara dikenali otomatis dari nama bandara di narasi.'
+          : found.length === 1 ? <>Bandara terdeteksi: <b>{found[0].name}</b> ({found[0].city}) · <span className="mono">{found[0].locId}</span></>
+          : found.length > 1 ? `Narasi menyebut lebih dari satu bandara: ${found.map((a) => `${a.name} (${a.locId})`).join(', ')}. Sebutkan satu bandara saja.`
+          : 'Bandara belum dikenali. Tulis nama bandara, misalnya "Bandar Udara Halim Perdanakusuma".'}
+      </p>
       {busy && <p className="muted" role="status">Sistem sedang menyusun NOTAM dan memeriksa aturannya. Mohon tunggu, jangan tutup halaman ini.</p>}
       {error && <p role="alert">{error}</p>}
     </section>
@@ -442,7 +455,7 @@ function App() {
   const [authed, setAuthed] = useState(!!session.role);
   const [tick, setTick] = useState(0);
   const [filter, setFilter] = useState<Filter>(EMPTY_FILTER);
-  const [prefill, setPrefill] = useState<Prefill>({ airport: '', freeText: '', n: 0 });
+  const [prefill, setPrefill] = useState<Prefill>({ freeText: '', n: 0 });
   const [tab, setTab] = useState<Tab>('ringkasan');
   const [view, setView] = useState<View>('beranda');
   const [me, setMe] = useState<Me | null>(null);
@@ -466,7 +479,7 @@ function App() {
   const admin = role === 'ADMIN';
   const reviewer = role === 'ATS' || role === 'PIA' || role === 'NOF';
   const reuse = (r: NotamRequest) => {
-    setPrefill({ airport: r.airport, freeText: lastVersion(r).freeText, reuseOf: r._id, n: Date.now() });
+    setPrefill({ freeText: lastVersion(r).freeText, reuseOf: r._id, n: Date.now() });
     setTimeout(() => document.getElementById('create')?.scrollIntoView({ behavior: 'smooth' }), 50);
   };
   const byStatus = (status: string) => { setFilter({ ...EMPTY_FILTER, status }); if (admin) setTab('daftar'); };

@@ -78,6 +78,17 @@ describe('input Originator', () => {
     await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: TEXT + ' dan WADD' }).expect(400);
   });
 
+  it('tanpa locator, bandara dikenali dari nama di narasi', async () => {
+    const { body } = await api('post', '/requests', 'orig').send({ freeText: 'Apron di Bandar Udara Juanda ditutup karena pekerjaan mulai tanggal 6 November 2026 pukul 08.00 WIB sampai tanggal 6 November 2026 pukul 17.00 WIB' }).expect(201);
+    assert.equal(body.airport, 'WARR');
+    const none = await api('post', '/requests', 'orig').send({ freeText: TEXT }).expect(400);
+    assert.ok(none.body.message.includes('tidak dikenali'));
+    const two = await api('post', '/requests', 'orig').send({ freeText: 'Apron di Bandar Udara Juanda dan Bandar Udara Halim Perdanakusuma ditutup mulai tanggal 6 November 2026 pukul 08.00 WIB sampai tanggal 6 November 2026 pukul 17.00 WIB' }).expect(400);
+    assert.ok(two.body.message.includes('lebih dari satu'));
+    const det = await api('get', '/suggest/airport?text=PAPI%20di%20Bandara%20Halim%20Perdanakusuma', 'orig').expect(200);
+    assert.equal(det.body.airports[0].locId, 'WIHH');
+  });
+
   it('menolak nama bandara yang beda dengan locator, dan tanggal selesai sebelum mulai', async () => {
     const juanda = await api('post', '/requests', 'orig').send({ airport: 'WADD', freeText: 'Apron di Bandar Udara Juanda ditutup karena pekerjaan mulai tanggal 4 November 2026 pukul 08.00 WIB sampai tanggal 4 November 2026 pukul 17.00 WIB' }).expect(400);
     assert.ok(juanda.body.message.includes('JUANDA (WARR)'));

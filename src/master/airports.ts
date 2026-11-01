@@ -33,6 +33,16 @@ export function mentionedAirportNames(text: string, ownLocId: string): Airport[]
   return named.filter(({ a, n }) => a.locId !== ownLocId && n !== own && !own.includes(n) && t.includes(n) && !seen.has(a.locId) && !!seen.add(a.locId)).map((x) => x.a);
 }
 
+// Bandara yang disebut di narasi (nama atau locator), dipakai bila pengguna tidak mengisi locator.
+// Nama yang merupakan bagian dari nama lain yang juga cocok diabaikan (mis. "SOEKARNO" di dalam "FATMAWATI SOEKARNO").
+export function detectAirports(text: string): Airport[] {
+  const t = normName(text);
+  const hits = named.filter(({ n }) => t.includes(n));
+  const found = new Map(hits.filter((h) => !hits.some((o) => o.n.length > h.n.length && o.n.includes(h.n))).map((h) => [h.a.locId, h.a]));
+  for (const l of mentionedLocators(text)) found.set(l, byLoc.get(l) as Airport);
+  return [...found.values()];
+}
+
 // ARP "0616S10653E" -> "0616S10653E" bila formatnya valid; selain itu null (data master tidak standar).
 export const validArp = (a: Airport) => (/^\d{4}[NS]\d{5}[EW]$/.test(a.arp) ? a.arp : null);
 
