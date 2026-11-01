@@ -77,15 +77,17 @@ Batasan: kode Q berasal dari susunan AI (kecocokan dengan NOTAM asli sekitar 61%
 
 ## Menyalakan di PC on-prem
 
-Klik dua kali dari folder `NOTAM`:
+Klik dua kali dari folder `01 Operasional` (di luar `app`):
 
 | File | Fungsi |
 |---|---|
 | `Nyalakan-NOTAM.bat` | Menyalakan Ollama, database, backend, dan tunnel ke VPS (komponen yang sudah hidup dilewati), lalu menampilkan status |
 | `Status-NOTAM.bat` | Memeriksa kelima komponen dan situs publik, hanya membaca |
 | `Matikan-NOTAM.bat` | Mematikan backend, tunnel, dan database (Ollama dibiarkan) |
+| `Perbarui-NOTAM.bat` | Git pull, install, build, lalu menyalakan ulang layanan |
+| `Aktifkan-Otomatis-NOTAM.bat` / `Batalkan-Otomatis-NOTAM.bat` | Menyala sendiri saat PC dihidupkan (tanpa login), dan pembatalannya. Meminta izin Administrator |
 
-Skripnya ada di `deploy/windows`. Kunci SSH dibaca dari `..\medisiana.pem` atau variabel `NOTAM_SSH_KEY`. **Mulai otomatis saat login Windows:** `powershell -ExecutionPolicy Bypass -File deploy\windows\install-autostart.ps1 -KeyPath C:\jalur\kunci.pem` (batalkan dengan `uninstall-autostart.ps1`). Tombol di web tidak dapat menyalakan backend yang mati, karena web dilayani dari VPS dan yang mati adalah PC-nya.
+Skripnya ada di `deploy/windows`. Kunci SSH dibaca dari `medisiana.pem` di folder `CODING` (dua tingkat di atas `01 Operasional`) atau variabel `NOTAM_SSH_KEY`. **Mulai otomatis saat PC dihidupkan:** gunakan `Aktifkan-Otomatis-NOTAM.bat`, atau manual: `powershell -ExecutionPolicy Bypass -File deploy\windows\install-autostart.ps1 -KeyPath C:\jalur\kunci.pem` (batalkan dengan `uninstall-autostart.ps1`). Tombol di web tidak dapat menyalakan backend yang mati, karena web dilayani dari VPS dan yang mati adalah PC-nya.
 
 ## Arti Q-code
 
