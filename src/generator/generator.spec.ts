@@ -159,3 +159,18 @@ describe('generator', () => {
     expect(body).toMatchObject({ url: '/api/generate', model: 'qwen3:8b', prompt: 'P', stream: false, think: false });
   });
 });
+
+describe('koreksi kurung penutup', () => {
+  const ap = findAirport('WIHH')!;
+  const head = 'Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611040100\nC) 2611050500\n';
+  it('membuang ")" sisa pembungkus ICAO di akhir E)', () => {
+    const r = correctNotam(`${head}E) RWY 07/25 CLSD DUE TO VOLCANIC ERUPTION)`, ap, '');
+    expect(r.text.endsWith('VOLCANIC ERUPTION')).toBe(true);
+    expect(r.corrections).toContain('Tanda kurung ")" berlebih di akhir E) dihapus');
+  });
+  it('mempertahankan kurung yang berpasangan', () => {
+    const r = correctNotam(`${head}E) RWY 07/25 CLSD (WIP)`, ap, '');
+    expect(r.text.endsWith('(WIP)')).toBe(true);
+    expect(r.corrections).toHaveLength(0);
+  });
+});

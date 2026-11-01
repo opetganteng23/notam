@@ -99,6 +99,12 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
       .join('\n');
     corrections.push(label.includes('{to}') ? label.replace('{to}', to) : `${label}: ${from} → ${to}`);
   };
+  // Sisa kurung penutup pembungkus format ICAO "(... E) ...)" yang tertiru dari dataset.
+  const e = items.E ?? '';
+  if (e.endsWith(')') && text.trimEnd().endsWith(')') && (e.match(/\(/g) ?? []).length < (e.match(/\)/g) ?? []).length) {
+    text = text.trimEnd().slice(0, -1).trimEnd();
+    corrections.push('Tanda kurung ")" berlebih di akhir E) dihapus');
+  }
   const [fir, ...rest] = (items.Q ?? '').split('/');
   if (rest.length && fir !== airport.fir) setItem('Q', fir, airport.fir, 'FIR di Q) disamakan dengan master bandara');
   const exp = expectedUtcStamps(freeText);
