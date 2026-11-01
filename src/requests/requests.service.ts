@@ -26,6 +26,9 @@ export interface ListQuery {
   to?: string;
 }
 
+// Kesalahan yang pasti salah; draf dengan kesalahan ini tidak boleh dikirim ke peninjau.
+export const BLOCKING = ['A_MISMATCH', 'C_BEFORE_B'];
+
 @Injectable()
 export class RequestsService {
   private log = new Logger(RequestsService.name);
@@ -116,8 +119,9 @@ export class RequestsService {
   async act(user: AuthUser, id: string, action: Action, opts: { route?: Route; note?: string }) {
     const doc = await this.load(id);
     if (action === 'SUBMIT' && doc.originator !== user.username) throw new ForbiddenException();
-    if (action === 'SUBMIT' && doc.versions[doc.versions.length - 1]?.validation?.status === 'failed')
-      throw new BadRequestException('Draf belum lolos validasi (ada error). Perbaiki teks atau locator lalu Generate ulang sebelum Submit.');
+    const blocking = (doc.versions[doc.versions.length - 1]?.validation?.issues ?? []).filter((i) => BLOCKING.includes(i.code));
+    if (action === 'SUBMIT' && blocking.length)
+      throw new BadRequestException(`Draf belum dapat di-submit: ${blocking.map((i) => i.message).join('; ')}. Perbaiki teks atau locator lalu Generate ulang.`);
     let res;
     try {
       res = transition({ status: doc.status, action, role: user.role, route: opts.route, note: opts.note, piaRevisionCount: doc.piaRevisionCount });

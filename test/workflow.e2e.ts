@@ -78,6 +78,23 @@ describe('input Originator', () => {
     await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: TEXT + ' dan WADD' }).expect(400);
   });
 
+  it('menolak nama bandara yang beda dengan locator, dan tanggal selesai sebelum mulai', async () => {
+    const juanda = await api('post', '/requests', 'orig').send({ airport: 'WADD', freeText: 'Apron di Bandar Udara Juanda ditutup karena pekerjaan mulai tanggal 4 November 2026 pukul 08.00 WIB sampai tanggal 4 November 2026 pukul 17.00 WIB' }).expect(400);
+    assert.ok(juanda.body.message.includes('JUANDA (WARR)'));
+    const halim = await api('post', '/requests', 'orig').send({ airport: 'WIII', freeText: 'Landasan pacu 06/24 di Bandar Udara Halim Perdanakusuma ditutup karena pekerjaan mulai tanggal 9 November 2026 pukul 08.00 WIB sampai tanggal 15 November 2026 pukul 12.00 WIB' }).expect(400);
+    assert.ok(halim.body.message.includes('WIHH'));
+    const mundur = await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: 'Landasan pacu 06/24 ditutup karena pekerjaan mulai tanggal 9 November 2026 pukul 08.00 WIB sampai tanggal 5 November 2026 pukul 12.00 WIB' }).expect(400);
+    assert.ok(mundur.body.message.includes('selesai lebih awal'));
+    await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: 'Landasan pacu 06/24 di Bandar Udara Halim Perdanakusuma ditutup karena pekerjaan mulai tanggal 5 November 2026 pukul 08.00 WIB sampai tanggal 9 November 2026 pukul 12.00 WIB' }).expect(201);
+  });
+
+  it('draf dengan validasi gagal tidak dapat di-submit', async () => {
+    const { body } = await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: TEXT }).expect(201);
+    await app.get(getConnectionToken()).collection('notamrequests').updateOne({ formNo: body.formNo }, { $set: { 'versions.0.validation': { status: 'failed', issues: [{ code: 'A_MISMATCH', level: 'error', message: 'A) (WARR) tidak sama dengan locator pengajuan (WIHH)' }] } } });
+    const res = await api('post', `/requests/${body._id}/submit`, 'orig').send({ route: 'ATS' }).expect(400);
+    assert.ok(res.body.message.includes('belum dapat di-submit'));
+  });
+
   it('revisi teks membuat versi baru dan menolak teks yang sama', async () => {
     const { body } = await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: TEXT }).expect(201);
     assert.equal(body.versions.length, 1);
@@ -263,18 +280,21 @@ describe('ketahanan operasional', () => {
 });
 
 describe('dashboard dan reuse', () => {
-  it('statistik mengikuti cakupan role; riwayat aktivitas hanya untuk admin', async () => {
+  it('statistik dan aktivitas terbaru mengikuti cakupan role', async () => {
     assert.equal((await api('get', '/requests/stats', 'orig2')).body.total, 0);
     await api('post', '/requests', 'orig2').send({ airport: 'WADD', freeText: 'Taxiway ditutup 3 Maret 2025 dashboard' }).expect(201);
     const o = (await api('get', '/requests/stats', 'orig2')).body;
     assert.deepEqual(o.byStatus, { DRAFT: 1 });
-    assert.deepEqual(o.recent, []);
+    assert.deepEqual(o.recent, []); // draft belum punya aktivitas
     const adm = (await api('get', '/requests/stats', 'adm')).body;
     assert.equal(adm.byStatus.DRAFT, undefined);
     assert.equal(adm.total, Object.values(adm.byStatus as Record<string, number>).reduce((a, b) => a + b, 0));
-    assert.ok(adm.recent.length > 0 && adm.recent.length <= 10);
+    assert.ok(adm.recent.length > 0 && adm.recent.length <= 15);
     assert.ok(adm.byAirport.length > 0 && adm.byMonth.length > 0);
-    assert.deepEqual((await api('get', '/requests/stats', 'ats')).body.recent, []);
+    const ats = (await api('get', '/requests/stats', 'ats')).body.recent as { formNo: string }[];
+    assert.ok(ats.length > 0 && ats.length <= 15);
+    const mine = (await api('get', '/requests/stats', 'orig')).body.recent as { formNo: string }[];
+    assert.ok(mine.every((e) => !o.recent.some((x: { formNo: string }) => x.formNo === e.formNo)));
   });
 
   it('reuse: teks harus diubah dan hanya dari permintaan milik sendiri', async () => {

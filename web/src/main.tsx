@@ -132,6 +132,7 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
 
   if (!r) return <p>{error || 'Memuat…'}</p>;
   const last = lastVersion(r);
+  const blocked = (last.validation?.issues ?? []).some((i) => ['A_MISMATCH', 'C_BEFORE_B'].includes(i.code));
   const editable = role === 'ORIGINATOR' && (r.status === 'DRAFT' || r.status === 'REVISION_REQUIRED');
   const reviewing = ({ UNDER_ATS: 'ATS', UNDER_PIA: 'PIA', UNDER_NOF: 'NOF' } as Record<string, string>)[r.status] === role;
 
@@ -163,7 +164,7 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
               <option value="ATS">Kirim ke ATS</option>
               <option value="PIA">Langsung ke PIA</option>
             </select>
-            <button disabled={busy || last.validation?.status === 'failed'} title={last.validation?.status === 'failed' ? 'Perbaiki error validasi lalu Generate ulang' : undefined} onClick={() => act(async () => {
+            <button disabled={busy || blocked} title={blocked ? 'Perbaiki kesalahan A) atau tanggal lalu Generate ulang' : undefined} onClick={() => act(async () => {
               if (!confirm(`Submit ke ${route}? Pastikan jalur sudah benar.`)) return;
               await api('POST', `/requests/${id}/submit`, { route }); done();
             })}>Submit</button>
