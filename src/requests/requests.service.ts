@@ -29,13 +29,13 @@ export interface ListQuery {
 // Kesalahan yang pasti salah; draf dengan kesalahan ini tidak boleh dikirim ke peninjau.
 export const BLOCKING = ['A_MISMATCH', 'C_BEFORE_B'];
 
-@Injectable()
 // Peran yang terakhir meminta revisi, dibaca dari riwayat.
 export function revisionRoute(events: { action: string; from: string }[]): Route {
   const e = [...events].reverse().find((x) => x.action === 'REVISE' && (x.from === 'UNDER_ATS' || x.from === 'UNDER_PIA'));
   return e?.from === 'UNDER_ATS' ? 'ATS' : 'PIA';
 }
 
+@Injectable()
 export class RequestsService {
   private log = new Logger(RequestsService.name);
 
