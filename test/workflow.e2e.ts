@@ -87,6 +87,8 @@ describe('input Originator', () => {
     assert.ok(two.body.message.includes('lebih dari satu'));
     const det = await api('get', '/suggest/airport?text=PAPI%20di%20Bandara%20Halim%20Perdanakusuma', 'orig').expect(200);
     assert.equal(det.body.airports[0].locId, 'WIHH');
+    const soetta = await api('get', '/suggest/airport?text=Apron%20di%20Soetta%20ditutup', 'orig').expect(200);
+    assert.deepEqual(soetta.body.airports.map((a: { locId: string }) => a.locId), ['WIII']);
   });
 
   it('menolak nama bandara yang beda dengan locator, dan tanggal selesai sebelum mulai', async () => {

@@ -35,9 +35,13 @@ export function mentionedAirportNames(text: string, ownLocId: string): Airport[]
 
 // Bandara yang disebut di narasi (nama atau locator), dipakai bila pengguna tidak mengisi locator.
 // Nama yang merupakan bagian dari nama lain yang juga cocok diabaikan (mis. "SOEKARNO" di dalam "FATMAWATI SOEKARNO").
+// Sebutan populer yang tidak sama dengan nama di master.
+const ALIASES: Record<string, string> = { SOETTA: 'WIII', 'NGURAH RAI': 'WADD', SEPINGGAN: 'WALL' };
+const aliased = Object.entries(ALIASES).filter(([, l]) => byLoc.has(l)).map(([n, l]) => ({ a: byLoc.get(l) as Airport, n: normName(n) }));
+
 export function detectAirports(text: string): Airport[] {
   const t = normName(text);
-  const hits = named.filter(({ n }) => t.includes(n));
+  const hits = [...named, ...aliased].filter(({ n }) => t.includes(n));
   const found = new Map(hits.filter((h) => !hits.some((o) => o.n.length > h.n.length && o.n.includes(h.n))).map((h) => [h.a.locId, h.a]));
   for (const l of mentionedLocators(text)) found.set(l, byLoc.get(l) as Airport);
   return [...found.values()];
