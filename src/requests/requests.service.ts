@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthUser } from '../auth/auth';
 import { NOTAM_GENERATOR, NotamGenerator } from '../generator/generator';
-import { endBeforeStart } from './input-check';
+import { endBeforeStart, hasDate } from './input-check';
 import { findAirport, mentionedAirportNames, mentionedLocators } from '../master/airports';
 import { Action, Route, WorkflowError, transition } from '../workflow/workflow';
 import { AuditService } from '../audit/audit.service';
@@ -71,6 +71,7 @@ export class RequestsService {
     if (RELATIVE_DATE.test(freeText)) throw new BadRequestException('Tanggal harus spesifik, bukan "hari ini"/"besok"');
     const other = mentionedLocators(freeText).filter((l) => l !== airport);
     if (other.length) throw new BadRequestException(`Locator di teks (${other.join(', ')}) tidak sama dengan bandara ${airport}`);
+    if (!hasDate(freeText)) throw new BadRequestException('Tulis tanggal mulai (dan selesai) secara lengkap, misalnya "9 November 2026 pukul 08.00 WIB". Tanpa tanggal, item B) tidak dapat disusun.');
     if (endBeforeStart(freeText)) throw new BadRequestException('Tanggal atau jam selesai lebih awal dari waktu mulai. Periksa kembali tanggalnya.');
     const named = mentionedAirportNames(freeText, airport);
     if (named.length) throw new BadRequestException(`Teks menyebut bandara ${named.map((a) => `${a.name} (${a.locId})`).join(', ')}, tetapi locator pengajuan adalah ${airport}. Perbaiki locator atau teksnya.`);

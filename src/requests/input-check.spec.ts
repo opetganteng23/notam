@@ -1,4 +1,4 @@
-import { endBeforeStart } from './input-check';
+import { endBeforeStart, hasDate } from './input-check';
 import { mentionedAirportNames } from '../master/airports';
 
 describe('pemeriksaan teks masukan', () => {
@@ -19,5 +19,13 @@ describe('pemeriksaan teks masukan', () => {
   });
   it('nama bandara sendiri tidak ditandai', () => {
     expect(mentionedAirportNames('Apron di Bandar Udara Juanda ditutup', 'WARR')).toEqual([]);
+  });
+  it('mewajibkan tanggal tertulis', () => {
+    expect(hasDate('Jam pelayanan bandara saat ini menjadi jam 0830')).toBe(false);
+    expect(hasDate('Semua keberangkatan tertunda karena pergerakan VIP')).toBe(false);
+    expect(hasDate('ditutup tanggal 01 nopember 2024 jam 0000 UTC')).toBe(true);
+    expect(hasDate('mulai 9 Nov 2026 pukul 08.00')).toBe(true);
+    expect(hasDate('mulai 09/11/2026 08.00 WIB')).toBe(true);
+    expect(hasDate('PADA TANGGAL 2 - 10 NOVEMBER 2023')).toBe(true);
   });
 });
