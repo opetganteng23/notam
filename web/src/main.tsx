@@ -6,6 +6,7 @@ import { TypesPanel } from './types-report';
 import { KamusPanel } from './kamus';
 import { Ticker } from './ticker';
 import { ProfilePanel, initialsOf } from './profile';
+import { NarrativeInput } from './suggest-input';
 import { Mark, Partners, TowerScene } from './brand';
 import { Landing } from './landing';
 import { Toaster, toast } from './toast';
@@ -94,7 +95,7 @@ function Create({ prefill, onDone }: { prefill: Prefill; onDone: () => void }) {
       )}
       <div className="row">
         <input placeholder="Locator (mis. WIHH)" value={airport} maxLength={4} onChange={(e) => setAirport(e.target.value.toUpperCase())} />
-        <textarea rows={4} placeholder="Tulis kondisi bandara dengan tanggal spesifik" value={freeText} onChange={(e) => setText(e.target.value)} />
+        <NarrativeInput placeholder="Tulis kondisi bandara dengan tanggal spesifik" value={freeText} onChange={setText} />
         <button disabled={busy || closed} onClick={() => run(async () => {
           setBusy(true);
           try { await api('POST', '/requests', { airport, freeText, reuseOf: prefill.reuseOf }); setText(''); onDone(); } finally { setBusy(false); }
