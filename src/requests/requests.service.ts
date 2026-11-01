@@ -30,6 +30,12 @@ export interface ListQuery {
 export const BLOCKING = ['A_MISMATCH', 'C_BEFORE_B'];
 
 @Injectable()
+// Peran yang terakhir meminta revisi, dibaca dari riwayat.
+export function revisionRoute(events: { action: string; from: string }[]): Route {
+  const e = [...events].reverse().find((x) => x.action === 'REVISE' && (x.from === 'UNDER_ATS' || x.from === 'UNDER_PIA'));
+  return e?.from === 'UNDER_ATS' ? 'ATS' : 'PIA';
+}
+
 export class RequestsService {
   private log = new Logger(RequestsService.name);
 
@@ -130,6 +136,8 @@ export class RequestsService {
     const blocking = (doc.versions[doc.versions.length - 1]?.validation?.issues ?? []).filter((i) => BLOCKING.includes(i.code));
     if (action === 'SUBMIT' && blocking.length)
       throw new BadRequestException(`Draf belum dapat di-submit: ${blocking.map((i) => i.message).join('; ')}. Perbaiki teks atau locator lalu Generate ulang.`);
+    // Hasil revisi dikirim balik ke peran yang meminta revisi (ATS -> ATS, PIA -> PIA); jalur tidak dipilih ulang.
+    if (action === 'SUBMIT' && doc.status === 'REVISION_REQUIRED') opts = { ...opts, route: revisionRoute(doc.events) };
     let res;
     try {
       res = transition({ status: doc.status, action, role: user.role, route: opts.route, note: opts.note, piaRevisionCount: doc.piaRevisionCount });

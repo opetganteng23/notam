@@ -149,6 +149,8 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
   const last = lastVersion(r);
   const blocked = (last.validation?.issues ?? []).some((i) => ['A_MISMATCH', 'C_BEFORE_B'].includes(i.code));
   const editable = role === 'ORIGINATOR' && (r.status === 'DRAFT' || r.status === 'REVISION_REQUIRED');
+  // Hasil revisi kembali ke peran yang meminta revisi.
+  const back = r.status === 'REVISION_REQUIRED' ? ([...r.events].reverse().find((e) => e.action === 'REVISE' && (e.from === 'UNDER_ATS' || e.from === 'UNDER_PIA'))?.from === 'UNDER_ATS' ? 'ATS' : 'PIA') : null;
   const reviewing = ({ UNDER_ATS: 'ATS', UNDER_PIA: 'PIA', UNDER_NOF: 'NOF' } as Record<string, string>)[r.status] === role;
 
   return (
@@ -175,14 +177,16 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
           <div className="row"><textarea rows={4} value={text} onChange={(e) => setText(e.target.value)} /></div>
           <div className="row">
             <button className="ghost" disabled={busy} onClick={() => act(async () => { await api('PUT', `/requests/${id}/text`, { freeText: text }); done(); })}>{busy ? `Memproses… ${fmtMs(elapsed)}` : 'Generate ulang'}</button>
-            <select value={route} onChange={(e) => setRoute(e.target.value as 'ATS' | 'PIA')}>
-              <option value="ATS">Kirim ke ATS</option>
-              <option value="PIA">Langsung ke PIA</option>
-            </select>
+            {back ? <span className="muted">Hasil revisi dikirim balik ke <b>{back}</b> (yang meminta revisi)</span> : (
+              <select value={route} onChange={(e) => setRoute(e.target.value as 'ATS' | 'PIA')}>
+                <option value="ATS">Kirim ke ATS</option>
+                <option value="PIA">Langsung ke PIA</option>
+              </select>
+            )}
             <button disabled={busy || blocked} title={blocked ? 'Perbaiki kesalahan A) atau tanggal lalu Generate ulang' : undefined} onClick={() => act(async () => {
-              if (!confirm(`Submit ke ${route}? Pastikan jalur sudah benar.`)) return;
-              await api('POST', `/requests/${id}/submit`, { route }); done();
-            })}>Submit</button>
+              if (!confirm(`Submit ke ${back ?? route}? Pastikan jalur sudah benar.`)) return;
+              await api('POST', `/requests/${id}/submit`, { route: back ?? route }); done();
+            })}>{back ? `Kirim balik ke ${back}` : 'Submit'}</button>
           </div>
         </>
       )}

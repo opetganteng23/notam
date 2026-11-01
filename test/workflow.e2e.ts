@@ -101,6 +101,18 @@ describe('input Originator', () => {
     await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: 'Landasan pacu 06/24 di Bandar Udara Halim Perdanakusuma ditutup karena pekerjaan mulai tanggal 5 November 2026 pukul 08.00 WIB sampai tanggal 9 November 2026 pukul 12.00 WIB' }).expect(201);
   });
 
+  it('hasil revisi dikirim balik ke peran yang meminta revisi', async () => {
+    const a = await newSubmitted('ATS', `${TEXT} revisi ats`);
+    await decide(a, 'ats', 'REVISE', 'perbaiki').expect(201);
+    const ra = await api('post', `/requests/${a}/submit`, 'orig').send({ route: 'PIA' }).expect(201);
+    assert.equal(ra.body.status, 'UNDER_ATS');
+    const p = await newSubmitted('ATS', `${TEXT} revisi pia`);
+    await decide(p, 'ats', 'ACCEPT').expect(201);
+    await decide(p, 'pia', 'REVISE', 'perbaiki').expect(201);
+    const rp = await api('post', `/requests/${p}/submit`, 'orig').send({ route: 'ATS' }).expect(201);
+    assert.equal(rp.body.status, 'UNDER_PIA');
+  });
+
   it('draf dengan validasi gagal tidak dapat di-submit', async () => {
     const { body } = await api('post', '/requests', 'orig').send({ airport: 'WIHH', freeText: TEXT }).expect(201);
     await app.get(getConnectionToken()).collection('notamrequests').updateOne({ formNo: body.formNo }, { $set: { 'versions.0.validation': { status: 'failed', issues: [{ code: 'A_MISMATCH', level: 'error', message: 'A) (WARR) tidak sama dengan locator pengajuan (WIHH)' }] } } });
