@@ -80,6 +80,10 @@ export function providerFromEnv(env: NodeJS.ProcessEnv = process.env): LlmProvid
 
 // Koreksi deterministik atas keluaran LLM: FIR di Q) dari master bandara, B)/C) dari konversi UTC jam berlabel zona di input.
 // Setiap koreksi dicatat agar tidak ada perubahan diam-diam.
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+const human = (s: string) => `${s.slice(4, 6)} ${MON[+s.slice(2, 4) - 1]} 20${s.slice(0, 2)} ${s.slice(6, 8)}.${s.slice(8, 10)}`;
+const shift = (tz: string) => ({ WIB: 'dikurangi 7 jam', WITA: 'dikurangi 8 jam', WIT: 'dikurangi 9 jam' } as Record<string, string>)[tz] ?? 'dikonversi';
+
 export function correctNotam(text: string, airport: Airport, freeText: string): { text: string; corrections: string[] } {
   const items = parseItems(text);
   const corrections: string[] = [];
@@ -93,16 +97,17 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
         return line.replace(from, to);
       })
       .join('\n');
-    corrections.push(`${label}: ${from} → ${to}`);
+    corrections.push(label.includes('{to}') ? label.replace('{to}', to) : `${label}: ${from} → ${to}`);
   };
   const [fir, ...rest] = (items.Q ?? '').split('/');
   if (rest.length && fir !== airport.fir) setItem('Q', fir, airport.fir, 'FIR di Q) disamakan dengan master bandara');
   const exp = expectedUtcStamps(freeText);
+  const tz = /\bWITA\b/i.test(freeText) ? 'WITA' : /\bWIT\b/i.test(freeText) ? 'WIT' : /\bWIB\b/i.test(freeText) ? 'WIB' : 'lokal';
   if (exp.length) {
-    if (/^\d{10}$/.test(items.B ?? '') && items.B !== exp[0]) setItem('B', items.B, exp[0], 'B) dikonversi ke UTC dari jam di input');
+    if (/^\d{10}$/.test(items.B ?? '') && items.B !== exp[0]) setItem('B', items.B, exp[0], `B) ditulis dalam UTC: {to} = ${human(exp[0])} UTC (jam ${tz} di narasi ${shift(tz)})`);
     const cEnd = exp[exp.length - 1];
     const c = items.C?.match(/^(\d{10})( ?EST)?$/);
-    if (exp.length > 1 && c && c[1] !== cEnd) setItem('C', c[1], cEnd, 'C) dikonversi ke UTC dari jam di input');
+    if (exp.length > 1 && c && c[1] !== cEnd) setItem('C', c[1], cEnd, `C) ditulis dalam UTC: {to} = ${human(cEnd)} UTC (jam ${tz} di narasi ${shift(tz)})`);
   }
   return { text, corrections };
 }
