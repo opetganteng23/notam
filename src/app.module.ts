@@ -16,6 +16,7 @@ import { RequestsController } from './requests/requests.controller';
 import { RequestsService } from './requests/requests.service';
 import { AuditLog, AuditLogSchema, NotamRequest, NotamRequestSchema, Setting, SettingSchema, User, UserSchema } from './requests/schemas';
 import { UsersController } from './users/users.controller';
+import { ProfileController } from './users/profile.controller';
 
 @Module({})
 export class AppModule {
@@ -32,7 +33,7 @@ export class AppModule {
         ]),
         JwtModule.register({ global: true, secret: o.jwtSecret, signOptions: { expiresIn: '8h' } }),
       ],
-      controllers: [AuthController, RequestsController, UsersController, HealthController, OpsController, AuditController, AnalyticsController, DictionaryController],
+      controllers: [AuthController, RequestsController, UsersController, ProfileController, HealthController, OpsController, AuditController, AnalyticsController, DictionaryController],
       providers: [RequestsService, OpsService, AuditService, AnalyticsService, { provide: NOTAM_GENERATOR, useFactory: () => new RagGenerator(providerFromEnv()) }, { provide: APP_GUARD, useClass: AuthGuard }],
     };
   }

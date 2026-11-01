@@ -38,16 +38,17 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
 
 function UserDialog({ user, onClose, onSaved }: { user: UserRow | null; onClose: () => void; onSaved: () => void }) {
   const me = user?.username === session.user;
-  const [form, setForm] = useState({ username: user?.username ?? '', password: '', role: (user?.role ?? 'ORIGINATOR') as Role, active: user?.active ?? true });
+  const [form, setForm] = useState({ username: user?.username ?? '', name: user?.name ?? '', password: '', role: (user?.role ?? 'ORIGINATOR') as Role, active: user?.active ?? true });
   const [busy, setBusy] = useState(false);
   const { error, run } = useAsync();
 
   const save = () => run(async () => {
     setBusy(true);
     try {
-      if (!user) await api('POST', '/users', { username: form.username, password: form.password, role: form.role });
+      if (!user) await api('POST', '/users', { username: form.username, name: form.name, password: form.password, role: form.role });
       else {
         const body: Record<string, unknown> = {};
+        if (form.name.trim() !== (user.name ?? '')) body.name = form.name;
         if (form.role !== user.role) body.role = form.role;
         if (form.active !== user.active) body.active = form.active;
         if (form.password) body.password = form.password;
@@ -63,6 +64,9 @@ function UserDialog({ user, onClose, onSaved }: { user: UserRow | null; onClose:
       <form className="form" onSubmit={(e) => { e.preventDefault(); save(); }}>
         <label className="field">Username
           <input autoFocus={!user} disabled={!!user} value={form.username} placeholder="huruf kecil, angka, atau email" onChange={(e) => setForm({ ...form, username: e.target.value })} />
+        </label>
+        <label className="field">Nama lengkap
+          <input value={form.name} maxLength={80} placeholder="opsional" onChange={(e) => setForm({ ...form, name: e.target.value })} />
         </label>
         <label className="field">{user ? 'Password baru (kosongkan bila tidak diubah)' : 'Password (min. 8 karakter)'}
           <input autoFocus={!!user} type="password" autoComplete="new-password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
@@ -103,7 +107,7 @@ export function Users() {
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase();
     const list = users.filter((u) =>
-      (!term || u.username.toLowerCase().includes(term) || u.role.toLowerCase().includes(term)) &&
+      (!term || u.username.toLowerCase().includes(term) || (u.name ?? '').toLowerCase().includes(term) || u.role.toLowerCase().includes(term)) &&
       (!role || u.role === role) &&
       (!status || (status === 'aktif') === u.active));
     const val = (u: UserRow) => (sort.key === 'active' ? Number(u.active) : sort.key === 'lastLoginAt' || sort.key === 'createdAt' ? (u[sort.key] ? Date.parse(u[sort.key] as string) : null) : u[sort.key]);
@@ -129,7 +133,7 @@ export function Users() {
   return (
     <>
       <div className="toolbar">
-        <input aria-label="Cari pengguna" placeholder="Cari username atau role…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input aria-label="Cari pengguna" placeholder="Cari nama, username, atau role…" value={q} onChange={(e) => setQ(e.target.value)} />
         <select aria-label="Filter role" value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="">Semua role</option>
           {ROLES.map((r) => <option key={r} value={r}>{r} ({count(r)})</option>)}
@@ -161,7 +165,7 @@ export function Users() {
             const me = u.username === session.user;
             return (
               <tr key={u._id}>
-                <td className="mono" data-label="Username">{u.username}{me && <span className="muted"> (Anda)</span>}</td>
+                <td data-label="Username">{u.name && <b className="uname">{u.name}</b>}<span className="mono">{u.username}</span>{me && <span className="muted"> (Anda)</span>}</td>
                 <td data-label="Role"><span className="pill">{u.role}</span></td>
                 <td data-label="Status"><span className={`pill ${u.active ? 's-APPROVED_BY_NOF' : 's-REJECTED'}`}>{u.active ? 'Aktif' : 'Nonaktif'}</span></td>
                 <td data-label="Terakhir login">{u.lastLoginAt ? fmtDateTime(u.lastLoginAt) : <span className="muted">Belum pernah</span>}</td>

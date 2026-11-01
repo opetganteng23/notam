@@ -5,10 +5,11 @@ import { AnalyticsPanel } from './analytics';
 import { TypesPanel } from './types-report';
 import { KamusPanel } from './kamus';
 import { Ticker } from './ticker';
+import { ProfilePanel, initialsOf } from './profile';
 import { Mark, Partners, TowerScene } from './brand';
 import { Landing } from './landing';
 import { Toaster, toast } from './toast';
-import { GateState, NotamRequest, OpsStatus, Stats, api, download, session } from './api';
+import { GateState, Me, NotamRequest, OpsStatus, Stats, api, download, session } from './api';
 import '@fontsource-variable/inter';
 import { fmtDate, fmtDateTime, fmtMs, useAsync, useElapsed } from './util';
 import './style.css';
@@ -408,16 +409,18 @@ function ListView({ tick, filter, setFilter, onChange, onReuse }: {
   );
 }
 
-type Tab = 'ringkasan' | 'analytics' | 'jenis' | 'server' | 'pengguna' | 'audit' | 'daftar' | 'kamus';
-type View = 'beranda' | 'analytics' | 'jenis' | 'kamus';
+type Tab = 'ringkasan' | 'analytics' | 'jenis' | 'server' | 'pengguna' | 'audit' | 'daftar' | 'kamus' | 'profil';
+type View = 'beranda' | 'analytics' | 'jenis' | 'kamus' | 'profil';
 interface Group<K extends string> { title: string; items: [K, string][] }
 const ADMIN_MENU: Group<Tab>[] = [
   { title: 'Pantau', items: [['ringkasan', 'Ringkasan'], ['analytics', 'Analytics'], ['jenis', 'Laporan Jenis'], ['daftar', 'Daftar NOTAM']] },
   { title: 'Kelola', items: [['server', 'Server'], ['pengguna', 'Pengguna'], ['audit', 'Audit Log']] },
   { title: 'Referensi', items: [['kamus', 'Kamus']] },
+  { title: 'Akun', items: [['profil', 'Profil saya']] },
 ];
-const REVIEWER_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['analytics', 'Analytics'], ['jenis', 'Laporan Jenis'], ['kamus', 'Kamus']] }];
-const ORIGINATOR_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['kamus', 'Kamus']] }];
+const ACCOUNT: Group<View> = { title: 'Akun', items: [['profil', 'Profil saya']] };
+const REVIEWER_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['analytics', 'Analytics'], ['jenis', 'Laporan Jenis'], ['kamus', 'Kamus']] }, ACCOUNT];
+const ORIGINATOR_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['kamus', 'Kamus']] }, ACCOUNT];
 
 // Sidebar: kelompok menu di layar lebar, baris yang dapat digeser di layar kecil.
 function Side<K extends string>({ groups, current, onPick }: { groups: Group<K>[]; current: K; onPick: (k: K) => void }) {
@@ -433,11 +436,6 @@ function Side<K extends string>({ groups, current, onPick }: { groups: Group<K>[
   );
 }
 
-const initials = (u: string) => {
-  const name = u.split('@')[0];
-  const parts = name.split(/[._-]/).filter(Boolean);
-  return (parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2)).toUpperCase();
-};
 
 function App() {
   const [authed, setAuthed] = useState(!!session.role);
@@ -446,6 +444,8 @@ function App() {
   const [prefill, setPrefill] = useState<Prefill>({ airport: '', freeText: '', n: 0 });
   const [tab, setTab] = useState<Tab>('ringkasan');
   const [view, setView] = useState<View>('beranda');
+  const [me, setMe] = useState<Me | null>(null);
+  useEffect(() => { if (authed) api<Me>('GET', '/me').then(setMe, () => undefined); else setMe(null); }, [authed]);
   const [route, setRoute] = useState<'beranda' | 'masuk'>(() => (location.hash === '#masuk' ? 'masuk' : 'beranda'));
   useEffect(() => {
     const f = () => setRoute(location.hash === '#masuk' ? 'masuk' : 'beranda');
@@ -477,8 +477,10 @@ function App() {
         <span className="brand"><Mark size={32} /><span className="wm">NOTAM <b>AI</b> Generator</span></span>
         <Partners />
         <span className="who">
-          <span className="avatar" aria-hidden="true">{initials(session.user)}</span>
-          <span className="uid"><b>{session.user}</b><small>{role}</small></span>
+          <button className="me-btn" title="Profil saya" onClick={() => (admin ? setTab('profil') : setView('profil'))}>
+            <span className="avatar" aria-hidden="true">{initialsOf(me?.name || session.user)}</span>
+            <span className="uid"><b>{me?.name || session.user}</b><small>{role}</small></span>
+          </button>
           <button className="ghost" onClick={logout}>Keluar</button>
         </span>
       </header>
@@ -498,10 +500,11 @@ function App() {
           {tab === 'audit' && <AuditPanel />}
           {tab === 'daftar' && list}
           {tab === 'kamus' && <KamusPanel />}
+          {tab === 'profil' && <ProfilePanel onChange={setMe} />}
         </>
       ) : (
         <>
-          {view === 'kamus' ? <KamusPanel /> : reviewer && view === 'analytics' ? <AnalyticsPanel /> : reviewer && view === 'jenis' ? <TypesPanel /> : (
+          {view === 'profil' ? <ProfilePanel onChange={setMe} /> : view === 'kamus' ? <KamusPanel /> : reviewer && view === 'analytics' ? <AnalyticsPanel /> : reviewer && view === 'jenis' ? <TypesPanel /> : (
             <>
               <Dashboard tick={tick} onStatus={(s) => setFilter({ ...EMPTY_FILTER, status: s })} />
               {role === 'ORIGINATOR' && <Create key={prefill.n} prefill={prefill} onDone={bump} />}

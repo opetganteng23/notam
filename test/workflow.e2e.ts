@@ -775,3 +775,41 @@ describe('kamus (API)', () => {
     assert.equal(wb.getWorksheet('Kode Q')!.getCell('A1').value, 'Kamus: Kode Q');
   });
 });
+
+describe('profil saya', () => {
+  const login = async (username: string, password: string) => (await api('post', '/auth/login').send({ username, password }).expect(201)).body.token as string;
+  const as = (method: 'get' | 'post' | 'patch', url: string, token: string) => (request(http) as any)[method](url).set('Authorization', `Bearer ${token}`);
+
+  it('ubah nama, ganti password, dan ganti email beserta kepemilikan NOTAM', async () => {
+    await api('post', '/users', 'adm').send({ username: 'profil@contoh.id', name: 'Awal', password: 'rahasia-awal', role: 'ORIGINATOR' }).expect(201);
+    let t = await login('profil@contoh.id', 'rahasia-awal');
+    const me = (await as('get', '/me', t).expect(200)).body;
+    assert.equal(me.name, 'Awal');
+    assert.equal(me.passwordHash, undefined);
+    assert.equal((await as('patch', '/me', t).send({ name: '  Rizky   Fadhillah ' }).expect(200)).body.name, 'Rizky Fadhillah');
+    assert.equal((await as('patch', '/me', t).send({ name: 'x'.repeat(81) }).expect(400)).body.message, 'Nama maksimal 80 karakter');
+
+    await as('post', '/me/password', t).send({ current: 'salah-sekali', next: 'rahasia-baru' }).expect(400);
+    await as('post', '/me/password', t).send({ current: 'rahasia-awal', next: 'pendek' }).expect(400);
+    await as('post', '/me/password', t).send({ current: 'rahasia-awal', next: 'rahasia-baru' }).expect(201);
+    await api('post', '/auth/login').send({ username: 'profil@contoh.id', password: 'rahasia-awal' }).expect(401);
+    t = await login('profil@contoh.id', 'rahasia-baru');
+
+    const { body: doc } = await as('post', '/requests', t).send({ airport: 'WIHH', freeText: TEXT + ' profil' }).expect(201);
+    await as('post', '/me/username', t).send({ username: 'orig', current: 'rahasia-baru' }).expect(409);
+    await as('post', '/me/username', t).send({ username: 'baru@contoh.id', current: 'salah-sekali' }).expect(400);
+    const changed = (await as('post', '/me/username', t).send({ username: 'Baru@Contoh.id', current: 'rahasia-baru' }).expect(201)).body;
+    assert.equal(changed.username, 'baru@contoh.id');
+    await as('get', `/requests/${doc._id}`, changed.token).expect(200);
+    await api('post', '/auth/login').send({ username: 'profil@contoh.id', password: 'rahasia-baru' }).expect(401);
+    await login('baru@contoh.id', 'rahasia-baru');
+    const audit = (await api('get', '/audit?action=PROFILE_USERNAME', 'adm')).body;
+    assert.ok(JSON.stringify(audit).includes('baru@contoh.id'));
+  });
+
+  it('admin dapat mengisi nama saat membuat dan mengubah akun', async () => {
+    const u = (await api('post', '/users', 'adm').send({ username: 'bernama', name: 'Petugas PIA', password: 'rahasia-pia', role: 'PIA' }).expect(201)).body;
+    assert.equal(u.name, 'Petugas PIA');
+    assert.equal((await api('patch', `/users/${u._id}`, 'adm').send({ name: 'PIA Manado' }).expect(200)).body.name, 'PIA Manado');
+  });
+});

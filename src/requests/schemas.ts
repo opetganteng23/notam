@@ -4,6 +4,7 @@ import { Role, Status } from '../workflow/workflow';
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true, unique: true }) username: string;
+  @Prop({ trim: true, default: '' }) name: string;
   @Prop({ required: true }) passwordHash: string;
   @Prop({ type: String, required: true, enum: ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'] }) role: Role;
   @Prop({ default: true }) active: boolean;

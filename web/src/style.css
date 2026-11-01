@@ -561,3 +561,17 @@ button.card::before, div.card::before { content: ''; position: absolute; left: 0
 button.card, div.card { border-top-color: var(--line) !important; }
 main.with-side div.card { border-color: var(--line); }
 button.card .num, div.card .num { font-size: 30px; }
+
+/* Profil */
+header.appbar .me-btn { display: flex; align-items: center; gap: 10px; padding: 4px 8px; margin: 0; border: 0; border-radius: 10px; background: transparent; color: inherit; text-align: left; font-weight: inherit; }
+header.appbar .me-btn:hover { background: var(--sky-soft); }
+.profile-head { display: flex; align-items: center; gap: 18px; }
+.profile-head h2 { margin: 0 0 4px; font-size: 22px; }
+.profile-head p { margin: 0 0 2px; }
+.avatar.lg { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; flex: none; background: linear-gradient(135deg, var(--navy), var(--sky)); color: #fff; font: 700 22px var(--font); }
+.profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; align-items: start; }
+.profile-grid section { margin: 0; }
+.profile-grid h3 { margin-top: 0; }
+.muted.small, p.small { font-size: 12.5px; }
+table.users .uname { display: block; font-weight: 650; }
+table.users td .mono { font-family: var(--mono); font-size: 13px; }

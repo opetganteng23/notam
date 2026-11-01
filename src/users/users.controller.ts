@@ -6,10 +6,10 @@ import { AuditService } from '../audit/audit.service';
 import { AuthUser, CurrentUser, Roles } from '../auth/auth';
 import { User } from '../requests/schemas';
 import { Role } from '../workflow/workflow';
-import { MIN_PASSWORD, USERNAME_HINT, USERNAME_RE } from './rules';
+import { MAX_NAME, MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, cleanName } from './rules';
 
 const ROLES: Role[] = ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'];
-const view = (u: any) => ({ _id: u._id, username: u.username, role: u.role, active: u.active !== false, createdAt: u.createdAt, lastLoginAt: u.lastLoginAt ?? null });
+const view = (u: any) => ({ _id: u._id, username: u.username, name: u.name ?? '', role: u.role, active: u.active !== false, createdAt: u.createdAt, lastLoginAt: u.lastLoginAt ?? null });
 
 // Manajemen akun: hanya ADMIN.
 @Controller('users')
@@ -33,12 +33,14 @@ export class UsersController {
   }
 
   @Roles('ADMIN') @Post()
-  async create(@CurrentUser() me: AuthUser, @Body() b: { username: string; password: string; role: Role }) {
+  async create(@CurrentUser() me: AuthUser, @Body() b: { username: string; password: string; role: Role; name?: string }) {
+    const name = cleanName(b.name);
+    if (name.length > MAX_NAME) throw new BadRequestException(`Nama maksimal ${MAX_NAME} karakter`);
     if (!USERNAME_RE.test(String(b.username))) throw new BadRequestException(USERNAME_HINT);
     this.checkPassword(b.password);
     this.checkRole(b.role);
     try {
-      const u = await this.users.create({ username: b.username, role: b.role, passwordHash: await bcrypt.hash(b.password, 10) });
+      const u = await this.users.create({ username: b.username, name, role: b.role, passwordHash: await bcrypt.hash(b.password, 10) });
       await this.rec(me, 'USER_CREATE', u.username, `Membuat akun ${u.username} (${u.role})`, { role: u.role });
       return view(u);
     } catch (e: any) {
@@ -48,8 +50,9 @@ export class UsersController {
   }
 
   @Roles('ADMIN') @Patch(':id')
-  async update(@CurrentUser() me: AuthUser, @Param('id') id: string, @Body() b: { role?: Role; active?: boolean; password?: string }) {
+  async update(@CurrentUser() me: AuthUser, @Param('id') id: string, @Body() b: { role?: Role; active?: boolean; password?: string; name?: string }) {
     const set: Record<string, unknown> = {};
+    if (b.name !== undefined) { const n = cleanName(b.name); if (n.length > MAX_NAME) throw new BadRequestException(`Nama maksimal ${MAX_NAME} karakter`); set.name = n; }
     if (b.role !== undefined) { this.checkRole(b.role); set.role = b.role; }
     if (b.active !== undefined) set.active = !!b.active;
     if (b.password !== undefined) { this.checkPassword(b.password); set.passwordHash = await bcrypt.hash(b.password, 10); }
@@ -62,6 +65,7 @@ export class UsersController {
     const detail: Record<string, unknown> = {};
     if (set.role && set.role !== before.role) { changes.push(`role ${before.role} → ${u.role}`); detail.role = { from: before.role, to: u.role }; }
     if (set.active !== undefined && (set.active as boolean) !== (before.active !== false)) { changes.push(u.active ? 'diaktifkan' : 'dinonaktifkan'); detail.active = { from: before.active !== false, to: u.active }; }
+    if (set.name !== undefined && set.name !== (before.name ?? '')) { changes.push(`nama menjadi "${set.name}"`); detail.name = { from: before.name ?? '', to: set.name }; }
     if (set.passwordHash) { changes.push('password direset'); detail.passwordReset = true; }
     if (changes.length) await this.rec(me, 'USER_UPDATE', u.username, `Mengubah akun ${u.username}: ${changes.join(', ')}`, detail);
     return view(u);

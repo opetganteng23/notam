@@ -8,7 +8,8 @@ export interface NotamRequest {
   piaRevisionCount: number; versions: Version[]; events: EventLog[]; createdAt: string;
 }
 
-export interface UserRow { _id: string; username: string; role: Role; active: boolean; createdAt: string; lastLoginAt: string | null }
+export interface Me { username: string; name: string; role: Role; createdAt: string | null; lastLoginAt: string | null }
+export interface UserRow { _id: string; username: string; name: string; role: Role; active: boolean; createdAt: string; lastLoginAt: string | null }
 export interface AuditItem { _id: string; at: string; actor: string; role?: string; action: string; target?: string; summary: string; ip?: string }
 export interface GateState { enabled: boolean; message: string; dailyLimit: number; window: string }
 export interface OpsStatus {
@@ -104,6 +105,7 @@ function describe(method: string, path: string, body: any, res: any): [string, s
     if (body?.role) parts.push(`role menjadi ${body.role}`);
     if (body?.active !== undefined) parts.push(body.active ? 'akun diaktifkan' : 'akun dinonaktifkan');
     if (body?.password) parts.push('password direset');
+    if (body?.name !== undefined) parts.push('nama diubah');
     return ['Perubahan disimpan', `${res?.username}: ${parts.join(', ')}.`];
   }
   if (method === 'DELETE' && /^\/users\//.test(path)) return ['Pengguna dihapus', 'Akun dihapus permanen. NOTAM yang pernah dibuatnya tetap tersimpan.'];
