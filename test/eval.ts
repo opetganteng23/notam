@@ -18,6 +18,8 @@ const sample = pool.map((e) => ({ e, k: rnd() })).sort((a, b) => a.k - b.k).slic
   const match = { Q: 0, A: 0, B: 0, C: 0 };
   const issues: Record<string, number> = {};
   let corrected = 0;
+  const qErr: Record<string, number> = {};
+  const qMiss: string[] = [];
   const t0 = Date.now();
   for (const e of sample) {
     const gold = parseItems(e.notam);
@@ -27,7 +29,16 @@ const sample = pool.map((e) => ({ e, k: rnd() })).sort((a, b) => a.k - b.k).slic
     for (const i of r.validation.issues) issues[i.code] = (issues[i.code] ?? 0) + 1;
     if (r.corrections.length) corrected++;
     for (const k of ['A', 'B', 'C'] as const) if (out[k]?.replace(/ ?EST$/, '') === gold[k]?.replace(/ ?EST$/, '')) match[k]++;
-    if (out.Q?.split('/')[1] === gold.Q?.split('/')[1]) match.Q++;
+    const gq = gold.Q?.split('/')[1] ?? '', oq = out.Q?.split('/')[1] ?? '';
+    if (oq === gq) match.Q++;
+    else {
+      const sj = oq.slice(1, 3) !== gq.slice(1, 3), cd = oq.slice(3, 5) !== gq.slice(3, 5);
+      const kind = !oq ? 'Q tidak terbaca' : sj && cd ? 'subjek dan kondisi' : sj ? 'hanya subjek' : 'hanya kondisi';
+      qErr[kind] = (qErr[kind] ?? 0) + 1;
+      qMiss.push(`${gq} -> ${oq || '(kosong)'} [${kind}] E) ${(gold.E ?? '').replace(/\s+/g, ' ').slice(0, 70)}`);
+    }
   }
-  console.log(JSON.stringify({ n: sample.length, secPerItem: +((Date.now() - t0) / 1000 / sample.length).toFixed(1), status, itemsMatchGold: match, correctedBySystem: corrected, issues }, null, 1));
+  // Rentang 95% (Wilson) untuk kecocokan Q: sampel kecil memberi rentang lebar.
+  const wilson = (k: number, m: number) => { const z = 1.96, p = k / m, d = 1 + (z * z) / m, c = p + (z * z) / (2 * m), w = z * Math.sqrt((p * (1 - p)) / m + (z * z) / (4 * m * m)); return [Math.round(((c - w) / d) * 100), Math.round(((c + w) / d) * 100)]; };
+  console.log(JSON.stringify({ n: sample.length, secPerItem: +((Date.now() - t0) / 1000 / sample.length).toFixed(1), status, itemsMatchGold: match, qMatchPct: Math.round((match.Q / sample.length) * 100), qCI95pct: wilson(match.Q, sample.length), qErrors: qErr, qMisses: qMiss, correctedBySystem: corrected, issues }, null, 1));
 })();

@@ -23,6 +23,10 @@ Konfigurasi: salin `.env.example` ke `.env` (dimuat otomatis oleh `npm start` da
 
 Validasi D) dan RMK: D) harus memuat rentang jam HHMM-HHMM yang nyata; RMK (di dalam E) tidak boleh kosong. Peringatan bila input menyebut "setiap hari/harian" tetapi D) tidak ada, atau memuat "Catatan" tetapi RMK tidak ada. Diuji ke 927 NOTAM asli: 0 error, 2 peringatan RMK_MISSING.
 
+Validasi kode Q (peringatan, tidak memblokir submit) memakai tabel ICAO di `data/icao-notam-code.json` (Doc 8400 PANS-ABC edisi ke-9, Bab 7; 179 subjek dan 79 kondisi, termasuk TT dari NSC_DOC_8126.xlsx): `Q_SUBJECT_UNKNOWN`/`Q_CONDITION_UNKNOWN` bila subjek atau kondisi tidak ada di tabel, dan `Q_SUBJECT_TEXT` bila subjek tidak cocok dengan frasa awal E) (APRON harus MN, TWY harus MX/MY, STAND harus MP, RWY harus MR; lampu, marka, dan arresting gear dikecualikan). Diuji ke 927 NOTAM asli: hanya 2 peringatan, keduanya `QXXXX`. Kode tabelnya di `src/master/icao-qcode.ts`.
+
+Validasi alasan: bila E) memuat `DUE TO ...` (di luar RMK) tetapi narasi tidak menyebut alasan apa pun, muncul peringatan `REASON_NOT_IN_INPUT` (tidak memblokir submit). Prompt juga menyuruh model menulis kondisi saja bila input tidak menyebut alasan. Diuji ke 927 NOTAM asli: 18 peringatan (1,9%), hampir semuanya pola "tidak berfungsi" yang di dataset dijawab `DUE TO TECR`; itu konvensi penyusun data, bukan ada di narasi, dan perlu diputuskan AirNav apakah dipertahankan.
+
 Pelabelan entitas (draf untuk ditinjau manusia, berbasis aturan, bukan model; mengikuti NOTAM Dataset Labelling Guidelines): `npx ts-node --transpile-only test/label.ts keluaran.jsonl [masukan.json]` (bawaan `data/examples.json`). Entitas: LOCATION, POSITION, REASON, B, C, D, RMK, label Q-code (MR, MX, MN, LP, LC, AS, AK, CC, CS), WIP, dan ILS/VOR/DME/RFFS. Jadwal per hari dalam pekan dan nama bandara huruf kapital semua masih sering meleset; hasilnya wajib diperiksa.
 
 ## Role dan fitur
@@ -91,4 +95,4 @@ Skripnya ada di `deploy/windows`. Kunci SSH dibaca dari `medisiana.pem` di folde
 
 ## Arti Q-code
 
-`qcode-arti-dari-contoh-dataset.csv` (di folder `NOTAM`) memuat arti subjek dan kondisi yang **disimpulkan dari contoh item E** di dataset (111 dari 118 kode; mencakup 99% NOTAM dataset). Kamusnya ada di `src/analytics/types.ts` (`SUBJECT_NAME`, `CONDITION_NAME`). Ini bukan tabel resmi AirNav; semua baris bertanda "perlu divalidasi". Kode yang contohnya kurang tegas dibiarkan tanpa arti.
+`qcode-arti-dari-contoh-dataset.csv` (di folder `NOTAM`) memuat arti subjek dan kondisi yang **disimpulkan dari contoh item E** di dataset (111 dari 118 kode; mencakup 99% NOTAM dataset). Kamusnya ada di `src/analytics/types.ts` (`SUBJECT_NAME`, `CONDITION_NAME`). Ini bukan tabel resmi AirNav; semua baris bertanda "perlu divalidasi". Kode yang contohnya kurang tegas dibiarkan tanpa arti. Arti resmi ICAO ditampilkan di kolom "Arti ICAO (resmi)" pada Kamus. AirNav memakai beberapa kode secara berbeda dari ICAO (CN = "NOTAM baru menyusul", LJ dan LT = RTIL, CA = HF udara-darat); itu belum dikonfirmasi.

@@ -141,6 +141,9 @@ export const VALIDASI: { kode: string; tingkat: 'error' | 'warning'; arti: strin
   { kode: 'D_MISSING', tingkat: 'warning', arti: 'Narasi menyebut jadwal berulang tetapi D) kosong.' },
   { kode: 'RMK_EMPTY', tingkat: 'error', arti: 'RMK ada tetapi kosong.' },
   { kode: 'RMK_MISSING', tingkat: 'warning', arti: 'Narasi memuat "Catatan" tetapi RMK tidak ada.' },
+  { kode: 'Q_SUBJECT_UNKNOWN / Q_CONDITION_UNKNOWN', tingkat: 'warning', arti: 'Subjek atau kondisi pada kode Q tidak ada di tabel ICAO Doc 8400.' },
+  { kode: 'REASON_NOT_IN_INPUT', tingkat: 'warning', arti: 'E) memuat alasan (DUE TO ...) tetapi narasi tidak menyebut alasan.' },
+  { kode: 'Q_SUBJECT_TEXT', tingkat: 'warning', arti: 'Subjek kode Q tidak cocok dengan frasa awal E) (mis. APRON tetapi bukan MN).' },
 ];
 
 export const PELABELAN: { entitas: string; arti: string; contoh: string }[] = [

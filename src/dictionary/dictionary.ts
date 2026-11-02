@@ -2,6 +2,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { CONDITION_NAME, GROUP_NAME, SUBJECT_NAME } from '../analytics/types';
 import { listAirports, tzOf, validArp } from '../master/airports';
+import { ICAO_CONDITION, ICAO_SUBJECT } from '../master/icao-qcode';
 import { ABBR, FIR_NAME, ISTILAH, ITEM_NOTAM, PELABELAN, PERAN, Q_LINE, STATUS, VALIDASI, WAKTU_ATURAN, WAKTU_ZONA } from './data';
 
 export interface DictColumn { key: string; label: string; mono?: boolean; num?: boolean }
@@ -67,7 +68,7 @@ export function buildDictionary(): DictCategory[] {
 
   // ---- kode Q
   const qcode: DictCategory = {
-    id: 'qcode', title: 'Kode Q', source: 'Kelompok: pengelompokan kode Q ICAO. Subjek dan kondisi: disimpulkan dari contoh item E pada dataset; bukan tabel resmi AirNav',
+    id: 'qcode', title: 'Kode Q', source: 'Kelompok: pengelompokan kode Q ICAO. Arti ICAO: ICAO Doc 8400 (PANS-ABC) edisi ke-9, Bab 7. Arti Indonesia: disimpulkan dari contoh item E pada dataset; bukan tabel resmi AirNav',
     summary: `Kode Q terdiri dari kelompok, subjek, dan kondisi. Jumlah dihitung dari ${coded} NOTAM pada dataset.`,
     tables: [
       {
@@ -76,14 +77,15 @@ export function buildDictionary(): DictCategory[] {
         rows: Object.entries(GROUP_NAME).map(([k, v]) => ({ kode: k, nama: v, jumlah: groups.get(k) ?? 0, porsi: pct(groups.get(k) ?? 0, coded) })).sort((a, b) => (b.jumlah as number) - (a.jumlah as number)),
       },
       {
-        id: 'subjek', title: 'Subjek (dua huruf)', note: 'Kode tanpa arti berarti contohnya kurang tegas; arti sengaja tidak ditebak.',
-        columns: [{ key: 'kode', label: 'Kode', mono: true }, { key: 'kelompok', label: 'Kelompok' }, { key: 'arti', label: 'Arti' }, { key: 'jumlah', label: 'Di dataset', num: true }, { key: 'contoh', label: 'Contoh item E', mono: true }],
-        rows: sortN(subjects).map(([k, n]) => ({ kode: k, kelompok: GROUP_NAME[k[0]] ?? k[0], arti: SUBJECT_NAME[k] ?? '(belum ada arti)', jumlah: n, contoh: subjExample.get(k) ?? '' })),
+        id: 'subjek', title: 'Subjek (dua huruf)', note: 'Kode tanpa arti berarti contohnya kurang tegas; arti sengaja tidak ditebak. Beda dengan ICAO yang terlihat di dataset: LJ dan LT dipakai untuk RTIL (ICAO: LJ = lampu alignment landasan, LT = lampu threshold); CA dipakai untuk HF udara-darat.',
+        columns: [{ key: 'kode', label: 'Kode', mono: true }, { key: 'kelompok', label: 'Kelompok' }, { key: 'arti', label: 'Arti' }, { key: 'icao', label: 'Arti ICAO (resmi)' }, { key: 'jumlah', label: 'Di dataset', num: true }, { key: 'contoh', label: 'Contoh item E', mono: true }],
+        rows: sortN(subjects).map(([k, n]) => ({ kode: k, kelompok: GROUP_NAME[k[0]] ?? k[0], arti: SUBJECT_NAME[k] ?? '(belum ada arti)', icao: ICAO_SUBJECT[k] ?? '(tidak ada di tabel ICAO)', jumlah: n, contoh: subjExample.get(k) ?? '' })),
       },
       {
         id: 'kondisi', title: 'Kondisi (dua huruf terakhir)',
-        columns: [{ key: 'kode', label: 'Kode', mono: true }, { key: 'arti', label: 'Arti' }, { key: 'jumlah', label: 'Di dataset', num: true }, { key: 'contoh', label: 'Contoh item E', mono: true }],
-        rows: sortN(conds).map(([k, n]) => ({ kode: k, arti: CONDITION_NAME[k] ?? '(belum ada arti)', jumlah: n, contoh: condExample.get(k) ?? '' })),
+        note: 'Beda dengan ICAO yang terlihat di dataset: CN dipakai untuk "NOTAM baru menyusul" (ICAO: Cancelled).',
+        columns: [{ key: 'kode', label: 'Kode', mono: true }, { key: 'arti', label: 'Arti' }, { key: 'icao', label: 'Arti ICAO (resmi)' }, { key: 'jumlah', label: 'Di dataset', num: true }, { key: 'contoh', label: 'Contoh item E', mono: true }],
+        rows: sortN(conds).map(([k, n]) => ({ kode: k, arti: CONDITION_NAME[k] ?? '(belum ada arti)', icao: ICAO_CONDITION[k] ?? '(tidak ada di tabel ICAO)', jumlah: n, contoh: condExample.get(k) ?? '' })),
       },
       {
         id: 'sebaran', title: 'Nilai Traffic, Purpose, dan Scope yang dipakai di dataset',

@@ -1,4 +1,6 @@
 import { createServer } from 'http';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { RagGenerator, MockLlm, OllamaLlm, correctNotam, providerFromEnv } from './generator';
 import { buildPrompt, retrieve } from './rag';
 import { findAirport, mentionedLocators, tzOf } from '../master/airports';
@@ -34,7 +36,7 @@ describe('validator', () => {
 });
 
 describe('validator waktu UTC', () => {
-  const input = 'ditutup tanggal 01 November 2024 pukul 08.00 WIB sampai tanggal 02 November 2024 pukul 12.00 WIB';
+  const input = 'ditutup tanggal 01 November 2024 pukul 08.00 WIB sampai tanggal 02 November 2024 pukul 12.00 WIB karena pekerjaan';
   const codes = (t: string) => validateNotam(t, 'WIHH', input).issues.map((i) => i.code);
   it('menerima B/C hasil konversi UTC dan menolak jam lokal yang tidak dikonversi', () => {
     expect(codes(GOOD.replace('2411011700', '2411010100').replace('2411020500', '2411020500'))).toEqual([]);
@@ -43,10 +45,10 @@ describe('validator waktu UTC', () => {
   });
   it('jam tanpa label zona tidak diperiksa', () => {
     const t = (n: string) => validateNotam(GOOD, 'WIHH', n).status;
-    expect(t('tanggal 01 November 2024 pukul 17.00 sampai tanggal 02 November 2024 pukul 05.00')).toBe('passed');
+    expect(t('tanggal 01 November 2024 pukul 17.00 sampai tanggal 02 November 2024 pukul 05.00 karena pekerjaan')).toBe('passed');
   });
   it('tanggal tidak terbaca di input -> tidak diperiksa', () => {
-    expect(validateNotam(GOOD, 'WIHH', 'runway ditutup').status).toBe('passed');
+    expect(validateNotam(GOOD, 'WIHH', 'runway ditutup karena pekerjaan').status).toBe('passed');
   });
 });
 
@@ -61,19 +63,19 @@ describe('validator D) dan RMK', () => {
     expect(codes(withD('DAILY 1500-1975'))).toEqual(['D_FORMAT']);
   });
   it('input menyebut jadwal berulang tetapi D) tidak ada -> warning', () => {
-    expect(codes(GOOD, 'ditutup setiap hari pukul 15.00 sampai 19.15')).toEqual(['D_MISSING']);
-    expect(codes(withD('DAILY 1500-1915'), 'ditutup setiap hari pukul 15.00 sampai 19.15')).toEqual([]);
+    expect(codes(GOOD, 'ditutup setiap hari pukul 15.00 sampai 19.15 karena pekerjaan')).toEqual(['D_MISSING']);
+    expect(codes(withD('DAILY 1500-1915'), 'ditutup setiap hari pukul 15.00 sampai 19.15 karena pekerjaan')).toEqual([]);
   });
   it('RMK harus berisi teks dan muncul bila input punya Catatan', () => {
     expect(codes(GOOD + ' RMK: ALL ACFT CTN')).toEqual([]);
     expect(codes(GOOD + ' RMK:')).toEqual(['RMK_EMPTY']);
-    expect(codes(GOOD, 'runway ditutup. Catatan: semua pesawat berhati-hati')).toEqual(['RMK_MISSING']);
-    expect(codes(GOOD + ' RMK : ALL ACFT CTN', 'Catatan: semua pesawat berhati-hati')).toEqual([]);
+    expect(codes(GOOD, 'runway ditutup karena pekerjaan. Catatan: semua pesawat berhati-hati')).toEqual(['RMK_MISSING']);
+    expect(codes(GOOD + ' RMK : ALL ACFT CTN', 'Catatan: semua pesawat berhati-hati karena pekerjaan')).toEqual([]);
   });
 });
 
 describe('koreksi deterministik', () => {
-  const input = 'ditutup tanggal 01 November 2024 pukul 08.00 WIB sampai tanggal 02 November 2024 pukul 12.00 WIB';
+  const input = 'ditutup tanggal 01 November 2024 pukul 08.00 WIB sampai tanggal 02 November 2024 pukul 12.00 WIB karena pekerjaan';
   it('memperbaiki FIR, B) dan C) serta mencatatnya', () => {
     const bad = GOOD.replace('WIIF', 'WAAF').replace('2411011700', '2411010800').replace('2411020500', '2411021200');
     const r = correctNotam(bad, findAirport('WIHH')!, input);
@@ -174,3 +176,84 @@ describe('koreksi kurung penutup', () => {
     expect(r.corrections).toHaveLength(0);
   });
 });
+
+describe('validator kode Q (tabel ICAO Doc 8400)', () => {
+  const warns = (t: string) => validateNotam(t, 'WIHH').issues.filter((i) => i.code.startsWith('Q_SUBJECT') || i.code.startsWith('Q_CONDITION'));
+  const codes = (t: string) => warns(t).map((i) => i.code);
+
+  it('subjek atau kondisi yang tidak ada di tabel ICAO jadi peringatan, bukan galat', () => {
+    expect(codes(GOOD)).toEqual([]);
+    expect(codes(GOOD.replace('QMRLC', 'QZZLC'))).toContain('Q_SUBJECT_UNKNOWN');
+    expect(codes(GOOD.replace('QMRLC', 'QMRZZ'))).toContain('Q_CONDITION_UNKNOWN');
+    expect(validateNotam(GOOD.replace('QMRLC', 'QZZZZ'), 'WIHH').status).toBe('warning');
+  });
+
+  it('kode TT (Trigger) dikenal', () => {
+    expect(codes(GOOD.replace('QMRLC', 'QMRTT'))).toEqual([]);
+  });
+
+  it('subjek harus cocok dengan frasa awal E): APRON harus MN, bukan MX', () => {
+    const apron = (q: string) => GOOD.replace('QMRLC', q).replace('RWY 06/24 CLSD DUE TO WIP', 'APRON CLSD DUE TO WIP');
+    const bad = warns(apron('QMXLC'));
+    expect(bad.map((i) => i.code)).toEqual(['Q_SUBJECT_TEXT']);
+    expect(bad[0].message).toContain('MN');
+    expect(validateNotam(apron('QMXLC'), 'WIHH').status).toBe('warning');
+    expect(codes(apron('QMNLC'))).toEqual([]);
+  });
+
+  it('TWY, stand, dan RWY: subjek benar lolos, subjek keliru diperingatkan', () => {
+    const e = (q: string, text: string) => GOOD.replace('QMRLC', q).replace('RWY 06/24 CLSD DUE TO WIP', text);
+    expect(codes(e('QMXLC', 'TWY D CLSD DUE TO WIP'))).toEqual([]);
+    expect(codes(e('QMRLC', 'TWY D CLSD DUE TO WIP'))).toEqual(['Q_SUBJECT_TEXT']);
+    expect(codes(e('QMPLC', 'PRKG STAND NR 7 CLSD DUE TO WIP'))).toEqual([]);
+    expect(codes(e('QMXLC', 'ACFT STAND NR 7 CLSD DUE TO WIP'))).toEqual(['Q_SUBJECT_TEXT']);
+    expect(codes(e('QMXLC', 'RWY 06/24 CLSD DUE TO WIP'))).toEqual(['Q_SUBJECT_TEXT']);
+  });
+
+  it('frasa yang subjeknya lain tidak diperingatkan (lampu, marka, arresting gear)', () => {
+    const e = (q: string, text: string) => GOOD.replace('QMRLC', q).replace('RWY 06/24 CLSD DUE TO WIP', text);
+    expect(codes(e('QLYAS', 'TWY EDGE LGT U/S DUE TO MAINT'))).toEqual([]);
+    expect(codes(e('QLEAS', 'RWY EDGE LGT 04/22 U/S'))).toEqual([]);
+    expect(codes(e('QMHCS', 'RWY ARRESTING GEAR RWY 18 INSTALLED'))).toEqual([]);
+    expect(codes(e('QXXXX', 'APRON LIGHT U/S')).includes('Q_SUBJECT_TEXT')).toBe(false);
+  });
+
+  it('NOTAM asli di dataset: hanya QXXXX yang diperingatkan (subjek XX tidak ada di tabel ICAO)', () => {
+    const data: { notam: string }[] = JSON.parse(readFileSync(join(__dirname, '..', '..', 'data', 'examples.json'), 'utf8'));
+    const flagged = data.filter((x) => warns(x.notam).length);
+    expect(flagged.every((x) => /\/QXXXX\//.test(x.notam))).toBe(true);
+  });
+});
+
+describe('validator alasan (DUE TO harus bersumber dari input)', () => {
+  const reason = (t: string, input?: string) => validateNotam(t, 'WIHH', input).issues.filter((i) => i.code === 'REASON_NOT_IN_INPUT');
+
+  it('input hanya menyebut kondisi tetapi E) memuat DUE TO: peringatan, tidak memblokir', () => {
+    const r = reason(GOOD, 'Landasan pacu 06/24 ditutup');
+    expect(r).toHaveLength(1);
+    expect(r[0].level).toBe('warning');
+    expect(validateNotam(GOOD, 'WIHH', 'Landasan pacu 06/24 ditutup').status).toBe('warning');
+  });
+
+  it('input menyebut alasan (karena, pekerjaan, pemeliharaan, due to) tidak diperingatkan', () => {
+    for (const input of ['Landasan pacu 06/24 ditutup karena ada pekerjaan', 'Runway ditutup untuk pemeliharaan', 'diperbaiki', 'RWY closed due to works'])
+      expect(reason(GOOD, input)).toEqual([]);
+  });
+
+  it('tanpa DUE TO di E), atau DUE TO hanya di RMK, atau tanpa teks input: tidak diperingatkan', () => {
+    expect(reason(GOOD.replace(' DUE TO WIP', ''), 'Landasan pacu 06/24 ditutup')).toEqual([]);
+    expect(reason(GOOD.replace('DUE TO WIP', 'RMK: AIRCRAFT DUE TO LAND SHOULD DIVERT'), 'Landasan pacu 06/24 ditutup')).toEqual([]);
+    expect(reason(GOOD)).toEqual([]);
+  });
+
+  it('prompt memuat aturan alasan', () => {
+    expect(buildPrompt('Landasan pacu 06/24 ditutup', findAirport('WIHH')!)).toContain('Alasan (DUE TO ...) hanya boleh ditulis bila input menyebut alasannya');
+  });
+
+  it('NOTAM asli di dataset: hanya sedikit yang alasannya tidak ada di narasi (18 dari 927 saat diukur)', () => {
+    const data: { freeText: string; notam: string }[] = JSON.parse(readFileSync(join(__dirname, '..', '..', 'data', 'examples.json'), 'utf8'));
+    const flagged = data.filter((x) => reason(x.notam, x.freeText).length).length;
+    expect(flagged > 0 && flagged <= 25).toBe(true);
+  });
+});
+

@@ -1,5 +1,6 @@
 import { findAirport } from '../master/airports';
 import { expectedUtcStamps } from '../master/time';
+import { qcodeWarnings } from '../master/icao-qcode';
 
 export interface Issue {
   code: string;
@@ -15,6 +16,12 @@ export interface Validation {
 const Q_LINE = /^[A-Z]{4}\/Q[A-Z]{4}\/[IVK]{1,2}\/[NBOMK]{1,3}\/[AEW]{1,2}\/\d{3}\/\d{3}\/\d{4}[NS]\d{5}[EW]\d{3}$/;
 
 const SCHEDULE_HINT = /setiap hari|tiap hari|harian|\bdaily\b/i;
+
+// Petunjuk bahwa input menyebut alasan (kata penyebab, atau jenis kegiatan/kejadian). Dipakai agar "DUE TO ..." di E) tidak muncul dari karangan model.
+const REASON_CUE = new RegExp(
+  String.raw`\b(?:karena|dikarenakan|disebabkan|akibat|sebab|dalam rangka|sehubungan|guna\b|untuk keperluan|alasan|due to|because|reason|teknis|operasional|keamanan|cuaca|erupsi|letusan|abu vulkanik|kebakaran|banjir|bencana|kalibrasi|calibrat|inspeksi|inspect|pemeriksaan|latihan|training|exercise|vip|haji|hajj|event|acara|kegiatan|upacara|perbaik|diperbaik|memperbaik|repair|pelihara|pemelihara|dipelihara|perawat|dirawat|rusak|kerusakan|lubang|pothole|maint|pekerja|pengerja|dikerja|kerja|work|wip|pembangun|konstruksi|construction|pelebar|pemasang|penggantian|pembersih|pengecat|marking|overlay)`,
+  'i',
+);
 
 // Mengurai item Q) A) B) C) D) E) dari teks NOTAM; E) boleh multi-baris.
 export function parseItems(text: string): Record<string, string> {
@@ -56,6 +63,7 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
   if (it.Q) {
     if (!Q_LINE.test(it.Q)) err('Q_FORMAT', 'Format Q) tidak sesuai pola FIR/QXXXX/traffic/purpose/scope/lower/upper/koordinat+radius');
     else if (airport && it.Q.split('/')[0] !== airport.fir) warn('Q_FIR', `FIR di Q) (${it.Q.split('/')[0]}) berbeda dari FIR master bandara (${airport.fir})`);
+    if (Q_LINE.test(it.Q)) for (const w of qcodeWarnings(it.Q, it.E)) warn(w.code, w.message);
   }
   if (it.A && it.A !== airportLocId) err('A_MISMATCH', `A) (${it.A}) tidak sama dengan locator pengajuan (${airportLocId}). Periksa apakah locator atau narasi yang keliru`);
 
@@ -87,6 +95,10 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
   const rmk = it.E ? /\bRMK\s*:?\s*([\s\S]*)$/.exec(it.E) : null;
   if (rmk && !rmk[1].trim()) err('RMK_EMPTY', 'RMK ada tetapi kosong');
   if (!rmk && freeText && /\bcatatan\b/i.test(freeText)) warn('RMK_MISSING', 'Input memuat "Catatan" tetapi RMK tidak ada di E)');
+
+  // Alasan di E) (DUE TO ..., di luar RMK) harus bersumber dari input; model cenderung menambahkannya dari contoh referensi.
+  if (freeText && it.E && /\bDUE\s+TO\b/i.test(it.E.split(/\bRMK\b/i)[0]) && !REASON_CUE.test(freeText))
+    warn('REASON_NOT_IN_INPUT', 'E) memuat alasan (DUE TO ...) tetapi input tidak menyebut alasan. Hapus alasannya, atau lengkapi narasi bila alasan memang ada');
 
   const status = issues.some((i) => i.level === 'error') ? 'failed' : issues.length ? 'warning' : 'passed';
   return { status, issues };

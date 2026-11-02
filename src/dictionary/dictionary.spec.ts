@@ -37,6 +37,9 @@ describe('kamus', () => {
     expect(table('qcode', 'subjek').rows[0]).toMatchObject({ kode: 'MR', arti: 'Runway' });
     expect(table('qcode', 'kelompok').rows[0]).toMatchObject({ kode: 'M', nama: 'Area pergerakan dan pendaratan' });
     expect(table('qcode', 'kondisi').rows.find((r) => r.kode === 'LC')).toMatchObject({ arti: 'Ditutup' });
+    expect(table('qcode', 'subjek').rows[0]).toMatchObject({ kode: 'MR', icao: 'Runway (specify runway)' });
+    expect(table('qcode', 'kondisi').rows.find((r) => r.kode === 'LC')).toMatchObject({ icao: 'Closed' });
+    expect(table('qcode', 'kondisi').rows.find((r) => r.kode === 'CN')).toMatchObject({ arti: 'NOTAM baru menyusul', icao: 'Cancelled' });
     expect(table('qcode', 'sebaran').rows.some((r) => r.bagian === 'Traffic' && r.nilai === 'IV')).toBe(true);
   });
 
@@ -58,6 +61,8 @@ describe('kamus', () => {
     expect(table('aplikasi', 'peran').rows).toHaveLength(5);
     expect(table('aplikasi', 'status').rows.map((r) => r.status)).toContain('Disetujui NOF');
     expect(table('aplikasi', 'validasi').rows.some((r) => String(r.kode).includes('D_FORMAT'))).toBe(true);
+    expect(table('aplikasi', 'validasi').rows.some((r) => String(r.kode).includes('Q_SUBJECT_TEXT'))).toBe(true);
+    expect(table('aplikasi', 'validasi').rows.some((r) => String(r.kode).includes('REASON_NOT_IN_INPUT'))).toBe(true);
   });
 
   it('hasil dikembalikan dari cache (objek sama)', () => {
