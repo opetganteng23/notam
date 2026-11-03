@@ -47,7 +47,7 @@ describe('validator waktu UTC', () => {
   });
   it('jam tanpa label zona tidak diperiksa', () => {
     const t = (n: string) => validateNotam(GOOD, 'WIHH', n).status;
-    expect(t('tanggal 01 November 2024 pukul 17.00 sampai tanggal 02 November 2024 pukul 05.00 karena pekerjaan')).toBe('passed');
+    expect(t('ditutup tanggal 01 November 2024 pukul 17.00 sampai tanggal 02 November 2024 pukul 05.00 karena pekerjaan')).toBe('passed');
   });
   it('tanggal tidak terbaca di input -> tidak diperiksa', () => {
     expect(validateNotam(GOOD, 'WIHH', 'runway ditutup karena pekerjaan').status).toBe('passed');
@@ -72,7 +72,7 @@ describe('validator D) dan RMK', () => {
     expect(codes(GOOD + ' RMK: ALL ACFT CTN')).toEqual([]);
     expect(codes(GOOD + ' RMK:')).toEqual(['RMK_EMPTY']);
     expect(codes(GOOD, 'runway ditutup karena pekerjaan. Catatan: semua pesawat berhati-hati')).toEqual(['RMK_MISSING']);
-    expect(codes(GOOD + ' RMK : ALL ACFT CTN', 'Catatan: semua pesawat berhati-hati karena pekerjaan')).toEqual([]);
+    expect(codes(GOOD + ' RMK : ALL ACFT CTN', 'runway ditutup. Catatan: semua pesawat berhati-hati karena pekerjaan')).toEqual([]);
   });
 });
 
@@ -298,10 +298,12 @@ describe('koreksi subjek kode Q dan alasan baku', () => {
   const ap = findAirport('WIHH')!;
   const head = (q: string) => `Q) WIIF/${q}/IV/BO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611040100\nC) 2611050500\n`;
   it('subjek yang tidak ada di tabel ICAO diganti subjek yang lazim menurut E)', () => {
-    const r = correctNotam(`${head('QTCAS')}E) TAXIWAY EC1 U/S DUE TO SURFACE DAMAGE`, ap, 'Taxiway EC1 rusak');
-    expect(r.text).toContain('WIIF/QMXAS/');
+    const r = correctNotam(`${head('QTCAS')}E) TAXIWAY EC1 U/S DUE TO SURFACE DAMAGE`, ap, 'Taxiway EC1 tidak dapat digunakan karena rusak');
+    // subjek dikoreksi (TC -> MX), lalu area gerak yang tidak dapat digunakan menjadi CLSD dan kondisi AS menjadi LC
+    expect(r.text).toContain('WIIF/QMXLC/');
+    expect(r.text).toContain('E) TAXIWAY EC1 CLSD DUE TO SURFACE DAMAGE');
     expect(r.corrections).toContain('Subjek kode Q tidak ada di tabel ICAO, diganti sesuai E): QTCAS → QMXAS');
-    expect(validateNotam(r.text, 'WIHH', 'Taxiway EC1 rusak').issues.map((i) => i.code)).not.toContain('Q_SUBJECT_UNKNOWN');
+    expect(validateNotam(r.text, 'WIHH', 'Taxiway EC1 tidak dapat digunakan karena rusak').issues.map((i) => i.code)).not.toContain('Q_SUBJECT_UNKNOWN');
   });
   it('subjek tak dikenal tanpa frasa E) yang tegas dibiarkan dan tetap ditandai', () => {
     const r = correctNotam(`${head('QTCAS')}E) AERODROME CLSD`, ap, '');
@@ -328,5 +330,41 @@ describe('koreksi subjek kode Q dan alasan baku', () => {
     expect(correctNotam(obj, ap, 'ditutup karena pemeliharaan arresting gear').text).toBe(obj);
     const already = `${head('QMRLC')}E) RWY 07/25 CLSD DUE TO MAINT`;
     expect(correctNotam(already, ap, 'ditutup karena pemeliharaan').corrections).toEqual([]);
+  });
+});
+
+describe('area gerak tidak dapat digunakan = CLSD', () => {
+  const ap = findAirport('WIHH')!;
+  const t = (e: string, q = 'QMRAS') => `Q) WIIF/${q}/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611060100\nC) 2611070500\nE) ${e}`;
+  const input = 'Landasan pacu 06/24 tidak bisa dilandasi karena pekerjaan mulai 6 November 2026 pukul 08.00 WIB sampai 7 November 2026 pukul 12.00 WIB';
+  it('landasan yang CLSD dari model dibiarkan (tidak dapat digunakan = closed)', () => {
+    const t1 = t('RWY 06/24 CLSD DUE TO WIP', 'QMRLC');
+    expect(correctNotam(t1, ap, input).text).toBe(t1);
+    expect(validateNotam(t1, 'WIHH', input).issues.map((i) => i.code)).not.toContain('CLSD_NOT_IN_INPUT');
+  });
+  it('U/S pada area gerak diganti CLSD dan kondisi AS menjadi LC', () => {
+    const r = correctNotam(t('TWY EC1 U/S DUE TO SURFACE DAMAGE', 'QMXAS'), ap, 'Taxiway EC1 tidak dapat digunakan karena kerusakan');
+    expect(r.text).toContain('/QMXLC/');
+    expect(r.text).toContain('E) TWY EC1 CLSD DUE TO SURFACE DAMAGE');
+    expect(r.corrections.some((c) => c.includes('U/S diganti CLSD'))).toBe(true);
+  });
+  it('lampu dan peralatan tetap U/S', () => {
+    const t1 = t('RWY EDGE LGT RWY 06/24 U/S', 'QLEAS');
+    expect(correctNotam(t1, ap, 'lampu tepi landasan tidak dapat digunakan').text).toBe(t1);
+  });
+  it('input yang menyebut pembatasan tidak diubah', () => {
+    const t1 = t('RWY 06/24 U/S DUE TO WIP');
+    expect(correctNotam(t1, ap, 'landasan terbatas karena pekerjaan').text).toBe(t1);
+  });
+  it('tidak menyentuh E) dengan lebih dari satu U/S, dan RMK tetap utuh', () => {
+    const t1 = t('RWY 06/24 U/S AND U/S');
+    expect(correctNotam(t1, ap, input).text).toBe(t1);
+    const r = correctNotam(t('RWY 06/24 U/S DUE TO WIP RMK: ALL TFC CTN ADZ U/S AREA'), ap, input);
+    expect(r.text).toContain('E) RWY 06/24 CLSD DUE TO WIP RMK: ALL TFC CTN ADZ U/S AREA');
+  });
+  it('validator memperingatkan CLSD bila input hanya menyebut pekerjaan', () => {
+    const t1 = t('RWY 06/24 CLSD DUE TO WIP', 'QMRLC');
+    expect(validateNotam(t1, 'WIHH', 'Landasan pacu 06/24 dilakukan pekerjaan').issues.map((i) => i.code)).toContain('CLSD_NOT_IN_INPUT');
+    expect(validateNotam(t1, 'WIHH', 'Landasan pacu 06/24 ditutup karena pekerjaan').issues.map((i) => i.code)).not.toContain('CLSD_NOT_IN_INPUT');
   });
 });

@@ -122,12 +122,35 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
     const c = items.C?.match(/^(\d{10})( ?EST)?$/);
     if (exp.length > 1 && c && c[1] !== cEnd) setItem('C', c[1], cEnd, `C) ditulis dalam UTC: {to} = ${human(cEnd)} UTC (jam ${tz} di narasi ${shift(tz)})`);
   }
+  const closed = movementAreaClosed(text, freeText);
+  if (closed) {
+    text = closed;
+    corrections.push('Landasan/taxiway/apron/stand yang tidak dapat digunakan ditulis CLSD (menurut AirNav sama dengan ditutup): U/S diganti CLSD, kondisi Q AS → LC');
+  }
   const maint = shortenMaintenance(text, freeText);
   if (maint) {
     text = maint.text;
     corrections.push(`Alasan disingkat sesuai kebiasaan AirNav: ${maint.from} → DUE TO MAINT`);
   }
   return { text, corrections };
+}
+
+// Menurut AirNav, area gerak (landasan, taxiway, apron, stand) yang tidak dapat digunakan berstatus closed; hanya WIP dan LIMITED yang berarti masih
+// bisa dipakai di bawah kendali ATC. Di dataset: 0 dari 270 NOTAM area gerak yang ditulis U/S (159 CLSD, 46 WIP, 23 LIMITED).
+// Maka U/S pada E) area gerak (tepat satu, kondisi Q AS) diganti CLSD dan AS menjadi LC, kecuali input menyebut pembatasan.
+function movementAreaClosed(text: string, freeText: string): string | null {
+  if (/terbatas|limited|dibatasi|pembatasan/i.test(freeText)) return null;
+  const rmk = text.search(/\bRMK\b/);
+  const head = rmk < 0 ? text : text.slice(0, rmk);
+  const tail = rmk < 0 ? '' : text.slice(rmk);
+  const eAt = head.search(/^E\)/m);
+  if (eAt < 0) return null;
+  const eHead = head.slice(eAt);
+  if (!/^E\)\s*(?:RWY|TWY|TAXIWAY|APRON|APN|PRKG STAND|PARKING STAND|STAND)\b/.test(eHead)) return null;
+  if ((eHead.match(/\bU\/S\b/g) ?? []).length !== 1) return null;
+  const qRe = /(^Q\)\s*[A-Z]{4}\/QM[RXYNP])AS(?=\/)/m;
+  if (!qRe.test(head.slice(0, eAt))) return null;
+  return head.slice(0, eAt).replace(qRe, '$1LC') + eHead.replace(/\bU\/S\b/, 'CLSD') + tail;
 }
 
 // Alasan pemeliharaan di E) ditulis "DUE TO MAINT" (kebiasaan AirNav: 71 NOTAM di dataset), bukan kalimat panjang.

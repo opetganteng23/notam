@@ -16,6 +16,9 @@ export interface Validation {
 
 const Q_LINE = /^[A-Z]{4}\/Q[A-Z]{4}\/[IVK]{1,2}\/[NBOMK]{1,3}\/[AEW]{1,2}\/\d{3}\/\d{3}\/\d{4}[NS]\d{5}[EW]\d{3}$/;
 
+// Input yang menyebut penutupan atau "tidak dapat digunakan": menurut AirNav keduanya berstatus closed (CLSD).
+const CLOSED_INPUT = /ditutup|penutupan|tutup|closed|\bclose\b|clsd|tidak\s+(?:dapat|bisa)\s+(?:digunakan|dipakai|dioperasikan|dilandasi|didarati|dilalui)|rusak/i;
+
 const SCHEDULE_HINT = /setiap hari|tiap hari|harian|\bdaily\b/i;
 
 // Petunjuk bahwa input menyebut alasan (kata penyebab, atau jenis kegiatan/kejadian). Dipakai agar "DUE TO ..." di E) tidak muncul dari karangan model.
@@ -96,6 +99,10 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
   const rmk = it.E ? /\bRMK\s*:?\s*([\s\S]*)$/.exec(it.E) : null;
   if (rmk && !rmk[1].trim()) err('RMK_EMPTY', 'RMK ada tetapi kosong');
   if (!rmk && freeText && /\bcatatan\b/i.test(freeText)) warn('RMK_MISSING', 'Input memuat "Catatan" tetapi RMK tidak ada di E)');
+
+  // CLSD hanya bila input menyebut ditutup atau tidak dapat digunakan; pekerjaan atau pembatasan yang masih memungkinkan operasi (di bawah kendali ATC) berstatus WIP atau LIMITED.
+  if (freeText && it.E && /\bCLSD\b/.test(it.E.split(/\bRMK\b/i)[0]) && !CLOSED_INPUT.test(freeText))
+    warn('CLSD_NOT_IN_INPUT', 'E) memuat CLSD tetapi input tidak menyebut ditutup atau tidak dapat digunakan. Bila masih bisa dipakai di bawah kendali ATC, statusnya WIP atau LIMITED, bukan CLSD');
 
   // Alasan di E) (DUE TO ..., di luar RMK) harus bersumber dari input; model cenderung menambahkannya dari contoh referensi.
   if (freeText && it.E && /\bDUE\s+TO\b/i.test(it.E.split(/\bRMK\b/i)[0]) && !REASON_CUE.test(freeText))
