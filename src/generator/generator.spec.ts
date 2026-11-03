@@ -5,7 +5,9 @@ import { RagGenerator, MockLlm, OllamaLlm, correctNotam, providerFromEnv } from 
 import { buildPrompt, retrieve } from './rag';
 import { findAirport, mentionedLocators, tzOf } from '../master/airports';
 import { annotateLocalTimes, expectedUtcStamps } from '../master/time';
+import { tpsWarnings } from '../master/tps';
 import { validateNotam } from './validator';
+import { BLOCKING } from '../requests/requests.service';
 
 const GOOD = `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005
 A) WIHH
@@ -269,5 +271,62 @@ describe('validator alasan (DUE TO harus bersumber dari input)', () => {
     const flagged = data.filter((x) => reason(x.notam, x.freeText).length).length;
     expect(flagged > 0 && flagged <= 25).toBe(true);
   });
+
+  describe('Traffic/Purpose/Scope per kode Q', () => {
+    it('kombinasi yang lazim untuk kodenya tidak diperingatkan', () => {
+      expect(tpsWarnings('WIIX/QFAXX/IV/NBO/A/000/999/0610S10646E005')).toEqual([]);
+      expect(tpsWarnings('WIIX/QNMAS/IV/BO/AE/000/999/0610S10646E005')).toEqual([]);
+    });
+    it('kombinasi yang belum pernah dipakai untuk kode yang sering muncul diperingatkan', () => {
+      const w = tpsWarnings('WIIX/QFAXX/IV/BO/W/000/999/0610S10646E005');
+      expect(w.map((x) => x.code)).toEqual(['Q_TPS_UNUSUAL']);
+      expect(w[0].message).toContain('IV/NBO/A');
+    });
+    it('kode yang jarang di dataset dibandingkan dengan matriks ICAO, dengan toleransi ketat/longgar', () => {
+      // QLGAS: ICAO IV/B. IV/BO lebih longgar (kompatibel), IV/M bertolak belakang.
+      expect(tpsWarnings('WIIX/QLGAS/IV/BO/A/000/999/0610S10646E005')).toEqual([]);
+      expect(tpsWarnings('WIIX/QLGAS/IV/M/A/000/999/0610S10646E005').map((x) => x.code)).toEqual(['Q_TPS_ICAO']);
+    });
+    it('kode yang jarang atau belum dikenal di dataset tidak diperingatkan', () => {
+      expect(tpsWarnings('WIIX/QZZZZ/IV/BO/W/000/999/0610S10646E005')).toEqual([]);
+    });
+  });
 });
 
+
+describe('koreksi subjek kode Q dan alasan baku', () => {
+  const ap = findAirport('WIHH')!;
+  const head = (q: string) => `Q) WIIF/${q}/IV/BO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611040100\nC) 2611050500\n`;
+  it('subjek yang tidak ada di tabel ICAO diganti subjek yang lazim menurut E)', () => {
+    const r = correctNotam(`${head('QTCAS')}E) TAXIWAY EC1 U/S DUE TO SURFACE DAMAGE`, ap, 'Taxiway EC1 rusak');
+    expect(r.text).toContain('WIIF/QMXAS/');
+    expect(r.corrections).toContain('Subjek kode Q tidak ada di tabel ICAO, diganti sesuai E): QTCAS → QMXAS');
+    expect(validateNotam(r.text, 'WIHH', 'Taxiway EC1 rusak').issues.map((i) => i.code)).not.toContain('Q_SUBJECT_UNKNOWN');
+  });
+  it('subjek tak dikenal tanpa frasa E) yang tegas dibiarkan dan tetap ditandai', () => {
+    const r = correctNotam(`${head('QTCAS')}E) AERODROME CLSD`, ap, '');
+    expect(r.text).toContain('/QTCAS/');
+    expect(validateNotam(r.text, 'WIHH', '').issues.map((i) => i.code)).toContain('Q_SUBJECT_UNKNOWN');
+  });
+  it('QXXXX (plain language) tidak dianggap subjek tak dikenal', () => {
+    const t = `${head('QXXXX')}E) SPECIAL ACTIVITY`;
+    expect(correctNotam(t, ap, '').text).toBe(t);
+    expect(validateNotam(t, 'WIHH', '').issues.map((i) => i.code)).not.toContain('Q_SUBJECT_UNKNOWN');
+  });
+  it('Q_SUBJECT_UNKNOWN memblokir submit', () => {
+    expect(BLOCKING).toContain('Q_SUBJECT_UNKNOWN');
+  });
+  it('alasan pemeliharaan disingkat menjadi DUE TO MAINT, RMK tetap utuh', () => {
+    const r = correctNotam(`${head('QMRLC')}E) RWY 07/25 CLSD DUE TO MAINTENANCE WORK RMK: ALL TFC CTN ADZ`, ap, 'Runway ditutup karena pemeliharaan rutin');
+    expect(r.text).toContain('E) RWY 07/25 CLSD DUE TO MAINT RMK: ALL TFC CTN ADZ');
+    expect(r.corrections).toContain('Alasan disingkat sesuai kebiasaan AirNav: DUE TO MAINTENANCE WORK → DUE TO MAINT');
+  });
+  it('alasan tidak disingkat bila input menyebut kerusakan atau alasan memuat objek tertentu', () => {
+    const dmg = `${head('QMRLC')}E) RWY 07/25 CLSD DUE TO MAINTENANCE WORK`;
+    expect(correctNotam(dmg, ap, 'ditutup karena kerusakan, setelah pemeliharaan').text).toBe(dmg);
+    const obj = `${head('QMRLC')}E) RWY 07/25 CLSD DUE TO MAINTENANCE OF ARRESTING GEAR`;
+    expect(correctNotam(obj, ap, 'ditutup karena pemeliharaan arresting gear').text).toBe(obj);
+    const already = `${head('QMRLC')}E) RWY 07/25 CLSD DUE TO MAINT`;
+    expect(correctNotam(already, ap, 'ditutup karena pemeliharaan').corrections).toEqual([]);
+  });
+});

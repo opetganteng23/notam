@@ -19,12 +19,20 @@ const TEXT_SUBJECT: { re: RegExp; subjects: string[]; label: string }[] = [
   { re: /^RWY\s(?!.*(LGT|LIGHT|EDGE|CENTER|CENTRE|PAPI|THR|ILS|MARKING|DISPLACED|LOC|GP|STRIP|SHOULDER|TDZ|REIL|RTIL|ALS|ARREST))/, subjects: ['MR'], label: 'RWY' },
 ];
 
+// Subjek yang lazim menurut frasa awal E) bila frasanya tegas; null bila tidak ada aturan yang berlaku.
+export function textSubject(eItem?: string): { subjects: string[]; label: string } | null {
+  const e = (eItem ?? '').replace(/\s+/g, ' ').trim().toUpperCase();
+  const rule = TEXT_SUBJECT.find((r) => r.re.test(e));
+  return rule ? { subjects: rule.subjects, label: rule.label } : null;
+}
+
 // Peringatan (bukan galat) atas kode Q: subjek dan kondisi harus ada di tabel ICAO, dan subjek harus cocok dengan frasa awal E) bila tegas.
 export function qcodeWarnings(qItem: string, eItem?: string): { code: string; message: string }[] {
   const qc = qItem.split('/')[1] ?? '';
   const subj = qc.slice(1, 3), cond = qc.slice(3, 5);
   const out: { code: string; message: string }[] = [];
-  if (!ICAO_SUBJECT[subj]) out.push({ code: 'Q_SUBJECT_UNKNOWN', message: `Subjek kode Q (${subj}) tidak ada di tabel ICAO Doc 8400` });
+  // XX = plain language, sah menurut ICAO walau tidak tercantum di tabel subjek.
+  if (!ICAO_SUBJECT[subj] && subj !== 'XX') out.push({ code: 'Q_SUBJECT_UNKNOWN', message: `Subjek kode Q (${subj}) tidak ada di tabel ICAO Doc 8400` });
   if (!ICAO_CONDITION[cond]) out.push({ code: 'Q_CONDITION_UNKNOWN', message: `Kondisi kode Q (${cond}) tidak ada di tabel ICAO Doc 8400` });
   const e = (eItem ?? '').replace(/\s+/g, ' ').trim().toUpperCase();
   const rule = TEXT_SUBJECT.find((r) => r.re.test(e));

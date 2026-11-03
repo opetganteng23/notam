@@ -1,6 +1,7 @@
 import { findAirport } from '../master/airports';
 import { expectedUtcStamps } from '../master/time';
 import { qcodeWarnings } from '../master/icao-qcode';
+import { tpsWarnings } from '../master/tps';
 
 export interface Issue {
   code: string;
@@ -63,7 +64,7 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
   if (it.Q) {
     if (!Q_LINE.test(it.Q)) err('Q_FORMAT', 'Format Q) tidak sesuai pola FIR/QXXXX/traffic/purpose/scope/lower/upper/koordinat+radius');
     else if (airport && it.Q.split('/')[0] !== airport.fir) warn('Q_FIR', `FIR di Q) (${it.Q.split('/')[0]}) berbeda dari FIR master bandara (${airport.fir})`);
-    if (Q_LINE.test(it.Q)) for (const w of qcodeWarnings(it.Q, it.E)) warn(w.code, w.message);
+    if (Q_LINE.test(it.Q)) for (const w of [...qcodeWarnings(it.Q, it.E), ...tpsWarnings(it.Q)]) warn(w.code, w.message);
   }
   if (it.A && it.A !== airportLocId) err('A_MISMATCH', `A) (${it.A}) tidak sama dengan locator pengajuan (${airportLocId}). Periksa apakah locator atau narasi yang keliru`);
 

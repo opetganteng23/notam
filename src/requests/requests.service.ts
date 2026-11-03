@@ -27,7 +27,8 @@ export interface ListQuery {
 }
 
 // Kesalahan yang pasti salah; draf dengan kesalahan ini tidak boleh dikirim ke peninjau.
-export const BLOCKING = ['A_MISMATCH', 'C_BEFORE_B'];
+// Q_SUBJECT_UNKNOWN: subjek kode Q yang tidak ada di tabel ICAO pasti salah (di 927 NOTAM asli tidak pernah terjadi, kecuali XX yang dikecualikan).
+export const BLOCKING = ['A_MISMATCH', 'C_BEFORE_B', 'Q_SUBJECT_UNKNOWN'];
 
 // Peran yang terakhir meminta revisi, dibaca dari riwayat.
 export function revisionRoute(events: { action: string; from: string }[]): Route {

@@ -1,6 +1,7 @@
 import { Airport, findAirport } from '../master/airports';
 import { buildPrompt } from './rag';
 import { expectedUtcStamps } from '../master/time';
+import { ICAO_SUBJECT, textSubject } from '../master/icao-qcode';
 import { Validation, parseItems, validateNotam } from './validator';
 
 export interface GeneratedNotam {
@@ -107,6 +108,12 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
   }
   const [fir, ...rest] = (items.Q ?? '').split('/');
   if (rest.length && fir !== airport.fir) setItem('Q', fir, airport.fir, 'FIR di Q) disamakan dengan master bandara');
+  // Subjek kode Q yang tidak ada di tabel ICAO diganti subjek yang lazim menurut frasa awal E) bila frasanya tegas (mis. TAXIWAY -> MX).
+  const qc = (items.Q ?? '').split('/')[1] ?? '';
+  if (/^Q[A-Z]{4}$/.test(qc) && !ICAO_SUBJECT[qc.slice(1, 3)] && qc.slice(1, 3) !== 'XX') {
+    const rule = textSubject(items.E);
+    if (rule) setItem('Q', qc, `Q${rule.subjects[0]}${qc.slice(3)}`, 'Subjek kode Q tidak ada di tabel ICAO, diganti sesuai E)');
+  }
   const exp = expectedUtcStamps(freeText);
   const tz = /\bWITA\b/i.test(freeText) ? 'WITA' : /\bWIT\b/i.test(freeText) ? 'WIT' : /\bWIB\b/i.test(freeText) ? 'WIB' : 'lokal';
   if (exp.length) {
@@ -115,7 +122,29 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
     const c = items.C?.match(/^(\d{10})( ?EST)?$/);
     if (exp.length > 1 && c && c[1] !== cEnd) setItem('C', c[1], cEnd, `C) ditulis dalam UTC: {to} = ${human(cEnd)} UTC (jam ${tz} di narasi ${shift(tz)})`);
   }
+  const maint = shortenMaintenance(text, freeText);
+  if (maint) {
+    text = maint.text;
+    corrections.push(`Alasan disingkat sesuai kebiasaan AirNav: ${maint.from} → DUE TO MAINT`);
+  }
   return { text, corrections };
+}
+
+// Alasan pemeliharaan di E) ditulis "DUE TO MAINT" (kebiasaan AirNav: 71 NOTAM di dataset), bukan kalimat panjang.
+// Hanya bila input menyebut pemeliharaan/perawatan, tidak menyebut kerusakan, dan seluruh kata alasannya kosakata pemeliharaan umum;
+// alasan yang memuat objek tertentu (mis. MAINTENANCE OF ILS ANTENNA) dibiarkan.
+const MAINT_INPUT = /pelihara|pemelihara|dipelihara|perawat|dirawat|maintenance|maintain|servis/i;
+const DAMAGE_INPUT = /rusak|kerusakan|damage|lubang|pothole|retak|crack/i;
+const MAINT_WORDS = new Set(['MAINTENANCE', 'MAINT', 'WORK', 'WORKS', 'ACTIVITY', 'ACTIVITIES', 'ROUTINE', 'SCHEDULED', 'PERIODIC', 'PREVENTIVE', 'PROGRAM', 'AND', 'SERVICING', 'SERVICE']);
+function shortenMaintenance(text: string, freeText: string): { text: string; from: string } | null {
+  if (!MAINT_INPUT.test(freeText) || DAMAGE_INPUT.test(freeText)) return null;
+  const rmk = text.search(/\bRMK\b/);
+  const head = rmk < 0 ? text : text.slice(0, rmk);
+  const m = /\bDUE TO ([A-Z ]+?)(?=\s*(?:[^A-Z ]|$))/.exec(head);
+  if (!m) return null;
+  const words = m[1].trim().split(/\s+/);
+  if (words.join(' ') === 'MAINT' || !words.every((w) => MAINT_WORDS.has(w))) return null;
+  return { text: head.slice(0, m.index) + 'DUE TO MAINT' + head.slice(m.index + m[0].length) + (rmk < 0 ? '' : text.slice(rmk)), from: m[0] };
 }
 
 // Retrieval dataset -> prompt -> LLM -> koreksi deterministik -> validasi deterministik. Hasil validasi disimpan terpisah dari teks LLM.
