@@ -4,7 +4,7 @@ import { join } from 'path';
 import { RagGenerator, MockLlm, OllamaLlm, correctNotam, providerFromEnv } from './generator';
 import { buildPrompt, retrieve } from './rag';
 import { findAirport, mentionedLocators, tzOf } from '../master/airports';
-import { annotateLocalTimes } from '../master/time';
+import { annotateLocalTimes, expectedUtcStamps } from '../master/time';
 import { validateNotam } from './validator';
 
 const GOOD = `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005
@@ -108,6 +108,20 @@ describe('zona waktu', () => {
     expect(annotateLocalTimes('mulai 03:00 WIB')).toBe('mulai 03:00 WIB [UTC 2000, tanggal -1 hari]');
     expect(annotateLocalTimes('10.00 WITA')).toBe('10.00 WITA [UTC 0200]');
     expect(annotateLocalTimes('10.00 UTC dan 11.00')).toBe('10.00 UTC dan 11.00');
+    // format 4 digit tanpa pemisah
+    expect(annotateLocalTimes('tutup 0000 WIB')).toBe('tutup 0000 WIB [UTC 1700, tanggal -1 hari]');
+    expect(annotateLocalTimes('mulai 2200 WITA')).toBe('mulai 2200 WITA [UTC 1400]');
+    expect(annotateLocalTimes('buka 0800 WIB')).toBe('buka 0800 WIB [UTC 0100]');
+    // angka lain tidak boleh terbaca sebagai jam
+    expect(annotateLocalTimes('1000 UTC')).toBe('1000 UTC');
+    expect(annotateLocalTimes('12345 WIB')).toBe('12345 WIB');
+    expect(annotateLocalTimes('2460 WIB')).toBe('2460 WIB');
+  });
+
+  it('stempel UTC yang diharapkan juga dihitung untuk jam 4 digit tanpa pemisah', () => {
+    expect(expectedUtcStamps('5 November 2026 pukul 0000 WIB')).toEqual(['2611041700']);
+    expect(expectedUtcStamps('5 November 2026 pukul 0800 WIB')).toEqual(['2611050100']);
+    expect(expectedUtcStamps('5 November 2026 pukul 07.30 WIB')).toEqual(['2611050030']);
   });
 });
 
