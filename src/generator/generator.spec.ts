@@ -86,7 +86,7 @@ describe('koreksi deterministik', () => {
     expect(validateNotam(r.text, 'WIHH', input).status).toBe('passed');
   });
   it('tidak mengubah apa pun bila sudah benar', () => {
-    expect(correctNotam(GOOD, findAirport('WIHH')!, 'runway ditutup')).toEqual({ text: GOOD, corrections: [] });
+    expect(correctNotam(GOOD, findAirport('WIHH')!, 'runway ditutup karena pekerjaan')).toEqual({ text: GOOD, corrections: [] });
   });
 });
 
@@ -366,5 +366,65 @@ describe('area gerak tidak dapat digunakan = CLSD', () => {
     const t1 = t('RWY 06/24 CLSD DUE TO WIP', 'QMRLC');
     expect(validateNotam(t1, 'WIHH', 'Landasan pacu 06/24 dilakukan pekerjaan').issues.map((i) => i.code)).toContain('CLSD_NOT_IN_INPUT');
     expect(validateNotam(t1, 'WIHH', 'Landasan pacu 06/24 ditutup karena pekerjaan').issues.map((i) => i.code)).not.toContain('CLSD_NOT_IN_INPUT');
+  });
+
+  it('draf runway dengan subjek dan kondisi salah (QLACS, U/S) menjadi QMRLC dan CLSD', () => {
+    const r = correctNotam(t('RWY 06/24 U/S TEMPORARILY DUE TO MAINTENANCE', 'QLACS'), ap, 'Landasan pacu 06/24 tidak bisa digunakan sementara');
+    expect(r.text).toContain('/QMRLC/');
+    expect(r.text).toContain('E) RWY 06/24 CLSD');
+    expect(r.text).not.toContain('TEMPORARILY');
+    expect(r.text).not.toContain('DUE TO');
+    expect(r.corrections.some((c) => c.includes('(LA) tidak cocok dengan E) yang diawali RWY'))).toBe(true);
+    expect(r.corrections.some((c) => c.includes('U/S diganti CLSD, kondisi Q CS → LC'))).toBe(true);
+  });
+  it('CLSD dengan kondisi Q selain LC dikoreksi menjadi LC', () => {
+    const r = correctNotam(t('RWY 06/24 CLSD DUE TO WIP', 'QMRCS'), ap, 'Landasan pacu 06/24 ditutup karena pekerjaan');
+    expect(r.text).toContain('/QMRLC/');
+    expect(r.corrections.some((c) => c.includes('kondisi Q CS → LC'))).toBe(true);
+  });
+  it('subjek yang bertentangan dengan E) diganti, yang sudah cocok atau tidak tegas dibiarkan', () => {
+    expect(correctNotam(t('RWY 06/24 WIP', 'QLAHW'), ap, 'pekerjaan di runway').text).toContain('/QMRHW/');
+    const ok = t('RWY 06/24 CLSD DUE TO WIP', 'QMRLC');
+    expect(correctNotam(ok, ap, 'ditutup karena pekerjaan').text).toBe(ok);
+    const papi = t('PAPI RWY 06/24 U/S', 'QLPAS');
+    expect(correctNotam(papi, ap, 'PAPI tidak dapat digunakan').text).toBe(papi);
+  });
+
+  describe('alasan yang dikarang model', () => {
+    const ap2 = findAirport('WIHH')!;
+    const tt = (e: string) => `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611060200\nC) 2611070800\nE) ${e}`;
+    it('DUE TO dihapus bila input tidak menyebut alasan', () => {
+      const r = correctNotam(tt('RWY 06/24 CLSD TEMPORARILY DUE TO MAINTENANCE'), ap2, 'Landasan pacu 06/24 tidak bisa digunakan sementara');
+      expect(r.text).toContain('E) RWY 06/24 CLSD');
+    expect(r.text).not.toContain('TEMPORARILY');
+      expect(r.text).not.toContain('DUE TO');
+      expect(r.corrections).toContain('Alasan "DUE TO MAINTENANCE" dihapus karena input tidak menyebut alasan');
+    });
+    it('RMK tetap utuh setelah alasan dihapus', () => {
+      const r = correctNotam(tt('RWY 06/24 CLSD DUE TO MAINTENANCE RMK: ALL TFC CTN ADZ'), ap2, 'Landasan pacu 06/24 ditutup');
+      expect(r.text).toContain('E) RWY 06/24 CLSD RMK: ALL TFC CTN ADZ');
+    });
+    it('alasan dipertahankan bila input menyebutnya, atau bila TECR', () => {
+      const a = tt('RWY 06/24 CLSD DUE TO WIP');
+      expect(correctNotam(a, ap2, 'Landasan pacu 06/24 ditutup karena pekerjaan').text).toBe(a);
+      const b = tt('RWY 06/24 CLSD DUE TO TECR');
+      expect(correctNotam(b, ap2, 'Landasan pacu 06/24 ditutup').text).toBe(b);
+    });
+  });
+
+  describe('kata sementara tidak diterjemahkan', () => {
+    const ap3 = findAirport('WIHH')!;
+    const tt = (e: string) => `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611060200\nC) 2611070800\nE) ${e}`;
+    it('TEMPORARILY dan TEMPO dihapus dari E), RMK tetap utuh', () => {
+      const r = correctNotam(tt('RWY 06/24 CLSD TEMPORARILY RMK: TEMPORARILY ALL TFC CTN ADZ'), ap3, 'Landasan pacu 06/24 ditutup sementara');
+      expect(r.text).toContain('E) RWY 06/24 CLSD RMK: TEMPORARILY ALL TFC CTN ADZ');
+      expect(r.corrections.some((c) => c.startsWith('Kata "TEMPORARILY" dihapus'))).toBe(true);
+      expect(correctNotam(tt('RWY 06/24 TEMPO CLSD'), ap3, 'ditutup sementara').text).toContain('E) RWY 06/24 CLSD');
+    });
+    it('TEMPORARY dihapus hanya bila menempel pada status', () => {
+      expect(correctNotam(tt('RWY 06/24 CLSD TEMPORARY'), ap3, 'ditutup').text).toContain('E) RWY 06/24 CLSD');
+      const ad = tt('TEMPORARY CHANGE OF AD DATA AS FLW : RWY 09/27 LIMITED');
+      expect(correctNotam(ad, ap3, 'perubahan data aerodrom').text).toBe(ad);
+    });
   });
 });

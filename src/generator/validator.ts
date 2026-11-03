@@ -22,7 +22,7 @@ const CLOSED_INPUT = /ditutup|penutupan|tutup|closed|\bclose\b|clsd|tidak\s+(?:d
 const SCHEDULE_HINT = /setiap hari|tiap hari|harian|\bdaily\b/i;
 
 // Petunjuk bahwa input menyebut alasan (kata penyebab, atau jenis kegiatan/kejadian). Dipakai agar "DUE TO ..." di E) tidak muncul dari karangan model.
-const REASON_CUE = new RegExp(
+export const REASON_CUE = new RegExp(
   String.raw`\b(?:karena|dikarenakan|disebabkan|akibat|sebab|dalam rangka|sehubungan|guna\b|untuk keperluan|alasan|due to|because|reason|teknis|operasional|keamanan|cuaca|erupsi|letusan|abu vulkanik|kebakaran|banjir|bencana|kalibrasi|calibrat|inspeksi|inspect|pemeriksaan|latihan|training|exercise|vip|haji|hajj|event|acara|kegiatan|upacara|perbaik|diperbaik|memperbaik|repair|pelihara|pemelihara|dipelihara|perawat|dirawat|rusak|kerusakan|lubang|pothole|maint|pekerja|pengerja|dikerja|kerja|work|wip|pembangun|konstruksi|construction|pelebar|pemasang|penggantian|pembersih|pengecat|marking|overlay)`,
   'i',
 );

@@ -2,7 +2,7 @@ import { Airport, findAirport } from '../master/airports';
 import { buildPrompt } from './rag';
 import { expectedUtcStamps } from '../master/time';
 import { ICAO_SUBJECT, textSubject } from '../master/icao-qcode';
-import { Validation, parseItems, validateNotam } from './validator';
+import { Validation, parseItems, validateNotam, REASON_CUE } from './validator';
 
 export interface GeneratedNotam {
   text: string;
@@ -108,11 +108,16 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
   }
   const [fir, ...rest] = (items.Q ?? '').split('/');
   if (rest.length && fir !== airport.fir) setItem('Q', fir, airport.fir, 'FIR di Q) disamakan dengan master bandara');
-  // Subjek kode Q yang tidak ada di tabel ICAO diganti subjek yang lazim menurut frasa awal E) bila frasanya tegas (mis. TAXIWAY -> MX).
+  // Subjek kode Q yang tidak ada di tabel ICAO, atau bertentangan dengan frasa awal E) yang tegas (RWY, TWY, APRON, STAND), diganti subjek yang lazim
+  // (mis. TAXIWAY -> MX). Frasa-frasa itu cocok 100% dengan dataset AirNav (RWY 99/99, TWY 75/75, STAND 29/29, APRON 24/24).
   const qc = (items.Q ?? '').split('/')[1] ?? '';
-  if (/^Q[A-Z]{4}$/.test(qc) && !ICAO_SUBJECT[qc.slice(1, 3)] && qc.slice(1, 3) !== 'XX') {
+  const qs = qc.slice(1, 3);
+  if (/^Q[A-Z]{4}$/.test(qc) && qs !== 'XX') {
     const rule = textSubject(items.E);
-    if (rule) setItem('Q', qc, `Q${rule.subjects[0]}${qc.slice(3)}`, 'Subjek kode Q tidak ada di tabel ICAO, diganti sesuai E)');
+    if (rule && !rule.subjects.includes(qs)) {
+      const label = ICAO_SUBJECT[qs] ? `Subjek kode Q (${qs}) tidak cocok dengan E) yang diawali ${rule.label}, diganti sesuai E)` : 'Subjek kode Q tidak ada di tabel ICAO, diganti sesuai E)';
+      setItem('Q', qc, `Q${rule.subjects[0]}${qc.slice(3)}`, label);
+    }
   }
   const exp = expectedUtcStamps(freeText);
   const tz = /\bWITA\b/i.test(freeText) ? 'WITA' : /\bWIT\b/i.test(freeText) ? 'WIT' : /\bWIB\b/i.test(freeText) ? 'WIB' : 'lokal';
@@ -124,8 +129,18 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
   }
   const closed = movementAreaClosed(text, freeText);
   if (closed) {
-    text = closed;
-    corrections.push('Landasan/taxiway/apron/stand yang tidak dapat digunakan ditulis CLSD (menurut AirNav sama dengan ditutup): U/S diganti CLSD, kondisi Q AS → LC');
+    text = closed.text;
+    corrections.push(`Landasan/taxiway/apron/stand yang tidak dapat digunakan ditulis CLSD (menurut AirNav sama dengan ditutup): ${closed.notes.join(', ')}`);
+  }
+  const tempo = stripTemporary(text);
+  if (tempo) {
+    text = tempo.text;
+    corrections.push(`Kata "${tempo.word}" dihapus dari E): AirNav tidak menerjemahkan "sementara", masa berlakunya sudah ada di B)/C)`);
+  }
+  const invented = stripInventedReason(text, freeText);
+  if (invented) {
+    text = invented.text;
+    corrections.push(`Alasan "${invented.reason}" dihapus karena input tidak menyebut alasan`);
   }
   const maint = shortenMaintenance(text, freeText);
   if (maint) {
@@ -136,9 +151,10 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
 }
 
 // Menurut AirNav, area gerak (landasan, taxiway, apron, stand) yang tidak dapat digunakan berstatus closed; hanya WIP dan LIMITED yang berarti masih
-// bisa dipakai di bawah kendali ATC. Di dataset: 0 dari 270 NOTAM area gerak yang ditulis U/S (159 CLSD, 46 WIP, 23 LIMITED).
-// Maka U/S pada E) area gerak (tepat satu, kondisi Q AS) diganti CLSD dan AS menjadi LC, kecuali input menyebut pembatasan.
-function movementAreaClosed(text: string, freeText: string): string | null {
+// bisa dipakai di bawah kendali ATC. Di dataset: 0 dari 270 NOTAM area gerak yang ditulis U/S (159 CLSD, 46 WIP, 23 LIMITED), dan setiap E) ber-CLSD
+// berpasangan dengan kondisi Q LC. Maka pada E) area gerak dengan tepat satu U/S atau CLSD: U/S menjadi CLSD dan kondisi Q menjadi LC,
+// kecuali input menyebut pembatasan.
+function movementAreaClosed(text: string, freeText: string): { text: string; notes: string[] } | null {
   if (/terbatas|limited|dibatasi|pembatasan/i.test(freeText)) return null;
   const rmk = text.search(/\bRMK\b/);
   const head = rmk < 0 ? text : text.slice(0, rmk);
@@ -147,10 +163,50 @@ function movementAreaClosed(text: string, freeText: string): string | null {
   if (eAt < 0) return null;
   const eHead = head.slice(eAt);
   if (!/^E\)\s*(?:RWY|TWY|TAXIWAY|APRON|APN|PRKG STAND|PARKING STAND|STAND)\b/.test(eHead)) return null;
-  if ((eHead.match(/\bU\/S\b/g) ?? []).length !== 1) return null;
-  const qRe = /(^Q\)\s*[A-Z]{4}\/QM[RXYNP])AS(?=\/)/m;
-  if (!qRe.test(head.slice(0, eAt))) return null;
-  return head.slice(0, eAt).replace(qRe, '$1LC') + eHead.replace(/\bU\/S\b/, 'CLSD') + tail;
+  const us = (eHead.match(/\bU\/S\b/g) ?? []).length;
+  const cl = (eHead.match(/\bCLSD\b/g) ?? []).length;
+  if (us + cl !== 1) return null;
+  const qRe = /(^Q\)\s*[A-Z]{4}\/QM[RXYNP])([A-Z]{2})(?=\/)/m;
+  const qm = qRe.exec(head.slice(0, eAt));
+  if (!qm) return null;
+  const notes: string[] = [];
+  if (us) notes.push('U/S diganti CLSD');
+  if (qm[2] !== 'LC') notes.push(`kondisi Q ${qm[2]} → LC`);
+  if (!notes.length) return null;
+  return { text: head.slice(0, eAt).replace(qRe, '$1LC') + eHead.replace(/\bU\/S\b/, 'CLSD') + tail, notes };
+}
+
+// "Sementara" tidak diterjemahkan di E): dari 33 input yang memuatnya di dataset AirNav, tidak satu pun ditulis TEMPORARILY/TEMPO (0 dari 927 E)).
+// TEMPORARILY dan TEMPO dihapus dari E) (di luar RMK); TEMPORARY hanya bila menempel pada status (CLSD/U/S/LIMITED/WIP), karena di dataset ia
+// dipakai untuk hal lain ("TEMPORARY CHANGE OF AD DATA", "TEMPORARY OBSTACLE").
+function stripTemporary(text: string): { text: string; word: string } | null {
+  const rmk = text.search(/\bRMK\b/);
+  const head = rmk < 0 ? text : text.slice(0, rmk);
+  const tail = rmk < 0 ? '' : text.slice(rmk);
+  const eAt = head.search(/^E\)/m);
+  if (eAt < 0) return null;
+  const eHead = head.slice(eAt);
+  const re = /\s+(TEMPORARILY|TEMPO)\b|(?<=\b(?:CLSD|U\/S|LIMITED|LTD|WIP))\s+(TEMPORARY)\b/;
+  const m = re.exec(eHead);
+  if (!m) return null;
+  const cleaned = eHead.replace(new RegExp(re.source, 'g'), '');
+  return { text: head.slice(0, eAt) + cleaned + (rmk < 0 || /\s$/.test(cleaned) ? '' : ' ') + tail, word: m[1] ?? m[2] };
+}
+
+// Alasan yang dikarang model: input tidak memuat petunjuk alasan sama sekali, tetapi E) berakhir dengan "DUE TO <alasan>". Klausa itu dihapus.
+// Dibiarkan (hanya diperingatkan validator) bila alasannya TECR (konvensi AirNav untuk "tidak berfungsi"), bila klausanya tidak di ujung E),
+// atau bila memuat angka/tanda baca (bukan alasan pendek yang jelas).
+function stripInventedReason(text: string, freeText: string): { text: string; reason: string } | null {
+  if (!freeText.trim() || REASON_CUE.test(freeText)) return null;
+  const rmk = text.search(/\bRMK\b/);
+  const head = rmk < 0 ? text : text.slice(0, rmk);
+  const tail = rmk < 0 ? '' : text.slice(rmk);
+  const eAt = head.search(/^E\)/m);
+  if (eAt < 0) return null;
+  const m = /\s+(DUE TO ([A-Z ]{3,40}))\s*\)?\s*$/.exec(head.slice(eAt));
+  if (!m || /^TECR\b/.test(m[2].trim())) return null;
+  const cut = eAt + m.index;
+  return { text: head.slice(0, cut) + (rmk < 0 ? '' : ' ') + tail, reason: m[1].trim() };
 }
 
 // Alasan pemeliharaan di E) ditulis "DUE TO MAINT" (kebiasaan AirNav: 71 NOTAM di dataset), bukan kalimat panjang.
