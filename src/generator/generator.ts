@@ -1,7 +1,8 @@
 import { Airport, findAirport } from '../master/airports';
 import { buildPrompt } from './rag';
 import { expectedUtcPlan } from '../master/time';
-import { ICAO_SUBJECT, textSubject } from '../master/icao-qcode';
+import { ICAO_CONDITION, ICAO_SUBJECT, textSubject } from '../master/icao-qcode';
+import { officialTps, usualTps } from '../master/tps';
 import { Validation, parseItems, validateNotam, REASON_CUE } from './validator';
 
 export interface GeneratedNotam {
@@ -129,6 +130,16 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
     text = closed.text;
     corrections.push(`Landasan/taxiway/apron/stand yang tidak dapat digunakan ditulis CLSD (menurut AirNav sama dengan ditutup): ${closed.notes.join(', ')}`);
   }
+  const wip = movementAreaWip(text);
+  if (wip) {
+    text = wip.text;
+    corrections.push(`Pekerjaan (WIP) yang tidak menutup landasan/taxiway/apron/stand memakai kondisi HW (tabel NSC AirNav: masih bisa dipakai di bawah kendali ATC): ${wip.notes.join(', ')}`);
+  }
+  const nscTps = enforceOfficialTps(text);
+  if (nscTps) {
+    text = nscTps.text;
+    corrections.push(`Traffic/Purpose/Scope disamakan dengan tabel NSC AirNav untuk ${nscTps.code}: ${nscTps.from} → ${nscTps.to}`);
+  }
   const tempo = stripTemporary(text);
   if (tempo) {
     text = tempo.text;
@@ -171,6 +182,53 @@ function movementAreaClosed(text: string, freeText: string): { text: string; not
   if (qm[2] !== 'LC') notes.push(`kondisi Q ${qm[2]} → LC`);
   if (!notes.length) return null;
   return { text: head.slice(0, eAt).replace(qRe, '$1LC') + eHead.replace(/\bU\/S\b/, 'CLSD') + tail, notes };
+}
+
+// Menurut AirNav, WIP (work in progress) berarti ada pekerjaan tetapi area gerak tidak ditutup: kondisi Q-nya HW, bukan LC. Di dataset, pada E) area gerak
+// yang berstatus WIP (bukan alasan "DUE TO ... WIP") tanpa CLSD/LIMITED, 51 dari 54 NOTAM berkondisi HW. Hanya kondisi yang bertentangan dengan WIP (LC, LT, XX,
+// atau yang tidak ada di tabel ICAO) yang diganti HW; kondisi lain (mis. CM displaced, AK resumed) dibiarkan. Traffic/Purpose/Scope ikut disesuaikan
+// ke kombinasi dominan AirNav untuk kode barunya (kombinasi lama milik kode yang lama).
+function movementAreaWip(text: string): { text: string; notes: string[] } | null {
+  const rmk = text.search(/\bRMK\b/);
+  const head = rmk < 0 ? text : text.slice(0, rmk);
+  const eAt = head.search(/^E\)/m);
+  if (eAt < 0) return null;
+  const eHead = head.slice(eAt).replace(/\s+/g, ' ');
+  if (!/^E\)\s*(?:RWY|TWY|TAXIWAY|APRON|APN|PRKG STAND|PARKING STAND|STAND)\b/.test(eHead)) return null;
+  if (/\b(?:CLSD|LIMITED|LTD)\b/.test(eHead)) return null;
+  if (!/\bWIP\b/.test(eHead.replace(/\bDUE TO\b[A-Z0-9 ,/]*?\bWIP\b/g, ''))) return null;
+  const qm = /^(Q\)\s*)([^\n]*)/m.exec(head.slice(0, eAt));
+  if (!qm) return null;
+  const parts = qm[2].trim().split('/');
+  const code = parts[1] ?? '';
+  if (!/^QM[RXYNP][A-Z]{2}$/.test(code)) return null;
+  const cond = code.slice(3);
+  if (cond === 'HW' || !(['LC', 'LT', 'XX'].includes(cond) || !ICAO_CONDITION[cond])) return null;
+  const notes = [`kondisi Q ${cond} → HW`];
+  parts[1] = `${code.slice(0, 3)}HW`;
+  if (parts.length >= 5) {
+    const usual = usualTps(parts[1]);
+    if (usual && usual !== `${parts[2]}/${parts[3]}/${parts[4]}`) {
+      const [t, pu, sc] = usual.split('/');
+      notes.push(`Traffic/Purpose/Scope ${parts[2]}/${parts[3]}/${parts[4]} → ${usual} (lazim untuk ${parts[1]})`);
+      [parts[2], parts[3], parts[4]] = [t, pu, sc];
+    }
+  }
+  return { text: text.replace(/^(Q\)\s*)([^\n]*)/m, (_all, p: string) => p + parts.join('/')), notes };
+}
+
+// Traffic/Purpose/Scope menurut tabel NSC AirNav (data/airnav-tps.json) untuk kode Q yang tabelnya sudah dimiliki (mis. QMRLC = IV/NBO/A, bukan IV/BO/A).
+function enforceOfficialTps(text: string): { text: string; code: string; from: string; to: string } | null {
+  const qm = /^(Q\)\s*)([^\n]*)/m.exec(text);
+  if (!qm) return null;
+  const parts = qm[2].trim().split('/');
+  const code = parts[1] ?? '';
+  const nsc = officialTps(code);
+  if (!nsc || parts.length < 5) return null;
+  const from = `${parts[2]}/${parts[3]}/${parts[4]}`;
+  if (from === nsc) return null;
+  [parts[2], parts[3], parts[4]] = nsc.split('/');
+  return { text: text.replace(/^(Q\)\s*)([^\n]*)/m, (_a, p: string) => p + parts.join('/')), code, from, to: nsc };
 }
 
 // "Sementara" tidak diterjemahkan di E): dari 33 input yang memuatnya di dataset AirNav, tidak satu pun ditulis TEMPORARILY/TEMPO (0 dari 927 E)).

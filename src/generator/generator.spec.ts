@@ -4,7 +4,7 @@ import { join } from 'path';
 import { RagGenerator, MockLlm, OllamaLlm, correctNotam, providerFromEnv } from './generator';
 import { buildPrompt, retrieve } from './rag';
 import { findAirport, mentionedLocators, tzOf } from '../master/airports';
-import { annotateLocalTimes, expectedUtcStamps, mixedZoneClocks } from '../master/time';
+import { annotateLocalTimes, expectedUtcPlan, expectedUtcStamps } from '../master/time';
 import { tpsWarnings } from '../master/tps';
 import { validateNotam } from './validator';
 import { BLOCKING } from '../requests/requests.service';
@@ -296,7 +296,7 @@ describe('validator alasan (DUE TO harus bersumber dari input)', () => {
 
 describe('koreksi subjek kode Q dan alasan baku', () => {
   const ap = findAirport('WIHH')!;
-  const head = (q: string) => `Q) WIIF/${q}/IV/BO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611040100\nC) 2611050500\n`;
+  const head = (q: string) => `Q) WIIF/${q}/${q === 'QMRLC' ? 'IV/NBO/A' : 'IV/BO/A'}/000/999/0616S10653E005\nA) WIHH\nB) 2611040100\nC) 2611050500\n`;
   it('subjek yang tidak ada di tabel ICAO diganti subjek yang lazim menurut E)', () => {
     const r = correctNotam(`${head('QTCAS')}E) TAXIWAY EC1 U/S DUE TO SURFACE DAMAGE`, ap, 'Taxiway EC1 tidak dapat digunakan karena rusak');
     // subjek dikoreksi (TC -> MX), lalu area gerak yang tidak dapat digunakan menjadi CLSD dan kondisi AS menjadi LC
@@ -442,56 +442,91 @@ describe('area gerak tidak dapat digunakan = CLSD', () => {
     });
   });
 
-  describe('jam berlabel zona bercampur dengan jam tanpa label', () => {
-    it('hanya jam awal berlabel zona: jam akhir tanpa label diperingatkan', () => {
-      const r = mixedZoneClocks('Ditutup 16 Oktober 2024 pukul 09:32 WITA sampai 19 Oktober 2024 pukul 12:00');
-      expect(r.local).toEqual(['09.32 WITA']);
-      expect(r.unlabeled).toEqual(['12.00']);
+  describe('zona di salah satu jam berlaku untuk semua jam di narasi', () => {
+    const wihh = findAirport('WIHH')!;
+    const tt = (b: string, c: string) => `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) ${b}\nC) ${c}\nE) RWY 06/24 CLSD DUE TO WIP`;
+    const feat = (a: string, b: string) => `Landasan pacu 06/24 ditutup karena pekerjaan mulai tanggal 7 November 2026 pukul ${a} sampai tanggal 8 November 2026 pukul ${b}`;
+    it('anotasi: jam tak berlabel ikut zona jam berlabel (mendahului atau mengikuti)', () => {
+      expect(annotateLocalTimes('pukul 08.00 WIB sampai pukul 10.00')).toBe('pukul 08.00 WIB [UTC 0100] sampai pukul 10.00 [UTC 0300, zona WIB ikut jam berlabel]');
+      expect(annotateLocalTimes('pukul 08.00 sampai pukul 10.00 WITA')).toBe('pukul 08.00 [UTC 0000, zona WITA ikut jam berlabel] sampai pukul 10.00 WITA [UTC 0200]');
     });
-    it('0800 WIB s.d 1000 (4 digit tanpa pemisah) juga terdeteksi', () => {
-      expect(mixedZoneClocks('Ditutup 5 Nov 2026 pukul 0800 WIB s.d 1000').unlabeled).toEqual(['10.00']);
+    it('tanpa label zona sama sekali, atau berlabel UTC: tidak disentuh (UTC apa adanya)', () => {
+      expect(annotateLocalTimes('pukul 08.00 sampai pukul 10.00')).toBe('pukul 08.00 sampai pukul 10.00');
+      expect(annotateLocalTimes('pukul 0800 UTC sampai 1000')).toBe('pukul 0800 UTC sampai 1000');
     });
-    it('semua berlabel, semua tanpa label, atau UTC bercampur tanpa zona lokal: tidak diperingatkan', () => {
-      expect(mixedZoneClocks('pukul 08.00 WIB sampai 10.00 WIB').unlabeled).toEqual([]);
-      expect(mixedZoneClocks('pukul 08.00 sampai 10.00').unlabeled).toEqual([]);
-      expect(mixedZoneClocks('pukul 0800 UTC sampai 1000').unlabeled).toEqual([]);
+    it('narasi yang memuat jam UTC berlabel: jam tak berlabel tidak diwarisi (UTC dan padanan lokal ditulis berdampingan)', () => {
+      expect(annotateLocalTimes('mulai pukul 2300 (08.00 WIT) sampai pukul 1000 UTC')).toBe('mulai pukul 2300 (08.00 WIT [UTC 2300, tanggal -1 hari]) sampai pukul 1000 UTC');
     });
-    it('angka lain (tahun, ketinggian) tidak dianggap jam', () => {
-      expect(mixedZoneClocks('pukul 08.00 WIB pada 5 Nov 2026, ketinggian 1500 FT dari RWY 06/24').unlabeled).toEqual([]);
+    it('pola "Jam 2300 (08.00 WIT)" (UTC lalu padanan lokal): jam tak berlabel tidak diwarisi', () => {
+      expect(annotateLocalTimes('mulai Jam 2300 (08.00 WIT) sampai dengan Jam 0100 (10.00 WIT)')).toBe('mulai Jam 2300 (08.00 WIT [UTC 2300, tanggal -1 hari]) sampai dengan Jam 0100 (10.00 WIT [UTC 0100])');
     });
-    it('validator memberi peringatan TIME_ZONE_MIXED, bukan galat', () => {
-      const n = 'Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611050100\nC) 2611051000\nE) RWY 06/24 CLSD';
-      const v = validateNotam(n, 'WIHH', 'Landasan 06/24 ditutup 5 November 2026 pukul 08.00 WIB sampai pukul 10.00');
-      expect(v.issues.map((i) => i.code)).toContain('TIME_ZONE_MIXED');
-      expect(v.issues.find((i) => i.code === 'TIME_ZONE_MIXED')?.level).toBe('warning');
-      expect(validateNotam(n, 'WIHH', 'Landasan 06/24 ditutup pukul 01.00 sampai pukul 10.00').issues.map((i) => i.code)).not.toContain('TIME_ZONE_MIXED');
+    it('angka lain (tahun, ketinggian, runway) tidak ikut dikonversi', () => {
+      expect(annotateLocalTimes('pukul 08.00 WIB pada 5 Nov 2026, 1500 FT dari RWY 06/24')).toBe('pukul 08.00 WIB [UTC 0100] pada 5 Nov 2026, 1500 FT dari RWY 06/24');
+    });
+    it('hanya jam akhir berlabel WIB: jam awal ikut WIB, B) dan C) keduanya dikonversi', () => {
+      expect(expectedUtcPlan(feat('0800', '1000 WIB'))).toEqual({ B: '2611070100', C: '2611080300' });
+      const r = correctNotam(tt('2611070800', '2611081000'), wihh, feat('0800', '1000 WIB'));
+      expect(r.text).toContain('B) 2611070100');
+      expect(r.text).toContain('C) 2611080300');
+    });
+    it('hanya jam awal berlabel WIB: jam akhir ikut WIB', () => {
+      const r = correctNotam(tt('2611070800', '2611081000'), wihh, feat('0800 WIB', '1000'));
+      expect(r.text).toContain('B) 2611070100');
+      expect(r.text).toContain('C) 2611080300');
+    });
+    it('tanpa label zona sama sekali: B) dan C) tidak diubah dan tidak ada galat', () => {
+      const n = tt('2611070600', '2611090800');
+      expect(correctNotam(n, wihh, feat('0600', '0800')).corrections.filter((c) => /^[BC]\)/.test(c))).toEqual([]);
+      expect(validateNotam(n, 'WIHH', feat('0600', '0800')).issues.map((i) => i.code)).not.toContain('B_UTC_MISMATCH');
+    });
+    it('keduanya berlabel: keduanya dikonversi (perilaku lama)', () => {
+      const r = correctNotam(tt('2611070800', '2611081000'), wihh, feat('0800 WIB', '1000 WIB'));
+      expect(r.text).toContain('B) 2611070100');
+      expect(r.text).toContain('C) 2611080300');
+    });
+    it('validator: B) yang belum dikonversi untuk jam yang ikut zona dianggap salah', () => {
+      const v = validateNotam(tt('2611070800', '2611080300'), 'WIHH', feat('0800', '1000 WIB'));
+      expect(v.issues.map((i) => i.code)).toContain('B_UTC_MISMATCH');
     });
   });
 
-  describe('jam berlabel hanya di salah satu ujung rentang', () => {
+  describe('WIP tanpa penutupan = kondisi HW', () => {
     const wihh = findAirport('WIHH')!;
-    const tt = (b: string, c: string) => `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) ${b}\nC) ${c}\nE) RWY 06/24 CLSD DUE TO WIP`;
-    const ft = 'Landasan pacu 06/24 ditutup karena pekerjaan mulai tanggal 7 November 2026 pukul 0800 sampai tanggal 8 November 2026 pukul 1000 WIB';
-    it('hanya jam akhir berlabel WIB: C) dikonversi, B) tidak ditimpa', () => {
-      const r = correctNotam(tt('2611070800', '2611081000'), wihh, ft);
-      expect(r.text).toContain('B) 2611070800');
-      expect(r.text).toContain('C) 2611080300');
-      expect(r.corrections.some((c) => c.startsWith('B)'))).toBe(false);
+    const nn = (q: string, e: string) => `Q) WIIF/${q}/000/999/0616S10653E005\nA) WIHH\nB) 2611060200\nC) 2611070800\nE) ${e}`;
+    it('E) berstatus WIP dengan kondisi LC diganti HW, Traffic/Purpose/Scope ikut ke kombinasi lazim', () => {
+      const r = correctNotam(nn('QMRLC/IV/NBO/A', 'RWY 18/36 MARKING REPAINTING WIP'), wihh, 'pengecatan ulang marka landasan, landasan tetap dapat digunakan');
+      expect(r.text).toContain('QMRHW/IV/BO/A/');
+      expect(r.corrections.join(' ')).toContain('HW');
     });
-    it('validator tidak menganggap B) salah bila hanya jam akhir yang berlabel', () => {
-      const v = validateNotam(tt('2611070800', '2611080300'), 'WIHH', ft);
-      expect(v.issues.map((i) => i.code)).not.toContain('B_UTC_MISMATCH');
-      expect(v.issues.map((i) => i.code)).toContain('TIME_ZONE_MIXED');
+    it('taxiway: subjek MX memakai kombinasi lazimnya sendiri', () => {
+      const r = correctNotam(nn('QMXLC/IV/BO/A', 'TWY OVERLAY WIP'), wihh, 'pekerjaan overlay taxiway');
+      expect(r.text).toContain('QMXHW/IV/M/A/');
     });
-    it('hanya jam awal berlabel WIB: B) dikonversi, C) tidak disentuh', () => {
-      const r = correctNotam(tt('2611070800', '2611081000'), wihh, 'Ditutup karena pekerjaan mulai tanggal 7 November 2026 pukul 0800 WIB sampai tanggal 8 November 2026 pukul 1000');
-      expect(r.text).toContain('B) 2611070100');
-      expect(r.text).toContain('C) 2611081000');
+    it('CLSD, LIMITED, dan alasan "DUE TO WIP" tidak mengubah kondisi', () => {
+      for (const e of ['RWY 06/24 CLSD DUE TO WIP', 'RWY 06/24 LIMITED WIP', 'RWY 06/24 CLSD']) {
+        expect(correctNotam(nn('QMRLC/IV/NBO/A', e), wihh, 'ditutup karena pekerjaan').text).toContain('QMRLC/IV/NBO/A/');
+      }
+      expect(correctNotam(nn('QMRLC/IV/NBO/A', 'RWY 06/24 U/S DUE TO WIP'), wihh, 'pekerjaan').text).not.toContain('QMRHW');
     });
-    it('keduanya berlabel: keduanya dikonversi (perilaku lama)', () => {
-      const r = correctNotam(tt('2611070800', '2611081000'), wihh, 'Ditutup karena pekerjaan mulai tanggal 7 November 2026 pukul 0800 WIB sampai tanggal 8 November 2026 pukul 1000 WIB');
-      expect(r.text).toContain('B) 2611070100');
-      expect(r.text).toContain('C) 2611080300');
+    it('kondisi lain yang tidak bertentangan (mis. CM displaced) dibiarkan', () => {
+      expect(correctNotam(nn('QMRCM/IV/NBO/A', 'RWY 02/20 DISPLACED WIP'), wihh, 'pekerjaan').text).toContain('QMRCM/IV/NBO/A/');
     });
+    it('bukan area gerak (mis. lampu) dan sudah HW dibiarkan', () => {
+      expect(correctNotam(nn('QLEAS/IV/BO/A', 'RWY EDGE LGT WIP'), wihh, 'pekerjaan').text).toContain('QLEAS/IV/BO/A/');
+      expect(correctNotam(nn('QMRHW/IV/BO/A', 'RWY 06/24 WIP'), wihh, 'pekerjaan').corrections.filter((c) => c.includes('HW'))).toEqual([]);
+    });
+  });
+});
+
+describe('LP vs LA dan tabel NSC (Traffic/Purpose/Scope)', () => {
+  const wihh = { icao: 'WIHH' } as never;
+  const mk = (q: string, e: string) => `Q) WIIF/${q}/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611040100\nC) 2611050500\nE) ${e}`;
+  it('PAPI memakai subjek LP, approach lighting memakai LA', () => {
+    expect(correctNotam(mk('QLAAS', 'PAPI RWY 06 U/S'), wihh, 'PAPI runway 06 rusak').text).toContain('/QLPAS/');
+    expect(correctNotam(mk('QLPAS', 'APCH LGT RWY 06 U/S'), wihh, 'approach lighting runway 06 rusak').text).toContain('/QLAAS/');
+  });
+  it('QMRLC memakai purpose NBO sesuai tabel NSC', () => {
+    const t = correctNotam(mk('QMRLC', 'RWY 06/24 CLSD').replace('IV/NBO/A', 'IV/BO/A'), wihh, 'runway 06/24 ditutup').text;
+    expect(t).toContain('QMRLC/IV/NBO/A/');
   });
 });

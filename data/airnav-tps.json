@@ -1,0 +1,21 @@
+{
+ "sumber": "Tabel NSC AirNav (Q Code Finder), subjek MR (Runway), kolom FORMAT; dikirim AirNav lewat pengguna pada 2026-11-04. Hanya baris yang terlihat pada tangkapan layar. Tambahkan subjek/kondisi lain bila tabelnya tersedia.",
+ "codes": {
+  "QMRAD": "IV/BO/A",
+  "QMRAH": "IV/BO/A",
+  "QMRAM": "IV/NBO/A",
+  "QMRAN": "IV/BO/A",
+  "QMRAP": "IV/NBO/A",
+  "QMRAR": "IV/NBO/A",
+  "QMRAW": "IV/BO/A",
+  "QMRCL": "IV/NBO/A",
+  "QMRCM": "IV/NBO/A",
+  "QMRCS": "IV/BO/A",
+  "QMRHW": "IV/BO/A",
+  "QMRHX": "IV/NBO/A",
+  "QMRLB": "IV/NBO/A",
+  "QMRLC": "IV/NBO/A",
+  "QMRLH": "IV/NBO/A",
+  "QMRLI": "I/NBO/A"
+ }
+}

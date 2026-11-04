@@ -10,12 +10,14 @@ export const ICAO_CONDITION = table.condition;
 
 const short = (s: string) => s.replace(/\s*\(.*$/, '').trim();
 
-// Frasa awal E) -> subjek yang lazim. Hanya frasa yang tegas; diukur ke dataset AirNav (RWY 99/99, TWY 75/75, STAND 29/29, APRON 24/24 yang terkena aturan).
+// Frasa awal E) -> subjek yang lazim. Hanya frasa yang tegas; diukur ke dataset AirNav (RWY 99/99, TWY 75/75, STAND 29/29, APRON 24/24, PAPI 40/40, approach lighting 10/10 yang terkena aturan).
 // Kata lampu/marka dikecualikan karena subjeknya lain (LY, LE, MM, dst.).
 const TEXT_SUBJECT: { re: RegExp; subjects: string[]; label: string }[] = [
   { re: /^(APRON|APN)\s(?!.*(LGT|LIGHT|TWY|MARKING|EDGE|FLOOD))/, subjects: ['MN'], label: 'APRON' },
   { re: /^(TWY|TAXIWAY)\s(?!.*(LGT|LIGHT|EDGE|CENTER|CENTRE|CL\b))/, subjects: ['MX', 'MY'], label: 'TWY' },
   { re: /^(PRKG STAND|ACFT STAND|AIRCRAFT STAND|STAND)\b/, subjects: ['MP'], label: 'STAND' },
+  { re: /^(PAPI|PRECISION APPROACH PATH INDICATOR)\b/, subjects: ['LP'], label: 'PAPI' },
+  { re: /^((APCH|APPROACH)\s+(LIGHT(ING)?|LGTS?)|[PMS]?ALS[FR]?|SSALR|MALS[RF]?)\b/, subjects: ['LA'], label: 'approach lighting' },
   { re: /^RWY\s(?!.*(LGT|LIGHT|EDGE|CENTER|CENTRE|PAPI|THR|ILS|MARKING|DISPLACED|LOC|GP|STRIP|SHOULDER|TDZ|REIL|RTIL|ALS|ARREST))/, subjects: ['MR'], label: 'RWY' },
 ];
 

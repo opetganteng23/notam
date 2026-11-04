@@ -20,6 +20,15 @@ try {
 // Yang bertolak belakang (mis. IV/M untuk kode yang oleh ICAO IV/NBO) yang diperingatkan.
 const compatible = (a: string, b: string) => [...a].every((c) => b.includes(c)) || [...b].every((c) => a.includes(c));
 
+// Kombinasi resmi dari tabel NSC AirNav (data/airnav-tps.json) untuk kode yang tabelnya sudah dimiliki; didahulukan daripada dugaan dari dataset.
+let official: Record<string, string> = {};
+try {
+  official = JSON.parse(readFileSync(join(__dirname, '..', '..', 'data', 'airnav-tps.json'), 'utf8')).codes ?? {};
+} catch {
+  /* tanpa tabel resmi, hanya pembanding dataset/ICAO yang berjalan */
+}
+export const officialTps = (code: string): string | null => official[code] ?? null;
+
 type Examples = { notam: string }[];
 const observed = new Map<string, Map<string, number>>();
 try {
@@ -45,7 +54,12 @@ export function tpsWarnings(qItem: string): { code: string; message: string }[] 
   const seen = observed.get(code);
   const total = seen ? [...seen.values()].reduce((a, b) => a + b, 0) : 0;
   const combo = `${traffic}/${purpose}/${scope}`;
-  if (seen && total >= MIN_SEEN && !seen.has(combo)) {
+  const nsc = official[code];
+  if (nsc && nsc !== combo) {
+    out.push({ code: 'Q_TPS_NSC', message: `Traffic/Purpose/Scope ${combo} berbeda dari tabel NSC AirNav untuk ${code} (${nsc}). Periksa Q)` });
+  } else if (nsc) {
+    /* sesuai tabel resmi */
+  } else if (seen && total >= MIN_SEEN && !seen.has(combo)) {
     const usual = [...seen].sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, v]) => `${k} (${v}x)`).join(', ');
     out.push({ code: 'Q_TPS_UNUSUAL', message: `Traffic/Purpose/Scope ${combo} belum pernah dipakai untuk ${code} di data AirNav; lazimnya ${usual}. Periksa Q)` });
   } else if (total < MIN_SEEN) {
@@ -57,4 +71,13 @@ export function tpsWarnings(qItem: string): { code: string; message: string }[] 
     }
   }
   return out;
+}
+
+// Kombinasi Traffic/Purpose/Scope dominan untuk kode Q bila sudah terlihat minimal MIN_SEEN kali di dataset; selain itu null.
+// Dipakai saat kode Q diganti oleh koreksi otomatis: kombinasi lama milik kode yang lama, bukan bukti untuk kode yang baru.
+export function usualTps(code: string): string | null {
+  if (official[code]) return official[code];
+  const seen = observed.get(code);
+  const total = seen ? [...seen.values()].reduce((a, b) => a + b, 0) : 0;
+  return seen && total >= MIN_SEEN ? [...seen].sort((a, b) => b[1] - a[1])[0][0] : null;
 }
