@@ -1,5 +1,5 @@
 import { findAirport } from '../master/airports';
-import { expectedUtcStamps, mixedZoneClocks } from '../master/time';
+import { expectedUtcPlan, mixedZoneClocks } from '../master/time';
 import { qcodeWarnings } from '../master/icao-qcode';
 import { tpsWarnings } from '../master/tps';
 
@@ -82,13 +82,10 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
   if (b !== null && c !== null && c < b) err('C_BEFORE_B', 'C) lebih awal dari B)');
   if (!it.C) warn('C_MISSING', 'C) tidak ada (wajib kecuali PERM)');
 
-  const expected = freeText ? expectedUtcStamps(freeText) : [];
-  if (expected.length) {
-    const cStamp = it.C?.replace(/ ?EST$/, '');
-    if (it.B && /^\d{10}$/.test(it.B) && it.B !== expected[0]) err('B_UTC_MISMATCH', `B) (${it.B}) tidak sama dengan konversi UTC dari teks input (${expected[0]})`);
-    if (cStamp && /^\d{10}$/.test(cStamp) && expected.length > 1 && cStamp !== expected[expected.length - 1])
-      err('C_UTC_MISMATCH', `C) (${cStamp}) tidak sama dengan konversi UTC dari teks input (${expected[expected.length - 1]})`);
-  }
+  const plan = freeText ? expectedUtcPlan(freeText) : {};
+  const cStamp = it.C?.replace(/ ?EST$/, '');
+  if (plan.B && it.B && /^\d{10}$/.test(it.B) && it.B !== plan.B) err('B_UTC_MISMATCH', `B) (${it.B}) tidak sama dengan konversi UTC dari teks input (${plan.B})`);
+  if (plan.C && cStamp && /^\d{10}$/.test(cStamp) && cStamp !== plan.C) err('C_UTC_MISMATCH', `C) (${cStamp}) tidak sama dengan konversi UTC dari teks input (${plan.C})`);
 
   // Jam berlabel WIB/WITA/WIT bercampur dengan jam tak berlabel: yang tak berlabel ditulis apa adanya sebagai UTC.
   if (freeText) {

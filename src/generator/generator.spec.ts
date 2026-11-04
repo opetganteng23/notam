@@ -467,4 +467,31 @@ describe('area gerak tidak dapat digunakan = CLSD', () => {
       expect(validateNotam(n, 'WIHH', 'Landasan 06/24 ditutup pukul 01.00 sampai pukul 10.00').issues.map((i) => i.code)).not.toContain('TIME_ZONE_MIXED');
     });
   });
+
+  describe('jam berlabel hanya di salah satu ujung rentang', () => {
+    const wihh = findAirport('WIHH')!;
+    const tt = (b: string, c: string) => `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) ${b}\nC) ${c}\nE) RWY 06/24 CLSD DUE TO WIP`;
+    const ft = 'Landasan pacu 06/24 ditutup karena pekerjaan mulai tanggal 7 November 2026 pukul 0800 sampai tanggal 8 November 2026 pukul 1000 WIB';
+    it('hanya jam akhir berlabel WIB: C) dikonversi, B) tidak ditimpa', () => {
+      const r = correctNotam(tt('2611070800', '2611081000'), wihh, ft);
+      expect(r.text).toContain('B) 2611070800');
+      expect(r.text).toContain('C) 2611080300');
+      expect(r.corrections.some((c) => c.startsWith('B)'))).toBe(false);
+    });
+    it('validator tidak menganggap B) salah bila hanya jam akhir yang berlabel', () => {
+      const v = validateNotam(tt('2611070800', '2611080300'), 'WIHH', ft);
+      expect(v.issues.map((i) => i.code)).not.toContain('B_UTC_MISMATCH');
+      expect(v.issues.map((i) => i.code)).toContain('TIME_ZONE_MIXED');
+    });
+    it('hanya jam awal berlabel WIB: B) dikonversi, C) tidak disentuh', () => {
+      const r = correctNotam(tt('2611070800', '2611081000'), wihh, 'Ditutup karena pekerjaan mulai tanggal 7 November 2026 pukul 0800 WIB sampai tanggal 8 November 2026 pukul 1000');
+      expect(r.text).toContain('B) 2611070100');
+      expect(r.text).toContain('C) 2611081000');
+    });
+    it('keduanya berlabel: keduanya dikonversi (perilaku lama)', () => {
+      const r = correctNotam(tt('2611070800', '2611081000'), wihh, 'Ditutup karena pekerjaan mulai tanggal 7 November 2026 pukul 0800 WIB sampai tanggal 8 November 2026 pukul 1000 WIB');
+      expect(r.text).toContain('B) 2611070100');
+      expect(r.text).toContain('C) 2611080300');
+    });
+  });
 });

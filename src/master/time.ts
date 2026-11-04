@@ -24,11 +24,9 @@ export function annotateLocalTimes(text: string): string {
 const MONTHS = ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'];
 const EN_MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
-// Pasangan "DD <bulan> YYYY [pukul] HH.MM <zona>" pada teks -> stempel UTC YYMMDDHHMM yang seharusnya muncul di B)/C).
-// Hanya mengenali pola tanggal+jam berlabel zona; selain itu tidak ada yang diperiksa.
-export function expectedUtcStamps(text: string): string[] {
+function labeledStamps(text: string): { stamp: string; index: number }[] {
   const re = new RegExp('\\b(\\d{1,2})\\s+([a-z]+)\\s+(\\d{4})\\s*,?\\s*(?:pukul|jam|at)?\\s*' + CLOCK + '\\s*(WITA|WIB|WIT)\\b', 'gi');
-  const out: string[] = [];
+  const out: { stamp: string; index: number }[] = [];
   for (const m of text.matchAll(re)) {
     const name = m[2].toLowerCase();
     const mo = MONTHS.indexOf(name) >= 0 ? MONTHS.indexOf(name) : EN_MONTHS.indexOf(name);
@@ -38,9 +36,26 @@ export function expectedUtcStamps(text: string): string[] {
     const offset = OFFSET[m[8].toUpperCase()];
     const d = new Date(Date.UTC(Number(m[3]), mo, Number(m[1]), hour, min) - offset * 3600_000);
     const p = (n: number) => String(n).padStart(2, '0');
-    out.push(`${p(d.getUTCFullYear() % 100)}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}${p(d.getUTCHours())}${p(d.getUTCMinutes())}`);
+    out.push({ stamp: `${p(d.getUTCFullYear() % 100)}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}${p(d.getUTCHours())}${p(d.getUTCMinutes())}`, index: m.index ?? 0 });
   }
   return out;
+}
+
+// Pasangan "DD <bulan> YYYY [pukul] HH.MM <zona>" pada teks -> stempel UTC YYMMDDHHMM yang seharusnya muncul di B)/C).
+// Hanya mengenali pola tanggal+jam berlabel zona; selain itu tidak ada yang diperiksa.
+export function expectedUtcStamps(text: string): string[] {
+  return labeledStamps(text).map((l) => l.stamp);
+}
+
+// Stempel yang diharapkan per item. Satu jam berlabel belum tentu jam awal: bila narasi memuat dua tanggal dan yang berlabel adalah yang terakhir,
+// itu jam akhir (C), dan B) tidak disentuh (jam tanpa label ditulis apa adanya sebagai UTC).
+export function expectedUtcPlan(text: string): { B?: string; C?: string } {
+  const l = labeledStamps(text);
+  if (!l.length) return {};
+  if (l.length > 1) return { B: l[0].stamp, C: l[l.length - 1].stamp };
+  const dates = [...text.matchAll(/\b\d{1,2}\s+([a-z]+)\s+\d{4}/gi)].filter((m) => MONTHS.includes(m[1].toLowerCase()) || EN_MONTHS.includes(m[1].toLowerCase())).map((m) => m.index ?? 0);
+  const isEnd = dates.length >= 2 && l[0].index === dates[dates.length - 1];
+  return isEnd ? { C: l[0].stamp } : { B: l[0].stamp };
 }
 
 // Jam di narasi: didahului kata penanda (pukul/jam/sampai/s.d./dari/...) atau tanda hubung, dengan zona opsional.

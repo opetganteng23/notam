@@ -1,6 +1,6 @@
 import { Airport, findAirport } from '../master/airports';
 import { buildPrompt } from './rag';
-import { expectedUtcStamps } from '../master/time';
+import { expectedUtcPlan } from '../master/time';
 import { ICAO_SUBJECT, textSubject } from '../master/icao-qcode';
 import { Validation, parseItems, validateNotam, REASON_CUE } from './validator';
 
@@ -119,14 +119,11 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
       setItem('Q', qc, `Q${rule.subjects[0]}${qc.slice(3)}`, label);
     }
   }
-  const exp = expectedUtcStamps(freeText);
+  const plan = expectedUtcPlan(freeText);
   const tz = /\bWITA\b/i.test(freeText) ? 'WITA' : /\bWIT\b/i.test(freeText) ? 'WIT' : /\bWIB\b/i.test(freeText) ? 'WIB' : 'lokal';
-  if (exp.length) {
-    if (/^\d{10}$/.test(items.B ?? '') && items.B !== exp[0]) setItem('B', items.B, exp[0], `B) ditulis dalam UTC: {to} = ${human(exp[0])} UTC (jam ${tz} di narasi ${shift(tz)})`);
-    const cEnd = exp[exp.length - 1];
-    const c = items.C?.match(/^(\d{10})( ?EST)?$/);
-    if (exp.length > 1 && c && c[1] !== cEnd) setItem('C', c[1], cEnd, `C) ditulis dalam UTC: {to} = ${human(cEnd)} UTC (jam ${tz} di narasi ${shift(tz)})`);
-  }
+  if (plan.B && /^\d{10}$/.test(items.B ?? '') && items.B !== plan.B) setItem('B', items.B, plan.B, `B) ditulis dalam UTC: {to} = ${human(plan.B)} UTC (jam ${tz} di narasi ${shift(tz)})`);
+  const c = items.C?.match(/^(\d{10})( ?EST)?$/);
+  if (plan.C && c && c[1] !== plan.C) setItem('C', c[1], plan.C, `C) ditulis dalam UTC: {to} = ${human(plan.C)} UTC (jam ${tz} di narasi ${shift(tz)})`);
   const closed = movementAreaClosed(text, freeText);
   if (closed) {
     text = closed.text;
