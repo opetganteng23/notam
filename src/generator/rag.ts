@@ -19,9 +19,18 @@ const indexed = examples.map((e) => ({ e, g: grams(e.freeText) }));
 
 // Contoh paling mirip dari dataset (Jaccard unigram+bigram). Kandidat referensi, bukan bukti kebenaran.
 // exclude: teks contoh yang dilewati (dipakai evaluasi agar contoh uji tidak bocor ke prompt).
-export function retrieve(freeText: string, k = 3, exclude?: string): Example[] {
+// pool: kumpulan contoh alternatif (dipakai pembuatan dataset fine-tuning agar retrieval hanya dari data latih).
+const poolIndex = new WeakMap<Example[], { e: Example; g: Set<string> }[]>();
+const indexOf = (pool?: Example[]) => {
+  if (!pool) return indexed;
+  let ix = poolIndex.get(pool);
+  if (!ix) poolIndex.set(pool, (ix = pool.map((e) => ({ e, g: grams(e.freeText) }))));
+  return ix;
+};
+
+export function retrieve(freeText: string, k = 3, exclude?: string, pool?: Example[]): Example[] {
   const q = grams(freeText);
-  return indexed
+  return indexOf(pool)
     .filter(({ e }) => e.freeText !== exclude)
     .map(({ e, g }) => {
       let hit = 0;
@@ -34,10 +43,10 @@ export function retrieve(freeText: string, k = 3, exclude?: string): Example[] {
     .map((r) => r.e);
 }
 
-export function buildPrompt(freeText: string, airport: Airport, exclude?: string): string {
+export function buildPrompt(freeText: string, airport: Airport, exclude?: string, pool?: Example[]): string {
   const tz = tzOf(airport);
   const input = annotateLocalTimes(freeText);
-  const shots = retrieve(freeText, 3, exclude)
+  const shots = retrieve(freeText, 3, exclude, pool)
     .map((e, i) => `Contoh ${i + 1}\nInput: ${e.freeText}\nNOTAM:\n${e.notam}`)
     .join('\n\n');
   return [

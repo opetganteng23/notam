@@ -9,7 +9,10 @@ import examples from '../data/examples.json';
 const n = Number(process.argv[2] ?? 30);
 let seed = 42;
 const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 2 ** 32) / 2 ** 32);
-const pool = (examples as { freeText: string; notam: string }[]).filter((e) => findAirport(parseItems(e.notam).A ?? ''));
+// EVAL_SET=finetune/out/val-cases.json: uji pada set uji fine-tuning (gold sudah dibersihkan). Catatan: retrieval aplikasi tetap memakai seluruh dataset, jadi hasil sedikit optimistis.
+import { readFileSync } from 'fs';
+const fromSet = process.env.EVAL_SET ? (JSON.parse(readFileSync(process.env.EVAL_SET, 'utf8')) as { freeText: string; gold: string }[]).map((c) => ({ freeText: c.freeText, notam: c.gold })) : null;
+const pool = (fromSet ?? (examples as { freeText: string; notam: string }[])).filter((e) => findAirport(parseItems(e.notam).A ?? ''));
 const sample = pool.map((e) => ({ e, k: rnd() })).sort((a, b) => a.k - b.k).slice(0, n).map((x) => x.e);
 
 (async () => {

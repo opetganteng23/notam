@@ -2,3 +2,7 @@ node_modules
 dist
 .env
 /public
+_to_delete/
+eval-*.json
+finetune/*.zip
+finetune/*.gguf

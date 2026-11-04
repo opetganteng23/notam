@@ -1,0 +1,542 @@
+[
+ {
+  "freeText": "Pada tanggal 24 Agustus 2023 pukul 01.00 hingga pukul tanggal 24 Agustus 2023 pukul 02.00 di Balikpapan Strip Runway Akan dilaksanakan Latihan darurat pada 350 meter setelah threshold 07 dan 80 meter arah timur laut dari garis tengah RWY dengan koordinat 011619.71S 1165314.49E. Catatan : Semua trafik mengikuti instruksi ATC",
+  "airport": "WALL",
+  "gold": "Q) WAAF/QMWXX/IV/M/A/000/999/0116S11653E005\nA) WALL\nB) 2308240100\nC) 2308240200\nE) EMERGENCY EXER WILL TAKE PLACE PSN 350M BEYOND RWY 07 AND 80M SOUTHEAST OF CENTERLINE WI COORD 011619.71S 1165314.49E RMK: ALL TFC SUBJ ATC CLR"
+ },
+ {
+  "freeText": "Approach Lighting System PALS kategori 1 landasan pacu 01 tidak beroperasi sementara karena alasan teknis di Bandar Udara Kalimaru - Tanjung Redeb mulai 12 Februari 2024 pukul 23.00 hingga 12 Mei 2024 pukul 23.00",
+  "airport": "WAQT",
+  "gold": "Q) WAAF/QLAAS/IV/NBO/A/000/999/0209N11726E005\nA) WAQT\nB) 2402122300\nC) 2405122300\nE) APPROACH LIGHTING SYSTEM PALS CAT I RWY 01 U/S DUE TO TECR"
+ },
+ {
+  "freeText": "Mulai 29 Januari 2024 jam 03.00\nhingga 29 Januari 2024 jam 08.00\nPenerbangan Kalibrasi untuk PAPI Runway 13/31 \ndi Bandar Udara H. Asan Sampit\nCatatan : Semua pesawat mengikuti izin ATC",
+  "airport": "WAGS",
+  "gold": "Q) WAAF/QLPXX/IV/BO/AE/000/999/0230S11259E005\nA) WAGS\nB) 2401290300\nC) 2401290800\nE) CLBR FLT FOR PAPI RWY 13/31\nRMK: ALL TFC SUBJ ATC CLR"
+ },
+ {
+  "freeText": "Penutupan landasan pacu 04/22 di Bandar Udara Malinau karena latihan penanganan darurat mulai tanggal 06 September 2024 pukul 02.30 hingga 04.00",
+  "airport": "WAQM",
+  "gold": "Q) WAAF/QMRLC/IV/NBO/A/000/999/0335N11638E005\nA) WAQM\nB) 2409060230\nC) 2409060400\nE) RWY 04/22 CLSD DUE TO EMERGENCY EXER"
+ },
+ {
+  "freeText": "Pada tanggal 15 Desember 2023 pukul 23.00 hingga 15 Februari 2024 pukul 10.00, pembatasan operasi pesawat tipe B737-900ER karena kerusakan permukaan pada landasan pacu 04/22 di Bandar Udara APT Pranoto-Samarinda.",
+  "airport": "WALS",
+  "gold": "Q) WAAF/QMRLT/IV/NBO/A/000/999/0029S11709E005\nA) WALS\nB) 2312152300\nC) 2402151000\nE) RWY 04/22 LIMITED FOR ACFT TYPE B737-900ER DUE TO SFC DAMAGE"
+ },
+ {
+  "freeText": "Mulai 19 Februari 2021 jam 03.00\nhingga 19 Mei 2021 jam 10.00\nUntuk tanggal 19 Februari 0300-1000 dan 20 Februari hingga 19 Mei 0000-1000\nPeringatan untuk semua traffic pekerjaan sedang berlangsung\nPerpanjangan runway sepanjang 200m dimulai dari awal runway 10\ndi Bandar Udara Kuala Pembuang\nCatatan : -Beberapa lampu di tepi rwy 10/28 terdampak\n-Adanya alat berat",
+  "airport": "WAGF",
+  "gold": "Q) WAAF/QMRHW/IV/NBO/A/000/999/0323S11233E005\nA) WAGF\nB) 2102190300\nC) 2105191000\nD) FEB 19 0300-1000 AND FEB 20-MAY 19 0000-1000\nE) ALL TFC CTN ADZ DUE TO WIP EXTENDING RWY ALONG 200M FM BEGINNING\nRWY 10\nRMK: - SOME EDGE LIGHT RWY 10/28 AFFECTED\n          - HEAVY EQUIPMENT PRESENT"
+ },
+ {
+  "freeText": "Mulai 22 Juni 2022 jam 00.00 hingga 20 September 2022 jam 07.00 RESA landasan pacu 28 tidak tersedia dikarenakan adanya pekerjaan di Bandar Udara Kuala Pembuang",
+  "airport": "WAGF",
+  "gold": "Q) WAAF/QMRXX/IV/NBO/A/000/999/0323S11233E005\nA) WAGF \nB) 2206220000\nC) 2209200700\nE) RESA RWY 28 NOT AVAILABLE DUE TO WIP"
+ },
+ {
+  "freeText": "Penutupan Aircraft Stand Nomor 7 di Bandar Udara Juwata - Tarakan karena adanya pekerjaan West Apron mulai tanggal 22 April 2024 pukul 2200 sampai dengan 22 Juli 2024 pukul 1200. Catatan : Semua trafik mengikuti instruksi ATC dan semua pesawat mengikuti pedoman taxi sementara",
+  "airport": "WAQQ",
+  "gold": "Q) WAAF/QMPLC/IV/BO/A/000/999/0320N11734E005\nA) WAQQ\nB) 2404222200\nC) 2407221200\nE) ACFT STAND NR 7 CLSD DUE TO WEST APRON WIP RMK : - ALL TFC SUBJ ATC CLR - ALL ACFT FLW TEMPORARY TAXI GUIDELINE _x0003_"
+ },
+ {
+  "freeText": "Strip runway 07L/25R di Bandara Soekarno Hatta sedang dalam perkerjaan perbaikan posisi 150M arah Utara dari runway 07L. Pada tanggal 23 Oktober 2024 Jam 0100 sampai dengan tanggal 30 November 2024 jam 1000\nCatatan : Semua pergerakan harus hati hati\n\nJadwal Spesifikasi: setiap hari dimulai jam 0100 sampai dengan 1000",
+  "airport": "WIII",
+  "gold": "Q) WIIF/QMWHW/IV/M/A/000/999/0607S10640E005\nA) WIII\nB) 2410230100\nC) 2411301000\nD) DAILY 0100-1000\nE) STRIP RWY 07L/25R WIP PSN 150M NORTH OF RWY 07L\nRMK: ALL TFC CTN ADZ"
+ },
+ {
+  "freeText": "Bandara Soekarno Hatta Taxi way di Bandara Soekarno Hatta N4 dan Taxiway N5 ditutup selama ada pekerjaan dimulai tanggal 26 oktober 2024 jam 1700 UTC sampai tanggal 29 oktober 2024 jam 2300 UTC dan dilaksanakan 3 hari setiap hari jam 1700 - 2300",
+  "airport": "WIII",
+  "gold": "Q) WIIF/QMXLC/IV/BO/A/000/999/0607S10640E005\nA) WIII\nB) 2410261700\nC) 2410292300\nD) DAILY 1700-2300\nE) TWY N4 AND TWY N5 CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Pada tanggal 24 Juni 2023 pukul 0212 sampai dengan 24 september 2023 pukul 0800, diBandara Gewayantana-Larantuka (WATL) terdapat alat berat pada posisi 200 m sebelum THR 10, 30M dari selatan centre line   catatan: Semua traffic agar berhati-hati",
+  "airport": "WATL",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0816S12300E005\nA) WATL\nB) 2306240212\nC) 2309240800\nE) HEAVY EQPT PRESENT PSN 200M BEFORE THR 10,30M SOUTH OF CENTERLINE\nRMK: ALL TFC CTN ADZ"
+ },
+ {
+  "freeText": "Fasilitas VOR/DME Di Bandara Umbu Mehang Kunda - Waingapu (WATU) dengan Frequensi 117.3MHZ/ch120x, bagian pada DME telah beroperasi normal pada tanggal 22 Oktober 2023 pada jam 0717 UTC",
+  "airport": "WATU",
+  "gold": "Q) WAAF/QNDAK/IV/BO/AE/000/999/0940S12018E250\nA) WATU\nB) 2310220717\nE) VOR/DME WGP FREQ 117.3MHZ/CH120X,DME PART RESUMED NML OPS"
+ },
+ {
+  "freeText": "PARKIR PESAWAT NO 2 DAN 4 DITUTUP KAREANA PEKERJAAN DI BANDARA LABUAN BAJO WATO MULAI TANGGAL 23 MEI 2024 PUKUL 1200 UTC SAMPAI DENGAN TANGGAL 6 JUNI 2024 PUKUL 2300 UTC",
+  "airport": "WATO",
+  "gold": "Q) WAAF/QMPLC/IV/BO/A/000/999/0827S11953E005\nA) WATO\nB) 2405231200\nC) 2406062300\nE) ACFT STANDS 2 AND 4 CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Pada tanggal 07 Agustus 2024, dari pukul 23:00 UTC hingga 21 Agustus 2024, pukul 10:00 UTC, sedang dilakukan pekerjaan di strip landasan pacu di Bandara Sultan Muhammad Salahuddin Bima (WADB) posisi 463M Diluar THR 32, 15 M ke arah barat laut dari centerline",
+  "airport": "WADB",
+  "gold": "Q) WAAF/QMWHW/IV/M/A/000/999/0832S11841E005\nA) WADB\nB) 2408072300\nC) 2408211000\nD) DAILY 2300-1000\nE) STRIP RWY WIP ALONG 60M PSN 463M BEYOND THR RWY 32.15M \nNORTH\nWEST OF CENTERLINE\nRMK:HEAVY EQPT PRESENT"
+ },
+ {
+  "freeText": "LAMPU THRESHOLD RUNWAY 10/28 TIDAK BERFUNGSI DIBANDARA TAMBOLAKA-WATK MULAI TANGGAL 18 MEI 2024 PUKUL 0400 UTC SAMPAI TANGGAL 14 JULI 2024 PUKUL 0900",
+  "airport": "WATK",
+  "gold": "Q) WAAF/QLTAS/IV/BO/A/000/999/0925S11915E005\nA) WATK\nB) 2405180400\nC) 2407140900\nE) THR LIGHTS RWY 10/28 U/S"
+ },
+ {
+  "freeText": "RTIL RWY 27 di bandara H. Hasan aroeboesman - Ende (WATE) sudah dapat digunakan kembali mulai tanggal 08 Agustus 2024 pukul 0335 UTC",
+  "airport": "WATE",
+  "gold": "Q) WAAF/QLJAK/IV/BO/A/000/999/0850S12140E005\nA) WATE\nB) 2408080335\nE) RTIL RWY 27 RESUME NML OPS"
+ },
+ {
+  "freeText": "Di Bandara Zainuddin Abdul Madjid pada tanggal 18 Oktober 2022 pukul 0927 sampai 18 Oktober 2022 1000 Approach LIGHTING SYSTEM PALS CAT 1 Runway 13 tidak dapat beroperasi karena sedang dalam pekerjaan",
+  "airport": "WADL",
+  "gold": "Q) WAAF/QLAAS/IV/NBO/A/000/999/0845S11616E005\nA) WADL\nB) 2210180927\nC) 2210181000\nE) APCH LIGHTING SYSTEM PALS CAT 1 RWY 13 U/S DUE TO WIP"
+ },
+ {
+  "freeText": "LAMPU UJUNG LANDASAN PACU 14/32 Di bandara Bima WADB tidak dapat digunakan mulai tanggal 05 november 2024 pukul 0200 UTC  sampai tanggal 26 november 2024 PUKUL 1000UTC",
+  "airport": "WADB",
+  "gold": "Q) WAAF/QLIAS/IV/BO/A/000/999/0832S11841E005\nA) WADB\nB) 2411050200\nC) 2411261000\nE) RWY END LIGHT RWY 14/32 U/S"
+ },
+ {
+  "freeText": "konsentrasi burung disekitar landasan pacu 17/35 di bandara labuan bajo mulai tanggal 05 januari 2024 pukul 23:00 sampai tanggal 04 maret 2024 pukul 12:00 setiap hari pada jam 23:00 sampai dengan 12:00 catatan: semua lalu lintas agar berhati-hati",
+  "airport": "WATO",
+  "gold": "Q) WAAF/QMRHX/IV/NBO/A/000/999/0829S11953E005\nA) WATO\nB) 2401052300\nC) 2403041200\nD) DAILY 2300-1200\nE) CONCENTRATION OF BIRDS AT AROUND RWY 17/35 RMK: ALL TFC CTN ADZ"
+ },
+ {
+  "freeText": "Penutupan RWY 09/27 dikarenakan adanya latihan keadaan darurat di bandara H. Hasan Aroeboesman  pada tanggal 08 November 2024 pukul 07:00 UTC sampai 08 November 2024 pukul 09:00 UTC",
+  "airport": "WATE",
+  "gold": "Q) WAAF/QMRLC/IV/NBO/A/000/999/0850S12140E005 \nA) WATE \nB) 2411080700 \nC) 2411080900 \nE) RWY 09/27 CLSD DUE TO AP EMERGENCY EXER"
+ },
+ {
+  "freeText": "Adanya Pekerjaan pada Bandar Udara Halu Oleo Kendari pada tanggal 29 Mei 2024 jam 06:37 UTC sampai dengan tanggal 27 Agustus 2024 jam 12:00 UTC dengan koordinat posisi pekerjaan sebagai berikut : \nZONA 1\n040434.97S1222557.44E - 040433.02S1222609.04E - 040434.48S1222610.91E - 040450.33S1222600.15E - 040450.55S1222556.22E - 040440.88S1222555.35E - 040440.34S1222558.45E - 040434.97S1222557.44E\nZONA 3\n040504.94S1222436.37E - 040503.69S1222442.59E - 040505.74S1222443.01E - 040506.78S1222436.64E - 040504.94S1222436.37E\nZONA 4\n040452.77S1222422.12E - 040447.84S1222447.56E - 040452.60S1222448.29E - 040457.41S1222423.31E - 040452.77S1222422.12E\ncatatan : \n- Semua pergerakan diharapkan berhati - hati\n- Terdapat alat berat",
+  "airport": "WAWW",
+  "gold": "Q) WAAF/QFAHW/IV/BO/A/000/999/0405S12225E005\nA) WAWW\nB) 2405290637\nC) 2408271200\nE) THE CONSTRUCTION WIP PSN AS FLW : ZONA 1 - 040434.97S1222557.44E - 040433.02S1222609.04E - 040434.48S1222610.91E - 040450.33S1222600.15E - 040450.55S1222556.22E - 040440.88S1222555.35E - 040440.34S1222558.45E - 040434.97S1222557.44E ZONA 3 - 040504.94S1222436.37E - 040503.69S1222442.59E - 040505.74S1222443.01E - 040506.78S1222436.64E - 040504.94S1222436.37E ZONA 4 - 040452.77S1222422.12E - 040447.84S1222447.56E - 040452.60S1222448.29E - 040457.41S1222423.31E - 040452.77S1222422.12E RMK: - ALL TFC CTN ADZ - HEAVY EQPT PRESENT"
+ },
+ {
+  "freeText": "PERPANJANGAN JAM OPERASIONAL PELAYANAN ATS DAN OPERATOR BANDARA SAMPAI DENGAN 17:30 WITA PADA TANGGAL 22 APRIL 2024",
+  "airport": "WAFJ",
+  "gold": "Q) WAAF/QFAAH/IV/NBO/A/000/999/0235S11902E005\nA) WAFJ\nB) 2404220348\nC) 2404220930\nE) OPERATIONAL HOURS OF SERVICE ARE NOW UNTIL 0930 DUE TO VIP MOV AS FLW : - AERODROME OPERATOR - ATS REPORTING OFFICE (ARO.) - ATS"
+ },
+ {
+  "freeText": "PEKERJAAN DI THR RUNWAY DI BANDARA ARUNG PALAKKA BONE POSISI ABEAM THR RWY 29 15M NORTH EAST DARI CENTERLINE DENGAN DIMENSI 975M2 DI\nCATATAN : - SEMUA LALU LINTAS HARUS OBSERVASI SEBLUM LEPAS LANDAS DAN MENDARAT\n- TERDAPAT PERALATAN BERAT",
+  "airport": "WAWN",
+  "gold": "Q) WAAF/QMTHW/IV/NBO/A/000/999/0428S12018E005\nA) WAWN\nB) 2306010030\nC) 2308091400\nD) DAILY 0030-1400\nE) THR RWY 29 WIP PSN ABEAM THR RWY 29 15M NORTH EAST OF CENTERLINE\nWITH DIMENSION 975M2\nRMK: - ALL TFC SHALL OBS BEFORE TKOF AND LDG\n - HEAVY EQPT PRESENT"
+ },
+ {
+  "freeText": "MALS RWY 18 DI BANDAR UDARA SANGIA NIBANDERA - KOLAKA TIDAK BEROPERASI KARENA ALASAN TEKNIS PADA TANGGAL 19 OKTOBER 2021 PUKUL 09:00UTC SAMPAI DENGAN 18 JANUARI 2022 PUKUL 08:00 UTC",
+  "airport": "WAWP",
+  "gold": "Q) WAAF/QLAAS/IV/NBO/A/000/999/0421S12131E005\nA) WAWP\nB) 2110190700\nC) 2201180800\nE) MALS RWY 18 U/S DUE TO TECR"
+ },
+ {
+  "freeText": "NDB MN frekuensi 348 KHZ di Bandar Udara Sugimanuru Muna tidak beroperasi karena alasan teknis pada tanggal 17 april 2024 pukul 05.55 sampai dengan 16 juli 2024 pukul 23.59",
+  "airport": "WAWR",
+  "gold": "Q) WAAF/QNBAS/IV/BO/AE/000/999/0446S12234E025\nA) WAWR\nB) 2404170555\nC) 2407162359\nE) NDB MN FREQ 348 KHZ U/S DUE TO TECR"
+ },
+ {
+  "freeText": "ILS/LOC RWY 03/21 BANDARA SULTAN HASANUDDIN TIDAK BEROPERASI KARENA MASALAH \nKELISTRIKAN PADA TANGGAL 25 JUNI 2024\nPUKUL 04:31 – 10:15 UTC",
+  "airport": "WAAA",
+  "gold": "Q) WAAF/QILAS/I/NBO/A/000/999/0504S11933E005\nA) WAAA\nB) 2406250431\nC) 2406251015\nE) ILS/LOC RWY 03/21 U/S DUE TO ELECTRICAL REASON AS FLW:\n-ILS/LOC RWY 03 IUJP FREQ 110.5 MHZ \n-ILS/LOC RWY 21 IMAK FREQ 110.1 MHZ"
+ },
+ {
+  "freeText": "DME TIDAK BEROPERASI PADA BANDARA BETOAMBARIBAU-BAU DIKARENAKAN ALASAN TEKNIS\nMULAI TANGGAL 20 JUNI 2023 PUKUL 06.30 UTC s/d\n21 JULI 2023 PUKUL 06.30 UTC",
+  "airport": "WAWB",
+  "gold": "Q) WAAF/QNMAS/IV/BO/AE/000/999/0529S12234E250\nA) WAWB\nB) 2306200630\nC) 2307210630\nE) VOR/DME BUT FREQ 115.4MHZ/CH-101X DME PART U/S DUE TO TECR"
+ },
+ {
+  "freeText": "MM RWY 03/21 BANDARA SULTAN HASANUDDIN - MAKASSAR BEROPERASI NORMAL KEMBALI PADA TANGGAL 25 JUNI 2024\nPUKUL09:06 UTC",
+  "airport": "WAAA",
+  "gold": "Q) WAAF/QIMAK/I/BO/A/000/999/0504S11933E005\nA) WAAA\nB) 2406250906\nE) MM RWY 03/21 FREQ 75MHZ RESUMED NML OPS"
+ },
+ {
+  "freeText": "TAXIWAY di Bandar Udara Sugimanuru Muna (WAWR) beroperasi normal kembali pada tanggal 26 September 2023 jam 06:34 UTC",
+  "airport": "WAWR",
+  "gold": "Q) WAAF/QMXAK/IV/BO/A/000/999/0446S12234E005\nA) WAWR\nB) 2309260634\nE) TWY RESUMED NML OPS"
+ },
+ {
+  "freeText": "Taxiway edge lights diTaxiway A dan Taxiway B diBandar Udara KENDARI / Halu Oleo mengalami kerusakan karena ada kesalahan teknis, mulai tanggal 17 Januari 2024 pukul 12:44 UTC sampai dengan tanggal 18 Januari 2024 pukul 12:00 UTC",
+  "airport": "WAWW",
+  "gold": "Q) WAAF/QLYAS/IV/M/A/000/999/0405S12225E005\nA) WAWW\nB) 2401171244\nC) 2401181200\nE) TWY EDGE LGT ON TWY A AND TWY B U/S DUE TO TECR"
+ },
+ {
+  "freeText": "Apron di Bandar Udara Sugimanuru Muna beroperasi dengan normal kembali pada tanggal 26 September 2023 jam 06:28 UTC",
+  "airport": "WAWR",
+  "gold": "Q) WAAF/QMNAK/IV/BO/A/000/999/0446S12234E005\nA) WAWR\nB) 2309260628\nE) APRON RESUMED NML OPS"
+ },
+ {
+  "freeText": "Parking Stand R32 dan R33 di Bandar Udara Sultan Hasanuddin kembali beroperasi dengan normal pada tanggal 03 Januari 2024 pukul 17:00",
+  "airport": "WAAA",
+  "gold": "Q) WAAF/QMPAK/IV/BO/A/000/999/0504S11933E005\nA) WAAA\nB) 2401031700\nE) PARKING STAND R32 AND R33 RESUMED NML OPS"
+ },
+ {
+  "freeText": "Parking Stand R11, R13 dan R14 di Bandar Udara Sultan Hasanuddin ditutup pada tanggal 15 Mei 2024 mulai pukul 17:23 sampai dengan pukul 23:00\nCatatan : Untuk (dikhususkan) penerbangan Haji",
+  "airport": "WAAA",
+  "gold": "Q) WAAF/QMPLC/IV/BO/A/000/999/0504S11933E005\nA) WAAA\nB) 2405151723\nC) 2405152300\nE) PARKING STAND R11, R13 AND R14 CLSD \nRMK: FOR HAJJ FLT"
+ },
+ {
+  "freeText": "Di bandara binaka WIMB sedang ada pengerjaan di Apron dekat taxiway A dengan demensi 90m x 80m mengakibatkan penutupan  apron, seluruh lalulintas atas persetujuan ATC dari tanggal 6 september 2024 jam 1223 sampai dengan tanggal 30 september 2024 jam 2300",
+  "airport": "WIMB",
+  "gold": "Q) WIIF/QMNLC/IV/NBO/A/000/999/0110N09742E005 \nA) WIMB \nB) 2409061223 \nC) 2409302300 \nE) APRON NEAR TWY A WI DIMENSION 90M X 80M CLSD DUE TO WIP RMK: ALL TFC SUBJ ATC CLR"
+ },
+ {
+  "freeText": "Di bandara PEKANBARU / Sultan Syarif Kasim II pada tanggal 18 Juli 2024 jam 2326 sampai dengan 19 Juli 2024 jam 0500 AIRCRAFT STAND D05 di tutup karena ada pekerjaan. Catatan: Semua Traffic mengikuti arahan ATC",
+  "airport": "WIBB",
+  "gold": "Q) WIIF/QMPLC/IV/BO/A/000/999/0028S10127E005\nA) WIBB\nB) 2407182326\nC) 2407190500\nE) AIRCRAFT STAND D05 CLSD DUE TO WIP RMK : ALL TFC SUBJ ATC CLR"
+ },
+ {
+  "freeText": "penutupan dikarenakan ada pekerjaan parking stand A dilaksanakan di bandara matak-anambas (WIDM) dilaksanakan pada tanggal 31 Mei 2024 pukul 1054 sampai tanggal 02 Juni 2024 pukul 1030",
+  "airport": "WIDM",
+  "gold": "Q) WIIF/QMPLC/IV/BO/A/000/999/0321N10616E005\nA) WIDM\nB) 2405311054\nC) 2406021030\nE) PRKG STAND A CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Taxiway B terbatas hanya untuk pesawat ringan karena untuk mengurangi beban struktur Taxiway B di bandara raji fisabilillah - tanjung pinang (WIDN) mulai tanggal 29 Oktober 2024 pukul 00:00 sampai 29 Januari 2025 jam 1200\n\nWAKTU SPESIFIK :\nSetiap hari dari jam 0000 sampai dengan 0200 dan 0500 sampai dengan 1200",
+  "airport": "WIDN",
+  "gold": "Q) WIIF/QMXLT/IV/M/A/000/999/0055N10432E005\nA) WIDN\nB) 2410290000\nC) 2501291200\nD) DAILY 0000-0200, 0500-1200\nE) TWY B LIMITED FOR LIGHT AIRCRAFT ONLY, DUE TO DECREASE \nSTRUCTURE OF PAVEMENT TWY B"
+ },
+ {
+  "freeText": "DI bandara BATAM / Hang Nadim pada tanggal 20 Januari 2024 pukul 1500 sampai dengan 20 Januari 2024 pukul 1800 Taxiway A dan taxiway F antara taxiway A dan taxiway L terbatas untuk swing compass Catatan: Semua traffic mengikuti arahan ATC",
+  "airport": "WIDD",
+  "gold": "Q) WIIF/QMXLT/IV/M/A/000/999/0107N10406E005\nA) WIDD\nB) 2401201500\nC) 2401201800\nE) TWY A AND TWY F BTN TWY A AND TWY L LIMITED FOR SWING COMPASS\nRMK : ALL TFC SUBJ ATC CLR"
+ },
+ {
+  "freeText": "bandar udara Kualanamu medan (WIMM) tanggal 08 Mei 2024 Pukul 1800 sampai dengan tanggal 08 Juni 2024 pukul 2100 runway 05/23 terbatas untuk penerbangan Haji, penerbangan medis, kargo, dan penerbangan militer dikarenakan ada pengerjaan pengalian kabel WAKTU SPESIFIK :\nmulai tanggal 08 Mei 2024 pukul 1800 sampai 2100 Sampai dengan 09 mei 2024 sampai dengan 08 Juni 2024 pukul 1700 sampai 2100",
+  "airport": "WIMM",
+  "gold": "Q) WIIF/QMRLT/IV/NBO/A/000/999/0339N09853E005\nA) WIMM\nB) 2405081800\nC) 2406082100\nD) MAY 08 1800-2100, MAY 09-JUN 08 1700-2100\nE) RWY 05/23 LIMITED FOR HAJJ FLT, MEDIVAC, CARGO FLT, AND MILITARY EXER  DUE TO CABLE DIGGING WIP"
+ },
+ {
+  "freeText": "Di bandara Tapanuli tengah / DR Ferdinand Lumbantobing(WIMS) tanggal 01 November 2023 pukul 0000 sampai dengan tanggal 31 Desember 2023 pukul 0700 TWY sedang ada Pekerjaan Pelapisan ulang Catatan: Semua Traffic agar berhati-hati dan terdapat alat berat\nWaktu Spesifik:\npengerjaan setiap hari pada jam 0000-0700",
+  "airport": "WIMS",
+  "gold": "Q) WIIF/QMXHW/IV/M/A/000/999/0133N09854E005\nA) WIMS\nB) 2311010000\nC) 2312310700\nD) DAILY 0000 - 0700\nE) TWY OVERLAY WIP RMK : ALL TFC CTN ADZ AND HEAVY EQPT PRESENT"
+ },
+ {
+  "freeText": "VOR/DME PKU FREQ 112.1MHZ / CH-58X di Bandara Sultan Syarif Kasim II - Pekanbaru (WIBB) beroperasi tapi ada pengecekan di Ground dan menunggu FLIGHT CHECK mulai pada tanggal 28 Juni 2024 Pukul 1000 sampai Tanggal 25 Juli 2024 Pukul 1700",
+  "airport": "WIBB",
+  "gold": "Q) WIIF/QNMAG/IV/BO/AE/000/999/0028N10127E005\nA) WIBB\nB) 2406281000\nC) 2407251700\nE) VOR/DME PKU FREQ 112.1MHZ / CH-58X OPERATING BUT GROUND CHECKED ONLY,AWAITING FLT CHECK"
+ },
+ {
+  "freeText": "Pada Tanggal 01 Maret 2024 Pukul 23.00 ILS/DME CH-48X Bandara Sultan Syarif Kasim II Pekanbaru Tidak Dapat digunakan karena sedang dalam perbaikan sampai dengan Tanggal 31 Mei 2024 Pukul 1700",
+  "airport": "WIBB",
+  "gold": "Q) WIIF/QIDAS/I/NBO/A/000/999/0028N10127E250\nA) WIBB\nB) 2403012300\nC) 2405311700\nE) ILS/DME CH-48X U/S DUE TO MAINT"
+ },
+ {
+  "freeText": "Bandara Pengujian Penerbangan Alat bantu pendaratan di landasan(PAPI) 27 di Bandara Djalaluddin- Gorontalo dikarenakan penerbangan kalibrasi mulai tanggal 08 Juli 2024 jam 0000 sampai dengan 9 Juli 2024 jam 1000 dengan waktu spesifik di Tanggal 8 Juli 2024 jam 0000 sampai 1000 sampai  tanggal 09 Juli 2024  jam 0000 sampai 1000",
+  "airport": "WAMG",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0038N12251E005\nA) WAMG\nB) 2407080000\nC) 2407091000\nD) 0000-1000\nE) CLBR FLT FOR :\n-PAPI RWY 27\n-ILS/LOC IGTO FREQ 110.10MHZ"
+ },
+ {
+  "freeText": "di Bandara Emalamo Sanana pada tanggal 13 Mei 2024 pukul 23:00 sampai dengan 13 Agustus 2024 pukul 11:00 utc akan dilaksanakan pekerjaan Strip Landasan 18/36 posisi 80M kearah luar ambang batas 36, 30m kearah timur dari garis tengah landasan dengan spesifikasi waktu pekerjaan:\n13 Mei pukul 23:00 sampai dengan 23:59 utc, 14 Mei sampai dan 12 Agustus pukul 00:00 sampai dengan 01:00 utc; 06:00 sampai dengan 11:00 utc; 23:00 sampai dengan 23:59 utc; 13 Agustus pukul 00:00 sampai dengan 01:00 utc; 06:00 sampai dengan 11:00 utc\nCatatan: Terdapat alat berat",
+  "airport": "WAES",
+  "gold": "Q) WAAF/QMWHW/IV/M/A/000/999/0256S12558E005\nA) WAES\nB) 2405132300\nC) 2408131100\nD) MAY 13 2300-2359, MAY 14-AUG 12 0000-0100 0600-1100 2300-2359, AUG 13 \n0000-0100 0600-1100\nE) STRIP RWY 18/36 WIP PSN 80M BEYOND THR 36,\n30M EAST FROM CENTERLINE\nRMK: HEAVY EQPT PRESENt"
+ },
+ {
+  "freeText": "pada tanggal 18 Juni 2024 pukul 23:00 sampai dengan 18 Agustus 2024 pukul 11:00 utc akan dilaksanakan pekerjaan Strip Landasan 18/36 posisi 80M kearah luar ambang batas 36, 23m kearah timur dari garis tengah landasan dengan spesifikasi waktu pekerjaan\n18 Juni pukul 23:00 sampai dengan 23:59 utc, 19 Juni sampai dan 17 September pukul 00:00 sampai dengan 01:00 utc; 06:00 sampai dengan 11:00 utc; 23:00 sampai dengan 23:59 utc; 18 September pukul 00:00 sampai dengan 01:00 utc; 06:00 sampai dengan 11:00 utc:\nCatatan: Terdapat alat berat",
+  "airport": "WAES",
+  "gold": "Q) WAAF/QMWHW/IV/M/A/000/999/0256S12558E005\nA) WAES\nB) 2406182300\nC) 2409181100\nD) JUN 18 2300-2359, JUN 19-SEP 17 0000-0100 0600-1100 2300-2359, SEP 18\n0000-0100 0600-1100\nE) STRIP RWY 18/36 WIP PSN 80M BEYOND THR 36,\n23M EAST FROM CENTERLINE\nRMK: HEAVY EQPT PRESENT"
+ },
+ {
+  "freeText": "PAPI di Runway 04 di bandara Pattimura - Ambondilakukan kalibrasi penerbangan mulai tanggal 06 Juli 2024 jam 2300 sampai tanggal 07 Juli 2024 jam 0800",
+  "airport": "WAPP",
+  "gold": "Q) WAAF/QLPXX/IV/BO/A/000/999/0342S12805E005\nA) WAPP\nB) 2407062300\nC) 2407070800\nE) CLBR FLT FOR PAPI RWY 04"
+ },
+ {
+  "freeText": "Lampu threshold runway 18 di bandara Melonguane - Sangihe Talaud (WAMN) tidak dapat digunakan karena alasan teknis mulai tanggal 27 Desember 2023 jam 06.00 sampai tanggal 27 Maret 2024 jam 06.00",
+  "airport": "WAMN",
+  "gold": "Q) WAAF/QLTAS/IV/BO/A/000/999/0358N12640E005\nA) WAMN\nB) 2312270600\nC) 2403270600\nE) THR LGT RWY 18 U/S DUE TO TECR"
+ },
+ {
+  "freeText": "Lampu identifikasi threshold runway pada runway 18 di bandara Karel Sadsuitubun - Langgur (WAPF) tidak dapat digunakan karena alasan teknis mulai tanggal 27 Desember 2023 jam 00.20 sampai tanggal 27 Maret 2024 jam 00.01",
+  "airport": "WAPF",
+  "gold": "Q) WAAF/QLTAS/IV/BO/A/000/999/0545S13246E005\nA) WAPF\nB) 2312270020\nC) 2403270001\nE) RTIL RWY 31 U/S DUE TO TECR"
+ },
+ {
+  "freeText": "Terdapat pekerjaan pelapisan taxiway di bandara Oesman Sadik - Labuha (WAEL) mulai tanggal 02 Desember 2023 jam 00.00 sampai tanggal 31 Desember 2023 jam 20.00 dengan jadwal spesifik pelaksanaan tiap hari jam 00.00-06.00 dan jam 09.00-20.00",
+  "airport": "WAEL",
+  "gold": "Q) WAAF/QMXHW/IV/M/A/000/999/0038S12730E005\nA) WAEL\nB) 2312020000\nC) 2312312000\nD) DAILY 0000-0600 0900-2000\nE) TWY OVERLAY WIP"
+ },
+ {
+  "freeText": "Runway 18/36  di bandara Sam Ratulangi - Manado sedang dilakukan pekerjaan pengecetan mulai tanggal 16 Juli  2024 pukul 1100 sampai tanggal 12 Agustus 2024 pukul 2000 dengan waktu spesifik di Tanggal 16 Juli 2024 jam 1100 sampai 2000 sampai dengan  tanggal 12 Agustus 2024  jam 1100 sampai 2000",
+  "airport": "WAMM",
+  "gold": "Q) WAAF/QMRHW/IV/BO/A/000/999/0133N12456E005\nA) WAMM\nB) 2407161100\nC) 2408122000\nD) DAILY 1100-2000\nE) RWY 18/36 MARKING REPAINTING WIP"
+ },
+ {
+  "freeText": "pada tanggal 29 November 2023 pukul 13:00 utc sampai 12 Desember 2023 pukul 21:00 Landasan Pacu 18/36 bandara Sam Ratulanagi Manado dilakukan pekerjaan Pengecatan Ulang Marka Landasan dengan waktu spesifik pekerjaan setiap hari pukul 13:00 utc sampai pukul 21:00 utc",
+  "airport": "WAMM",
+  "gold": "Q) WAAF/QMRHW/IV/BO/A/000/999/0133N12456E005\nA) WAMM\nB) 2311291300\nC) 2312122100\nD) DAILY 1300-2100\nE) RWY 18/36 MARKING REPAINTING WIP"
+ },
+ {
+  "freeText": "Terdapat pekerjaan pelapisan apron di bandara Oesman Sadik - Labuha (WAEL) mulai tanggal 02 Desember 2023 jam 00.00 sampai dengan 31 Desember 2023 jam 20.00 dengan jadwal spesifik pelaksanaan tiap hari jam 00.00-06.00 dan jam 09.00-20.00",
+  "airport": "WAEL",
+  "gold": "Q) WAAF/QMNHW/IV/BO/A/000/999/0038S12730E005\nA) WAEL\nB) 2312020000\nC) 2312312000\nD) DAILY 0000-0600 0900-2000\nE) APN OVERLAY WIP"
+ },
+ {
+  "freeText": "Uji Coba T-CAS di darat di bandara Sam Ratulangi - Manado (WAMM) oleh pesawat Embraer 145 dengan nomor registrasi PK-OMG pada level 0 sampai level 3000 kaki pada tanggal 18 Desember 2023 jam 06.00 sampai jam 10.00",
+  "airport": "WAMM",
+  "gold": "Q) WAAF/QXXXX/IV/NBO/AE/000/030/0133N12456E005\nA) WAMM\nB) 2312180600\nC) 2312181000\nE) TCAS TEST ON GROUND BY EMB145 PK-OMG LEVEL 0-3000FT"
+ },
+ {
+  "freeText": "Glide Path dibandara Sentani dengan frequensi 335.0 MHz tidak\ndapat beroperasi karena alasan teknis\nBandara Sentani GlidePath tidak dapat\nberoperasi mulai 29 agustus 2024 jam 2144 hingga 5 september 2024\njam 1100",
+  "airport": "WAJJ",
+  "gold": "Q) WAAF/QIGAS/I/NBO/A/000/999/0234S14031E005\nA) WAJJ\nB) 2408292144\nC) 2409051100\nE) GP FREQ 335.0 MHZ U/S TECH REASON"
+ },
+ {
+  "freeText": "Pada Bandara tanah merah (WAKT) Lampu tepi landasan pacu 07/25 sedang tidak berfungsi karena alasan teknis mulai 31 januari 2024 pukul 08:41 UTC ( 17:41 WIT) sampai 17 Maret 2024 pukul 23:59 UTC (08:59 WIT)",
+  "airport": "WAKT",
+  "gold": "Q) WAAF/QLEAS/I/BO/A/000/999/0607S14016E005\nA) WAKT\nB) 2401310841\nC) 2403172359\nE) RWY EDGE LGT 07/25 U/S DUE TO TECR"
+ },
+ {
+  "freeText": "Pada Bandara tanah merah (WAKT) Lampu ujung landasan pacu 07/25 sedang tidak berfungsi karena alasan teknis mulai 31 januari 2024 pukul 08:46 UTC ( 17:46 WIT) sampai 17 Maret 2024 pukul 23:59 UTC (08:59 WIT)",
+  "airport": "WAKT",
+  "gold": "Q) WAAF/QLIAS/IV/BO/A/000/999/0607S14016E005\nA) WAKT\nB) 2401310846\nC) 2403172359\nE) RWY END LGT 07/25 U/S DUE TO TECR"
+ },
+ {
+  "freeText": "Taxiway di Bandara Wamena (WAVV) ditutup karena ada pekerjaan mulai tanggal 9 Januari 2024 pukul 05:48 UTC sampai 9 April 2024 pukul 07:00 UTC",
+  "airport": "WAVV",
+  "gold": "Q) WAAF/QMXLC/IV/BO/A/000/999/0406S13857E005\nA) WAVV\nB) 2401090548\nC) 2404090700\nE) TWY D CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Landasan pacu 06/24 Bandara Ewer (WAKG) ditutup karena ada genangan air pada tanggal 20 Februari 2023 pukul 22:00 sampai dengan 21 Februari 2023 pukul 01:00 UTC",
+  "airport": "WAKG",
+  "gold": "Q) WAAF/QMRLC/IV/NBO/A/000/999/0529S13805E005\nA) WAKG\nB) 2302202200\nC) 2302210100\nE) RWY 06/24 CLSD DUE TO STANDING WATER"
+ },
+ {
+  "freeText": "Pada tanggal 27 Oktober 2024 sampai tanggal 27 Oktober 2024, semua keberangkatan dan kedatangan pesawat mengalami delay dikarenakan adanya pergerakan vip di bandar udara Halim Perdana Kusuma",
+  "airport": "WIHH",
+  "gold": "Q) WIIF/QFAXX/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2410270430\nC) 2410270555\nE) ALL DEP/ARR ACFT ARE EXP DLA DUE TO VIP MOV"
+ },
+ {
+  "freeText": "Bandara Udara Padang Pariaman di tutup di karenakan dampak gunung berpai Marapi pada tanggal 28 Maret 2024 pukul 03:21 UTC diperkirakan sampai 28 Maret 2024 Pukul 07:00 UTC",
+  "airport": "WIEE",
+  "gold": "Q) WIIF/QFALC/IV/NBO/A/000/999/0047S10017E005\nA) WIEE\nB) 2403280321\nC) 2403280700EST\nE) AD CLSD DUE TO MARAPI VOLCANIC ASH"
+ },
+ {
+  "freeText": "Jam pelayanan operasi Bandar Udara Kertajati  berubah menjadi 24 jam dari tanggal 27 Mei 2023 jam 0919 s/d 23 Juni 2023 jam 1400\nCatatan : Untuk penerbangan Haji",
+  "airport": "WICA",
+  "gold": "Q) WIIF/QFAAH/IV/NBO/A/000/999/0639S10809E005\nA) WICA\nB) 2305270919\nC) 2306231400\nE) OPERATION HOURS OF AD CHANGED TO H24 RMK : FOR HAJJ FLT"
+ },
+ {
+  "freeText": "Jam pelayanan operasi Bandar Udara Kertajati berubah menjadi 24 jam dari tanggal 27 Mei 2023 jam 0919 s/d 23 Juni 2023 jam 1400\nCatatan : Untuk penerbangan Haji",
+  "airport": "WICA",
+  "gold": "Q) WIIF/QFAAH/IV/NBO/A/000/999/0639S10809E005\nA) WICA\nB) 2305270919\nC) 2306231400\nE) OPERATION HOURS OF AD CHANGED TO H24 RMK : FOR HAJJ FLT"
+ },
+ {
+  "freeText": "Pada tanggal 02 November 2024 pukul 08:04 UTC sampai tanggal 02 November 2024 pukul 08:15 UTC Ada kemungkinan penundaan keberangkatan/kedatangan karena Kegiatan pergerakan VIP di Bandara Udara mopah – merauke",
+  "airport": "WAKK",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0831S14025E005\nA) WAKK\nB) 2411022000\nC) 2411022045\nE) ALL DEP/ARR ACFT ARE EXP DLA DUE TO VIP MOV"
+ },
+ {
+  "freeText": "RESCUE AND FIRE FIGHTING CHANGED TO CAT 8 Di Bandara\n lombok WADL  mulai tanggal 09 oktober 2023\npukul 0500 hinggal pukul 0900 UTC",
+  "airport": "WADL",
+  "gold": "Q) WAAF/QFFCH/IV/NBO/A/000/999/0845S11616E005\nA) WADL\nB) 2310090500\nC) 2310090900\nE) RESCUE AND FIRE FIGHTING CHANGED TO CAT 8"
+ },
+ {
+  "freeText": "TRIGGER NOTAM UNTUK AIRAC AIP SUPPLEMENT NOMOR 41/23 DENGAN TANGGAL EFEKTIF 02 NOVEMBER 2023, TRAFFIC INFORMATION BROADCAST BY AIRCRAFT (TIBA) DAN FLIGHT WATCH DI BANDARA ENGGANO – BENGKULU UTARA (WIGE) MULAI TANGGAL 02 NOVEMBER 2023 PUKUL 00.00 SAMPAI 15 NOVEMBER 2023 PUKUL 23.59",
+  "airport": "WIGE",
+  "gold": "Q) WIIF/QFATT/IV/BO/A/000/999/0518S10211E005\nA) WIGE\nB) 2311020000\nC) 2311152359\nE) TRIGGER NOTAM-AIRAC AIP SUP 41/23 WEF 02 NOV 2023, TRAFFIC INFORMATION BROADCAST BY AIRCRAFT (TIBA) AND FLIGHT WATCH IN ENGGANO AERODROME NORTH BENGKULU"
+ },
+ {
+  "freeText": "PENERBANGAN KALIBRASI UNTUK BANDARA FATMAWATI SOEKARNO – BENGKULU\n- VOR/DME BKL FREQ 114.3MHZ/CH90X \n- ILS/LOC IBKL FREQ 111.7MHZ \n- ILS/GP FREQ 333.5MHZ \n- ILS/MM FREQ 75MHZ \n- ILS/DME CH54X \n- PAPI RWY 13/31\nDILAKSANAKAN MULAI TANGGAL 18 OKTOBER 2023 PUKUL 03.00 SAMPAI TANGGAL 19 OKTOBER 2023 PUKUL 11.00, ADAPUN WAKTU PELAKSANAAN TANGGAL 18 OKTOBER 2023 DIMULAI PUKUL 03.00 SAMPAI 11.00 DAN TANGGAL 19 OKTOBER 2023 PUKUL 00.00 SAMPAI 11.00\nCATATAN: SEMUA PESAWAT AGAR BERHATI-HATI DAN MENGIKUTI ARAHAN DARI ATC",
+  "airport": "WIGG",
+  "gold": "Q) WIIF/QFAXX/IV/NBO/A/000/999/0352S10220E005\nA) WIGG\nB) 2310180300\nC) 2310191100\nD) 18 0300-1100, 19 0000-1100\nE) CLBR FLT FOR : - VOR/DME BKL FREQ 114.3MHZ/CH90X - ILS/LOC IBKL FREQ 111.7MHZ - ILS/GP FREQ 333.5MHZ - ILS/MM FREQ 75MHZ - ILS/DME CH54X - PAPI RWY 13/31 RMK : ALL TFC CTN ADZ AND SUBJ ATC CLR"
+ },
+ {
+  "freeText": "NDB MN FREKUENSI 348 KHZ DI BANDAR UDARA SUGIMANURU MUNA TIDAK BEROPERASI KARENA ALASAN TEKNIS PADA TANGGAL 17 APRIL 2024 PUKUL 05.55 SAMPAI DENGAN 16 JULI 2024 PUKUL 23.59",
+  "airport": "WAWR",
+  "gold": "Q) WAAF/QNBAS/IV/BO/AE/000/999/0446S12234E025\nA) WAWR\nB) 2404170555\nC) 2407162359\nE) NDB MN FREQ 348 KHZ U/S DUE TO TECR"
+ },
+ {
+  "freeText": "ILS/LOC IBKL 111.7MHZ DI BANDARA FATMAWATI SOEKARNO -  BENGKULU BEROPERASI TETAPI HANYA DIPERIKSA DI DARAT, MENUNGGU PEMERIKSAAN PENERBANGAN. DIMULAI 15 MARET 2023 PUKUL 03.52 SAMPAI 15 JUNI 2023 PUKUL 14.00",
+  "airport": "WIGG",
+  "gold": "Q) WIIF/QILAG/I/BO/A/000/999/0352S10220E005\nA) WIGG\nB) 2303150352\nC) 2306151400\nE) ILS/LOC IBKL 111.7MHZ OPR BUT GND CHECKED ONLY, AWAITING FLT CHECK"
+ },
+ {
+  "freeText": "Di Bandar Udara Supadio - Pontianak Pada tanggal 03 Oktober 2024 pada pukul 04.25 UTC sampai tanggal 30 Desember 2024 pukul 23.59 UTC sistem pendaratan instrumen landasan pacu 17 frekuensi 332.3 Mhz tidak dapat digunakan.\n\nCatatan: Lalu lintas penerbangan yang masuk di landasan pacu 15 menggunakan prosedur RNP dan prosedur pendekatan VOR",
+  "airport": "WIOO",
+  "gold": "Q) WIIF/QILAS/I/NBO/A/000/999/0009S10942E005\nA) WIOO\nB) 2410030425\nC) 2412302359\nE) ILS/LOC IPNK RWY 15 FREQ 111.3MHZ U/S RMK : INCOMING TFC RWY 15 USE RNP APCH AND VOR APCH"
+ },
+ {
+  "freeText": "Pada tanggal 04 Agustus 2024 0515UTC hingga 04 Agustus 2024 1030UTC alat navigasi ATIS frekuensi 127.25MHZ tidak bisa digunakan dikarenakan sedang adanya pemeliharaan listrik dibandara MInagkabau – Padang",
+  "airport": "WIEE",
+  "gold": "Q) WIIF/QSAAS/IV/BO/A/000/999/0047S10017E025\nA) WIEE\nB) 2408040515\nC) 2408041030\nE) ATIS FREQ 127.25MHZ U/S DUE TO AIRPORT ELECTRICITY MAINT"
+ },
+ {
+  "freeText": "Pada tanggal 04 Agustus 2024 0515UTC hingga 04 Agustus 2024 1030UTC alat navigasi ATIS frekuensi 127.25MHZ tidak bisa digunakan dikarenakan sedang adanya pemeliharaan arus listrik dibandara MInagkabau – Padang",
+  "airport": "WIEE",
+  "gold": "Q) WIIF/QSAAS/IV/BO/A/000/999/0047S10017E025\nA) WIEE\nB) 2408040515\nC) 2408041030\nE) ATIS FREQ 127.25MHZ U/S DUE TO AIRPORT ELECTRICITY MAINT"
+ },
+ {
+  "freeText": "Pada tanggal 06 September 2024 hingga 27 November 2024 Lampu Runway Approach Light Runway 31 tidak bisa digunakan karena alasan teknis dibandara Sultan Thaha – Jambi",
+  "airport": "WIJJ",
+  "gold": "Q) WIIF/QLAAS/IV/NBO/A/000/999/0138S10339E005\nA) WIJJ\nB) 2409060638\nC) 2411272359\nE) APPROACH LGT RWY 31 U/S DUE TO TEC"
+ },
+ {
+  "freeText": "Di Bandar Udara Kertajati - Jawa Barat Pada tanggal 31 Oktober 2024 pada pukul 04.30 UTC sampai tanggal 29 Januari 2025 pukul 14.00 UTC PALS Runway 32 tidak dapat digunakan.",
+  "airport": "WICA",
+  "gold": "Q) WIIF/QLAAS/IV/NBO/A/000/999/0639S10809E005\nA) WICA\nB) 2410310430\nC) 2501291400\nE) PALS RWY 32 U/S"
+ },
+ {
+  "freeText": "Di Bandar Udara  Mutiara Sis Al Jufri - Palu Pada tanggal 28 Oktober 2024 pada pukul 09.31 UTC sampai tanggal 28 Januari 2025 pukul 10.00 UTC MALS Runway 33 tidak dapat digunakan dikarenakan alasan teknis.",
+  "airport": "WAFF",
+  "gold": "Q) WAAF/QLAAS/IV/NBO/A/000/999/0055S11955E005\nA) WAFF\nB) 2410280931\nC) 2501281000\nE) MALS RWY 33 U/S DUE TO TECR"
+ },
+ {
+  "freeText": "TAXIWAY DI BANDAR UDARA SUGIMANURU MUNA BEROPERASI NORMAL KEMBALI PADA TANGGAL 26 SEPTEMBER 2023 JAM 06:34 UTC",
+  "airport": "WAWR",
+  "gold": "Q) WAAF/QMXAK/IV/BO/A/000/999/0446S12234E005\nA) WAWR\nB) 2309260634\nE) TWY RESUMED NML OPS"
+ },
+ {
+  "freeText": "Pada tanggal 24 September 2024 pukul 00.00UTC sampai dengan tanggal 23 November 2024 pukul 23.59UTC Taxiway D terbatas  dikarenakan adanya penurunan struktur perkerasan pada Taxiway D di Bandar Udara Abdulrachman Saleh - Malang",
+  "airport": "WARA",
+  "gold": "Q) WAAF/QMXLT/IV/M/A/000/999/0756S11243E005\nA) WARA\nB) 2409240000\nC) 2411232359\nE) TWY D LIMITED FOR LIGHT ACFT ONLY,\nDUE TO DECREASE STRUCTURE OF PAVEMENT TWY D"
+ },
+ {
+  "freeText": "Pada tanggal 21 Oktober 2024 jam 1800 sampai tanggal 16 Januari 2025 jam 2300 landasan pacu 09/27, diTutup dikarenakan adanya pengerjaan di bandar udara INTL I Gusti Ngurah Rai, Bali\n\nJadwal spesifik:\nSetiap Hari hanya pada jam 1800-2300",
+  "airport": "WADD",
+  "gold": "Q) WAAF/QMRLC/IV/NBO/A/000/999/0845S11510E005\nA) WADD\nB) 2410211800\nC) 2501162300\nD) DAILY 1800-2300\nE) RWY 09/27 CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Pada tanggal 21 oktober 2024 jam 1120 sampai tanggal 21 november 2024 2200 terdapat pekerjaan pada stripe (bahu landasan pacu) posisi 1235 dari awalan RWY 11 diluar Threshold RWY 29 arah 75 meter timur laut dari garis tengah RWY dan posisi 1235 dari awalan RWY 11 diluar Threshold RWY 29 arah 34 meter barat daya dari garis tengah RWY \nCatatan semua traffic diharapkan berhati hati",
+  "airport": "WIPP",
+  "gold": "Q) WIIF/QMWHW/IV/M/A/000/999/0254S10442E005\nA) WIPP\nB) 2410211120\nC) 2411212200\nE) STRIP RWY 11/29 WIP DUE TO MAINT PSN 1235M FM BEGINNING RWY 11 BEYOND THR RWY 29, 75M NORTHEAST FM CENTERLINE AND PSN 1235M FM BEGINNING RWY 11 BEYOND THR RWY 29, 34M SOUTHWEST FM CENTERLINE RMK : ALL TFC CTN"
+ },
+ {
+  "freeText": "Pada tanggal 15 Juli 2024 0900UTC hingga 15 Juli 2024 1000UTC Apron sebelah \nbarat ditutup dikarenakan adanya kegiatan latihan pemadam kebakaran dibandara Depati Amir – Pangkal Pinang",
+  "airport": "WIKK",
+  "gold": "Q) WIIF/QMNLC/IV/NBO/A/000/999/0210S10608E005\nA) WIKK\nB) 2407150900\nC) 2407151000\nE) WEST APN CLSD DUE TO FIRE FIGHTING EXER"
+ },
+ {
+  "freeText": "Jam Operasi Bandara di Bandar Udara Semarang diubah menjadi pukul 00:00 hingga pukul 14:00 karena alasan operasional kecuali untuk VIP dan penebangan militer Mulai tanggal 29 September pukul 23:00 sampai tanggal 28 Desember pulul 17:00",
+  "airport": "WAHS",
+  "gold": "Q) WAAF/QFAAH/IV/BO/A/000/999/0659S11023E005\nA) WAHS\nB) 2409292300\nC) 2412281700\nE) OPERATING HOURS OF AD CHANGED TO 0000-1400 DUE TO OPERATIONAL REASON RMK: EXC FOR VIP AND MIL FLT"
+ },
+ {
+  "freeText": "Jam Operasi Bandara di Bandar Udara Syamsudin Noor berubah menjadi 24 jam hanya untuk penerbangan haji yang akan dimulai tanggal 10 Mei 2024 jam 22.00 sampai tanggal 25 Juli 2024 jam 15.00",
+  "airport": "WAOO",
+  "gold": "Q) WAAF/QFAAH/IV/NBO/A/000/999/0326S11445E005\nA) WAOO\nB) 2405102200\nC) 2407251500\nE) OPERATING HOURS OF AD CHANGED TO H24 FOR HAJJ FLT ONLY"
+ },
+ {
+  "freeText": "Notam Pemicu Bandar Udara Tunggul Wulung AIRAC AIP AMDT 143 dengan tanggal efektif 21 MAR 2024  informasi perubahan data di Bandar Udara Tunggul Wulung - CILACAP",
+  "airport": "WAHL",
+  "gold": "Q) WAAF/QFATT/IV/BO/A/000/999/0739S10902E005\nA) WAHL\nB) 2403210000\nC) 2404032359\nE) TRIGGER NOTAM-PERM AIRAC AIP AMDT 143 WEF 21 MAR 2024 CHANGES INFORMATION OF AD DATA TUNGGUL WULUNG - CILACAP"
+ },
+ {
+  "freeText": "Aerodrome di Bandara AbdulRachman saleh (WARA) penundaan keberangkatan atau kedatangan semua pesawat karena ada pergerakan /VIP MOV mulai tanggal 27 Juni jam 04.15 sampai tanggal 28 Juni jam 06.45\n\nJadwal Spesifik :\nTanggal 27 Jam 04.15-05.00\nTanggal 28 Jam 06.00-06.45",
+  "airport": "WARA",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0756S11243E005\nA) WARA\nB) 2406270415\nC) 2406280645\nD) 27 0415-0500, 28 0600-0645\nE) ALL DEP/ARR ACFT ARE EXP DLA DUE TO VIP MOV"
+ },
+ {
+  "freeText": "NDB'KJ' 336KHZ/FREQ di Bandara Karimun Jawa tidak dapat digunakan karena ada pemeliharaan mulai tanggal 10 April 2020 pukul 00.30 sampai tanggal 30 April 2020 pukul 00.00",
+  "airport": "WAHU",
+  "gold": "Q) WAAF/QNBAS/IV/BO/AE/000/999/0548S11029E025\nA) WAHU\nB) 2004100030\nC) 2004300000\nE) NDB `KJ` FREQ 336KHZ U/S DUE TO MAINT"
+ },
+ {
+  "freeText": "ILS ISBY dengan frekuensi 110.10 MHz/FREQ di Bandara Juanda tidak dapat digunakan karena ada pemeliharaan Catatan : Approach Runway No 10 menggunakan RNP Approach mulai dari tanggal 11 Mei 2023 pukul 21.59 sampai pada tanggal 13 Mei 2023 pukul 22.00",
+  "airport": "WARR",
+  "gold": "Q) WAAF/QILAS/I/NBO/A/000/999/0723S11247E005\nA) WARR\nB) 2305112159\nC) 2305132200\nE) ILS ISBY FREQ 110.10MHZ U/S DUE TO MAINT RMK: APPROACH RWY 10 USING RNP APPROACH"
+ },
+ {
+  "freeText": "ILS/LOC Rusak freq 110.7MHZ/FREQ dibandara internasional yogyakarta Pemeliharaan mulai tanggal 18 september 2021 pukul 06:00 sampai pukul 11:00",
+  "airport": "WAHI",
+  "gold": "Q) WAAF/QILAS/I/NBO/A/000/999/0754S11030E005\nA) WAHI\nB) 2109180600\nC) 2109181100\nE) ILS/LOC IKLP FREQ 110.7MHZ U/S DUE TO MAINT"
+ },
+ {
+  "freeText": "PAPI di runway nomor 17 di bandara Abdul Rachmansaleh tidak dapat beroperasi mulai tanggal 12 Desember 2023 pukul 00.00 sampai tanggal 13 desember 2023 pukul 23.00.",
+  "airport": "WARA",
+  "gold": "Q) WAAF/QLPAS/IV/BO/A/000/999/0756S11243E005\nA) WARA\nB) 2312120000\nC) 2312132359\nE) PAPI RWY 17 U/S"
+ },
+ {
+  "freeText": "Calibration flight bandara dibandara adisutjipto G-ILS/LOC IJOG 109.1MHZ -PAPI RWY 09/27 -VOR/DME JOG 112.8MHZ/CH-75X -NDB OF 270KHZ mulai tanggal 02 DES 2023 pukul 00:00 sampai tanggal 03 DES 2023 pukul 14:00 catatan : perhatian untuk semua penerbangan dan mengikuti petunjuk ATC",
+  "airport": "WAHH",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0748S11026E005\nA) WAHH\nB) 2312020000\nC) 2312031400\nE) CLBR FLT FOR :\n-ILS/LOC IJOG 109.1MHZ\n-PAPI RWY 09/27\n-VOR/DME JOG 112.8MHZ/CH-75X\n-NDB OF 270KHZ\nRMK : ALL TFC CTN AND SUBJ ATC CLR"
+ },
+ {
+  "freeText": "Taxiway A di Bandara Soemarmo ditutup karena ada pekerjaan mulai tanggal 27 Februari 2024 pukul 09:41 sampai pukul 12:00",
+  "airport": "WAHQ",
+  "gold": "Q) WAAF/QMXLC/IV/BO/A/000/999/0731S11045E005\nA) WAHQ\nB) 2402270941\nC) 2402271200\nE) TWY A CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Taxiway G di Bandara Ahmad Yani ditutup karena ada pekerjaan mulai tanggal 18 Juli 2024 pukul 07.54 sampai pukul 11:00",
+  "airport": "WAHS",
+  "gold": "Q) WAAF/QMXLC/IV/BO/A/000/999/0659S11023E005\nA) WAHS\nB) 2407180754\nC) 2407181100\nE) TWY G CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Penutupan parking stand dibandara internasional yogyakarta Parking stand NR 1A, 1B and 1C karena ada pekerjaan (WIP) mulai tanggal 05 November 2021 pukul 00:00 sampai tanggal 20 desember 2021 pukul 12:00",
+  "airport": "WAHI",
+  "gold": "Q) WAAF/QMPLC/IV/BO/A/000/999/0754S11030E005\nA) WAHI\nB) 2111050000\nC) 2112201200\nE) PARKING STAND NR 1A, 1B AND 1C CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Runway Holding Position Taxiway N1 berubah ke posisi 107.5 meter dari awal Runway 10 di Bandara Juanda (WARR) yang dimulai pada tanggal 2 Mei 2024 pukul 09.23 sampai dengan tanggal 1 Agustus 2024 pukul 14.00",
+  "airport": "WARR",
+  "gold": "Q) WAAF/QMRXX/IV/BO/A/000/999/0723S11247E005\nA) WARR\nB) 2405020923\nC) 2408011400\nE) RWY HOLDING POSITION TWY N1 REPLACE TO POSITION 107.5M FM RCL BEGINNING RWY 10"
+ },
+ {
+  "freeText": "Penutupan Runway Dibandara internasional Yogyakarta dikarenakan adanya Kegiatan Pengecekan Runway mulai tanggal 01 Oktober 2024 jam 07:10 sampai dengan tanggal 02 Oktober 2024 07:40 setiap hari pada jam 07:10 sampai dengan 07:40",
+  "airport": "WAHI",
+  "gold": "Q) WAAF/QMRLC/IV/NBO/A/000/999/0754S11003E005\nA) WAHI\nB) 2410010710\nC) 2410020740\nD) DAILY 0710-0740\nE) RWY 11/29 CLSD DUE TO RWY INSPECTION"
+ },
+ {
+  "freeText": "Penutupan runway 14/32 di bandara Dhoho Kediri dikarenakan adanya pekerjaan mulai tanggal 14 Maret 2024 jam 0600 sampai dengan 1100",
+  "airport": "WARD",
+  "gold": "Q) WAAF/QMRLC/IV/NBO/A/000/999/0745S11157E005 \nA) WARD\nB) 2403140600\nC) 2403141100\nE) RWY 14/32 CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Runway Nomor 09/27 diadakan inspeksi dibandar udara Adi Sutjipto dimulai tanggal 18 Januari 2024 pukul 0900 sampai tanggal 30 Maret 2024 pukul 09.30 Diadakan setiap hari dijam 0900 sampai 0930 Catatan : Seluruh pesawat harap berhati hati",
+  "airport": "WAHH",
+  "gold": "Q) WAAF/QMRXX/IV/NBO/A/000/999/0747S11026E005\nA) WAHH\nB) 2401180900\nC) 2403300930\nD) DAILY 0900-0930\nE) RWY 09/27 INSPECTION RMK : ALL TFC CTN ADZ"
+ },
+ {
+  "freeText": "Pemberitahuan akan Adanya pegerakan VIP di bandara Sorong  Pada Tanggal 05 Juni 2024  Pukul 0445 UTC Sampai 05 Juni 2024 Pukul 0526 UTC",
+  "airport": "WASS",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0054S13118E005\nA) WASS\nB) 2406050445\nC) 2406050526\nE) ALL DEP/ARR ACFT ARE EXP DLA DUE TO VIP MOV"
+ },
+ {
+  "freeText": "pada bandara Domine Eduard Osok (WASS) setiap penerbangan harap menjadikan perhatian pada sepanjang sisi RWY 09/27 terdapat pengerjaan drainage, mulai 07 Maret 2023 21:00 UTC sampai 07 Juni 2023 21:00 UTC. Catatan setiap penerbangan ATC clearance dan alat berat",
+  "airport": "WASS",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0054S13118E005\nA) WASS\nB) 2303072100\nC) 2306072100\nE) ALL TFC CTN ADZ DUE TO DRAINAGE WIP PSN ALONG SIDE RUNWAY 09/27 RMK: ALL TFC SUBJ ATC CLR AND HVY EQPT PRESENT"
+ },
+ {
+  "freeText": "Perubahan Sementara pada Jam Pelayanan dan Fasilitas Komunikasi Lalu Lintas Udara di bandara Marinda menjadi 2200 - 0500 UTC, dimulai 30 Oktober 2024 pukul 2200 utc sampai 28 November 2024 pukul 0500 utc",
+  "airport": "WASN",
+  "gold": "Q) WAAF/QSFAH/IV/BO/A/000/999/0026S13046E005\nA) WASN\nB) 2410302200\nC) 2411280500\nE) TEMPORARY CHANGES INFORMATION RELATED TO ATS DATA AS FLW : ATS AIRSPACE - HOURS OF APPLICABILITY : 2200 - 0500 ATS COMMUNICATION FACILITIES - MARINDA AERODROME INFORMATION FREQ 118.35MHZ : 2200 - 0500 _x0003_"
+ },
+ {
+  "freeText": "Pemberitahuan akan Adanya pegerakan VIP di bandara Sorong  Pada Tanggal 05 Juni 2024  Pukul 0445 UTC Sampai 05 Juni 2024 Pukul 0526 UTC",
+  "airport": "WASS",
+  "gold": "Q) WAAF/QFAXX/IV/NBO/A/000/999/0054S13118E005\nA) WASS\nB) 2406050445\nC) 2406050526\nE) ALL DEP/ARR ACFT ARE EXP DLA DUE TO VIP MOV"
+ },
+ {
+  "freeText": "Fasilitas navigasi Instrument approach procedure di Bandara Biak dengan tidak dapat digunakan mulai 06-04- 2023 pukul 0230 UTC sampai 06-07-2023 pukul 0000 UTC",
+  "airport": "WABB",
+  "gold": "Q) WAAF/QPIXX/IV/NBO/A/000/999/0112S13607E005\nA) WABB\nB) 2304060230\nC) 2307060000\nE) REF AIP VOL II 109 07 OCT 21 INSTRUMENT APPROACH CHART - ICAO PAGE WABB AD 2.24-IIA NDB RWY II (CAT A/B/C/D) U/S"
+ },
+ {
+  "freeText": "DVOR/DME MIL bandara sorong frekuensi 117.1 MHz tidak dapat beroperasi. Pada tanggal 16 Maret 2023 09:05 UTC sampai 30 Maret 2023 10:00 UTC",
+  "airport": "WASS",
+  "gold": "Q) WAAF/QNVAS/IV/BO/AE/000/999/0054S13118E025\nA) WASS\nB) 2303160905\nC) 2303301000\nE) DVOR/DME MIL FREQ 117.1MHZ/CH-118X, VOR PART U/S"
+ },
+ {
+  "freeText": "Fasilitas navigasi VOR/DME NBR di Bandara DOUW ATURURE NABIRE(WABI) dengan frekuensi 117.3 MHz  sedang dilakukan Kalibrasi  mulai 29 September 2023 pukul 0500 UTC sampai 30 September 2023 pukul 0500 UTC",
+  "airport": "WABI",
+  "gold": "Q) WAAF/QNMXX/IV/BO/AE/000/999/0322S13530E005\nA) WABI\nB) 2309290500\nC) 2309300500\nE) CLBR FLT FOR VOR/DME NBR 117.3 MHZ RMK: ALL TFC SUBJ ATC CLR"
+ },
+ {
+  "freeText": "Fasilitas Navigasi VOR/DME BIK dibandara Frans Kaisiepo dengan Frekuensi 112.5MHZ/CH-72X tidak dapat beroperasi untuk sementara dikarenakan sedang dalam pemeliharaan yang dimulai pada 31 Mei 2024 Pukul 0835 UTC (17.35 WIT) sampai dengan 01 Juni 2024 pukul 0800 UTC (17.00 WIT)",
+  "airport": "WABB",
+  "gold": "Q) WAAF/QNMAS/IV/BO/AE/000/999/0112S13607E025\nA) WABB\nB) 2405310835\nC) 2406010800\nE) VOR/DME BIK FREQ 112.5MHZ/CH-72X U/S DUE TO MAINT _x0003_"
+ },
+ {
+  "freeText": "di bandara biak (WABB) di posisi 1595M diluar RWY 11, 56 M  dari centerline terdapat pengerjaan strip. Mulai dari tanggal 28 Juli 2024 05:00 UTC sampai 27 Agustus 2024 15:00 UTC. Catatan terdapat alat berat",
+  "airport": "WABB",
+  "gold": "Q) WAAF/QMWHW/IV/M/A/000/999/0112S13607E005\nA) WABB\nB) 2407280500\nC) 2408271500\nE) RWY STRIP WIP PSN 1595M BEYOND THR RWY 11, 56M OF CENTERLINE RMK: HEAVY EQPT PRESENT"
+ },
+ {
+  "freeText": "di bandara Utarom (WASK) TWY A dan TWY B ditutup karena ada pengerjaan, mulai dari tanggal 28 Juli 2023 06:00 UTC hingga 27 Oktober 2023. dengan jadwal setiap hari di jam 06:00 UTC sampai 19:00 UTC",
+  "airport": "WASK",
+  "gold": "Q) WAAF/QMXLC/IV/NBO/A/000/999/0338S13341E005\nA) WASK\nB) 2307280600\nC) 2310271900\nD) DAILY 0600-1900\nE) TWY A TWY B TWY C CLSD DUE TO WIP"
+ },
+ {
+  "freeText": "Penutupan runway 01/19 di bandara Kaimana dikarenakan adanya pekerjaan mulai tanggal 28 Juli 2023 jam 0600 sampai dengan  27 Oktober 2023 1900",
+  "airport": "WASK",
+  "gold": "Q) WAAF/QMRLC/IV/NBO/A/000/999/0338S13341E005\nA) WASK\nB) 2307280600 \nC) 2310271900\nD) DAILY 0600-1900\nE) RWY 01/19 CLSD DUE TO OVERLAY WIP"
+ },
+ {
+  "freeText": "pemberitahuan pekerjaan di bandara rendani Manokwari akan adanya pekerjaan pemenuhan strip rwy  pada thr rwy 35 pada tanggal 24 september 2024 2100 sampai dengan tanggal 20 Desember 2024 0900",
+  "airport": "WAUU",
+  "gold": "Q) WAAF/QMWHW/IV/M/A/000/999/0054S13403E005\nA) WAUU\nB) 2409242100\nC) 2412200900\nE) STRIP RWY 17/35 WIP PSN 300M BEYOND THR RWY 35, 75.35M EAST OF CENTERLINE RMK: HEAVY EQPT PRESENT"
+ },
+ {
+  "freeText": "pemberitahuan parking stand nomor 7 tutup dikarenakan ada perbaikan di bandara domine edwar sorong dari tanggal 16 september 2024 2030 sampai 23 september 2024 /1000",
+  "airport": "WASS",
+  "gold": "Q) WAAF/QMPLC/IV/BO/A/000/999/0054S13117E005\nA) WASS\nB) 2409162030\nC) 2409231000\nE) ACFT STAND NR 07 CLSD DUE TO MAINT"
+ }
+]

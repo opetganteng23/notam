@@ -17,7 +17,10 @@ export interface Validation {
 const Q_LINE = /^[A-Z]{4}\/Q[A-Z]{4}\/[IVK]{1,2}\/[NBOMK]{1,3}\/[AEW]{1,2}\/\d{3}\/\d{3}\/\d{4}[NS]\d{5}[EW]\d{3}$/;
 
 // Input yang menyebut penutupan atau "tidak dapat digunakan": menurut AirNav keduanya berstatus closed (CLSD).
-const CLOSED_INPUT = /ditutup|penutupan|tutup|closed|\bclose\b|clsd|tidak\s+(?:dapat|bisa)\s+(?:digunakan|dipakai|dioperasikan|dilandasi|didarati|dilalui)|rusak/i;
+const CLOSED_INPUT = /ditutup|penutupan|tutup|closed|\bclose\b|clsd|(?:tidak|belum)\s+(?:dapat|bisa|boleh)\s+(?:di)?(?:gunakan|pergunakan|pakai|operasikan|landasi|darati|lalui)|rusak/i;
+
+// Petunjuk bahwa input menyebut pekerjaan. "DUE TO WIP" tanpa ini adalah alasan karangan: di dataset 156 dari 167 NOTAM ber-WIP inputnya menyebut pekerjaan.
+const WORK_INPUT = /pekerja|pengerja|dikerja|kerja|\bwork|\bwip\b|perbaik|pelebar|pemasang|penggantian|pembangun|konstruksi|construction|overlay|pelapis|pengecat|pembersih|marking|penambahan|pembuatan|galian|penutup|pemeliharaan|perawatan|instalasi/i;
 
 const SCHEDULE_HINT = /setiap hari|tiap hari|harian|\bdaily\b/i;
 
@@ -103,6 +106,10 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
   // CLSD hanya bila input menyebut ditutup atau tidak dapat digunakan; pekerjaan atau pembatasan yang masih memungkinkan operasi (di bawah kendali ATC) berstatus WIP atau LIMITED.
   if (freeText && it.E && /\bCLSD\b/.test(it.E.split(/\bRMK\b/i)[0]) && !CLOSED_INPUT.test(freeText))
     warn('CLSD_NOT_IN_INPUT', 'E) memuat CLSD tetapi input tidak menyebut ditutup atau tidak dapat digunakan. Bila masih bisa dipakai di bawah kendali ATC, statusnya WIP atau LIMITED, bukan CLSD');
+
+  // WIP berarti ada pekerjaan; bila input hanya menyebut sebab lain (mis. ada pesawat di landasan), alasan WIP salah.
+  if (freeText && it.E && /\bDUE TO [A-Z ]*\bWIP\b/.test(it.E.split(/\bRMK\b/i)[0]) && !WORK_INPUT.test(freeText))
+    warn('REASON_WIP_NOT_IN_INPUT', 'E) menulis alasan WIP (pekerjaan) tetapi input tidak menyebut pekerjaan. Periksa alasan yang sebenarnya');
 
   // Alasan di E) (DUE TO ..., di luar RMK) harus bersumber dari input; model cenderung menambahkannya dari contoh referensi.
   if (freeText && it.E && /\bDUE\s+TO\b/i.test(it.E.split(/\bRMK\b/i)[0]) && !REASON_CUE.test(freeText))

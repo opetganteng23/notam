@@ -427,4 +427,18 @@ describe('area gerak tidak dapat digunakan = CLSD', () => {
       expect(correctNotam(ad, ap3, 'perubahan data aerodrom').text).toBe(ad);
     });
   });
+
+  describe('petunjuk input untuk CLSD dan WIP', () => {
+    const tt = (e: string) => `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611060200\nC) 2611070800\nE) ${e}`;
+    const codes = (e: string, ft: string) => validateNotam(tt(e), 'WIHH', ft).issues.map((i) => i.code);
+    it('"belum bisa digunakan" dan "tidak dapat dipergunakan" dianggap tidak dapat dipakai (CLSD sah)', () => {
+      expect(codes('RWY 06/24 CLSD', 'Landasan pacu 06/24 belum bisa digunakan mulai tanggal 6 November 2026')).not.toContain('CLSD_NOT_IN_INPUT');
+      expect(codes('RWY 06/24 CLSD', 'Landasan pacu 06/24 tidak dapat dipergunakan')).not.toContain('CLSD_NOT_IN_INPUT');
+    });
+    it('DUE TO WIP tanpa kata pekerjaan di input diperingatkan', () => {
+      expect(codes('RWY 06/24 CLSD DUE TO WIP', 'Landasan pacu 06/24 belum bisa digunakan karena ada pesawat di landasan')).toContain('REASON_WIP_NOT_IN_INPUT');
+      expect(codes('RWY 06/24 CLSD DUE TO WIP', 'Landasan pacu 06/24 ditutup karena pengerjaan overlay')).not.toContain('REASON_WIP_NOT_IN_INPUT');
+      expect(codes('RWY 06/24 CLSD DUE TO MAINT', 'Landasan pacu 06/24 ditutup karena ada pesawat di landasan')).not.toContain('REASON_WIP_NOT_IN_INPUT');
+    });
+  });
 });
