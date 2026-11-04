@@ -1,5 +1,5 @@
 import { findAirport } from '../master/airports';
-import { expectedUtcStamps } from '../master/time';
+import { expectedUtcStamps, mixedZoneClocks } from '../master/time';
 import { qcodeWarnings } from '../master/icao-qcode';
 import { tpsWarnings } from '../master/tps';
 
@@ -88,6 +88,13 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
     if (it.B && /^\d{10}$/.test(it.B) && it.B !== expected[0]) err('B_UTC_MISMATCH', `B) (${it.B}) tidak sama dengan konversi UTC dari teks input (${expected[0]})`);
     if (cStamp && /^\d{10}$/.test(cStamp) && expected.length > 1 && cStamp !== expected[expected.length - 1])
       err('C_UTC_MISMATCH', `C) (${cStamp}) tidak sama dengan konversi UTC dari teks input (${expected[expected.length - 1]})`);
+  }
+
+  // Jam berlabel WIB/WITA/WIT bercampur dengan jam tak berlabel: yang tak berlabel ditulis apa adanya sebagai UTC.
+  if (freeText) {
+    const mix = mixedZoneClocks(freeText);
+    if (mix.unlabeled.length)
+      warn('TIME_ZONE_MIXED', `Input memuat jam berlabel zona lokal (${mix.local.join(', ')}) dan jam tanpa label (${mix.unlabeled.join(', ')}). Jam tanpa label ditulis apa adanya sebagai UTC; bila sebenarnya waktu lokal, lengkapi labelnya (WIB/WITA/WIT)`);
   }
 
   // D): jadwal harian; setiap rentang HHMM-HHMM harus jam yang nyata (2400 diperbolehkan).

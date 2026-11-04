@@ -42,3 +42,24 @@ export function expectedUtcStamps(text: string): string[] {
   }
   return out;
 }
+
+// Jam di narasi: didahului kata penanda (pukul/jam/sampai/s.d./dari/...) atau tanda hubung, dengan zona opsional.
+// Tanpa pemisah (HHMM) hanya dihitung bila didahului kata penanda, bukan tanda hubung, agar angka lain tidak terbaca sebagai jam.
+const KEY = '(?:pukul|pkl\\.?|jam|sampai|s\\.?\\s?d\\.?|hingga|dari|until|from|to|at)';
+const CLOCK_ANY = new RegExp('(?:\\b' + KEY + '\\s*|[-–]\\s*)\\b' + CLOCK + '(?:\\s*(WITA|WIB|WIT|UTC|GMT|Z|LT)\\b)?', 'gi');
+
+// Sebagian jam berlabel WIB/WITA/WIT tetapi jam lain di narasi tidak berlabel: yang tak berlabel ditulis apa adanya (UTC), sehingga rentang bisa terbalik tujuh jam.
+// Jam tanpa label sama sekali sengaja tidak diperingatkan: di dataset 544 dari 855 narasi ber-jam begitu, dan aturan AirNav menganggapnya UTC.
+export function mixedZoneClocks(text: string): { local: string[]; unlabeled: string[] } {
+  const local: string[] = [];
+  const unlabeled: string[] = [];
+  for (const m of text.matchAll(CLOCK_ANY)) {
+    const raw = m[0].trim();
+    const zone = m[5];
+    if (m[2] === undefined && /^[-–]/.test(raw)) continue;
+    const clock = `${(m[1] ?? m[3]).padStart(2, '0')}.${m[2] ?? m[4]}`;
+    if (!zone) unlabeled.push(clock);
+    else if (/^(WITA|WIB|WIT)$/i.test(zone)) local.push(`${clock} ${zone.toUpperCase()}`);
+  }
+  return local.length && unlabeled.length ? { local, unlabeled } : { local: [], unlabeled: [] };
+}

@@ -4,7 +4,7 @@ import { join } from 'path';
 import { RagGenerator, MockLlm, OllamaLlm, correctNotam, providerFromEnv } from './generator';
 import { buildPrompt, retrieve } from './rag';
 import { findAirport, mentionedLocators, tzOf } from '../master/airports';
-import { annotateLocalTimes, expectedUtcStamps } from '../master/time';
+import { annotateLocalTimes, expectedUtcStamps, mixedZoneClocks } from '../master/time';
 import { tpsWarnings } from '../master/tps';
 import { validateNotam } from './validator';
 import { BLOCKING } from '../requests/requests.service';
@@ -439,6 +439,32 @@ describe('area gerak tidak dapat digunakan = CLSD', () => {
       expect(codes('RWY 06/24 CLSD DUE TO WIP', 'Landasan pacu 06/24 belum bisa digunakan karena ada pesawat di landasan')).toContain('REASON_WIP_NOT_IN_INPUT');
       expect(codes('RWY 06/24 CLSD DUE TO WIP', 'Landasan pacu 06/24 ditutup karena pengerjaan overlay')).not.toContain('REASON_WIP_NOT_IN_INPUT');
       expect(codes('RWY 06/24 CLSD DUE TO MAINT', 'Landasan pacu 06/24 ditutup karena ada pesawat di landasan')).not.toContain('REASON_WIP_NOT_IN_INPUT');
+    });
+  });
+
+  describe('jam berlabel zona bercampur dengan jam tanpa label', () => {
+    it('hanya jam awal berlabel zona: jam akhir tanpa label diperingatkan', () => {
+      const r = mixedZoneClocks('Ditutup 16 Oktober 2024 pukul 09:32 WITA sampai 19 Oktober 2024 pukul 12:00');
+      expect(r.local).toEqual(['09.32 WITA']);
+      expect(r.unlabeled).toEqual(['12.00']);
+    });
+    it('0800 WIB s.d 1000 (4 digit tanpa pemisah) juga terdeteksi', () => {
+      expect(mixedZoneClocks('Ditutup 5 Nov 2026 pukul 0800 WIB s.d 1000').unlabeled).toEqual(['10.00']);
+    });
+    it('semua berlabel, semua tanpa label, atau UTC bercampur tanpa zona lokal: tidak diperingatkan', () => {
+      expect(mixedZoneClocks('pukul 08.00 WIB sampai 10.00 WIB').unlabeled).toEqual([]);
+      expect(mixedZoneClocks('pukul 08.00 sampai 10.00').unlabeled).toEqual([]);
+      expect(mixedZoneClocks('pukul 0800 UTC sampai 1000').unlabeled).toEqual([]);
+    });
+    it('angka lain (tahun, ketinggian) tidak dianggap jam', () => {
+      expect(mixedZoneClocks('pukul 08.00 WIB pada 5 Nov 2026, ketinggian 1500 FT dari RWY 06/24').unlabeled).toEqual([]);
+    });
+    it('validator memberi peringatan TIME_ZONE_MIXED, bukan galat', () => {
+      const n = 'Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611050100\nC) 2611051000\nE) RWY 06/24 CLSD';
+      const v = validateNotam(n, 'WIHH', 'Landasan 06/24 ditutup 5 November 2026 pukul 08.00 WIB sampai pukul 10.00');
+      expect(v.issues.map((i) => i.code)).toContain('TIME_ZONE_MIXED');
+      expect(v.issues.find((i) => i.code === 'TIME_ZONE_MIXED')?.level).toBe('warning');
+      expect(validateNotam(n, 'WIHH', 'Landasan 06/24 ditutup pukul 01.00 sampai pukul 10.00').issues.map((i) => i.code)).not.toContain('TIME_ZONE_MIXED');
     });
   });
 });

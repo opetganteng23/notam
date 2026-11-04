@@ -35,6 +35,8 @@ Validasi Traffic/Purpose/Scope (peringatan, tidak memblokir submit): di dataset 
 
 Validasi alasan: bila E) memuat `DUE TO ...` (di luar RMK) tetapi narasi tidak menyebut alasan apa pun, muncul peringatan `REASON_NOT_IN_INPUT` (tidak memblokir submit). Prompt juga menyuruh model menulis kondisi saja bila input tidak menyebut alasan. Diuji ke 927 NOTAM asli: 18 peringatan (1,9%), hampir semuanya pola "tidak berfungsi" yang di dataset dijawab `DUE TO TECR`; itu konvensi penyusun data, bukan ada di narasi, dan perlu diputuskan AirNav apakah dipertahankan.
 
+Validasi zona waktu: jam tanpa label WIB/WITA/WIT ditulis apa adanya sebagai UTC (aturan AirNav, tidak berubah). Bila sebagian jam di narasi berlabel zona lokal tetapi jam lain tidak (mis. "pukul 09:32 WITA sampai pukul 12:00"), muncul peringatan `TIME_ZONE_MIXED` (tidak memblokir submit) karena rentang bisa terbalik tujuh jam. Jam tanpa label sama sekali sengaja tidak diperingatkan: 544 dari 855 narasi ber-jam di dataset begitu. Diuji ke 927 NOTAM asli: 1 peringatan. Kodenya `mixedZoneClocks` di `src/master/time.ts`.
+
 Pelabelan entitas (draf untuk ditinjau manusia, berbasis aturan, bukan model; mengikuti NOTAM Dataset Labelling Guidelines): `npx ts-node --transpile-only test/label.ts keluaran.jsonl [masukan.json]` (bawaan `data/examples.json`). Entitas: LOCATION, POSITION, REASON, B, C, D, RMK, label Q-code (MR, MX, MN, LP, LC, AS, AK, CC, CS), WIP, dan ILS/VOR/DME/RFFS. Jadwal per hari dalam pekan dan nama bandara huruf kapital semua masih sering meleset; hasilnya wajib diperiksa.
 
 ## Role dan fitur
