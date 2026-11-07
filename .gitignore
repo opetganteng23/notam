@@ -6,3 +6,5 @@ _to_delete/
 eval-*.json
 finetune/*.zip
 finetune/*.gguf
+
+deploy/docker/secrets/

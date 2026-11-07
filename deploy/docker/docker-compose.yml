@@ -1,0 +1,79 @@
+# NOTAM AI baru: container, network, dan volume sendiri, terpisah dari sistem NOTAM lama di server yang sama.
+# Tidak memakai network, volume, atau nama container milik sistem lama; tidak membuka port 80/3000/11434/11435.
+name: notam-ai
+
+services:
+  mongo:
+    image: ${MONGO_IMAGE:-mongo:7}
+    container_name: notam-ai-mongo
+    restart: unless-stopped
+    volumes:
+      - notam_ai_mongo:/data/db
+    networks: [notam_ai_net]
+    # Tidak ada "ports": database hanya terjangkau dari container aplikasi di network ini.
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok' || mongo --quiet --eval 'db.adminCommand(\"ping\").ok'"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # Tunnel SSH ke server GPU: server Notam AI belum punya rute langsung ke Ollama di 10.168.219.3.
+  # Kunci khusus tunnel (hanya boleh meneruskan 10.168.219.3:11436) dan known_hosts ada di ./secrets/ (tidak di-commit).
+  llm-tunnel:
+    build:
+      context: ./tunnel
+    image: notam-ai-tunnel:latest
+    container_name: notam-ai-tunnel
+    restart: unless-stopped
+    volumes:
+      - ./secrets/tunnel_key:/run/secrets/tunnel_key:ro
+      - ./secrets/known_hosts:/root/.ssh/known_hosts:ro
+    networks: [notam_ai_net]
+    command: >
+      ssh -N -i /run/secrets/tunnel_key
+      -o BatchMode=yes -o StrictHostKeyChecking=yes -o ExitOnForwardFailure=yes
+      -o ServerAliveInterval=20 -o ServerAliveCountMax=3
+      -p ${GPU_SSH_PORT:-5617}
+      -L 0.0.0.0:11436:${GPU_OLLAMA_HOST:-10.168.219.3}:11436
+      ubuntu@${GPU_PUBLIC_IP:-103.67.43.166}
+
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    image: notam-ai:latest
+    container_name: notam-ai-app
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      llm-tunnel:
+        condition: service_started
+    environment:
+      MONGO_URI: mongodb://mongo:27017/notam
+      JWT_SECRET: ${JWT_SECRET:?isi JWT_SECRET di file .env}
+      PORT: "3300"
+      HOST: 0.0.0.0
+      LLM_PROVIDER: ollama
+      LLM_MODEL: ${LLM_MODEL:-notam-ft}
+      OLLAMA_URL: ${OLLAMA_URL:-http://llm-tunnel:11436}
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-24h}
+      LLM_CONCURRENCY: ${LLM_CONCURRENCY:-4}
+    ports:
+      # Port host untuk nginx AirNav. Ubah NOTAM_PORT di .env bila 8080 sudah terpakai.
+      - "${NOTAM_BIND:-0.0.0.0}:${NOTAM_PORT:-8080}:3300"
+    networks: [notam_ai_net]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3300/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+networks:
+  notam_ai_net:
+    name: notam_ai_net
+
+volumes:
+  notam_ai_mongo:
+    name: notam_ai_mongo

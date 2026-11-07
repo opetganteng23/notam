@@ -1,0 +1,12 @@
+node_modules
+dist
+public
+.git
+.env
+.env*
+_to_delete
+eval-*.json
+finetune
+test
+*.md
+deploy
