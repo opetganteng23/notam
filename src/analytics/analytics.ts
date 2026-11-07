@@ -22,7 +22,9 @@ export interface Analytics {
     avgTurnaroundH: number | null; medianTurnaroundH: number | null; avgRevisions: number | null;
     aiPassRate: number | null; correctedRate: number | null; regenRate: number | null; avgGenSec: number | null;
     pendingOver24h: number;
+    submitted: number; revisedDocs: number; revisionRate: number | null; rejectionRate: number | null;
   };
+  previous: { from: string; to: string; kpi: Analytics['kpi']; stages: Analytics['stages'] } | null;
   status: Record<string, number>;
   funnel: { label: string; n: number }[];
   granularity: 'day' | 'month';
@@ -202,12 +204,15 @@ export function computeAnalytics(docs: DocLike[], o: { from?: Date; to?: Date; a
     regenRate: ratio(regenerated, total),
     avgGenSec: genMs.length ? (avg(genMs) as number) / 1000 : null,
     pendingOver24h,
+    submitted, revisedDocs: revisionCounts.filter((n) => n > 0).length,
+    revisionRate: ratio(revisionCounts.filter((n) => n > 0).length, submitted),
+    rejectionRate: ratio(rejected, approved + rejected),
   };
 
   const returnsList = Object.entries(returns).map(([role, v]) => ({ role, ...v })).sort((a, b) => b.revise + b.reject - (a.revise + a.reject));
   const analytics: Analytics = {
     period: { from: o.from ? iso(o.from) : null, to: o.to ? iso(o.to) : null, generatedAt: iso(now), airport: o.airport ?? null },
-    kpi, status,
+    kpi, previous: null, status,
     funnel: [
       { label: 'Diajukan (submit)', n: submitted },
       { label: 'Lolos ATS', n: passedAts },
@@ -237,6 +242,18 @@ export function buildInsights(a: Analytics): string[] {
   if (k.avgTurnaroundH !== null) out.push(`Rata-rata waktu penyelesaian ${fmtDuration(k.avgTurnaroundH)} (median ${fmtDuration(k.medianTurnaroundH)}) dari pengajuan hingga persetujuan NOF.`);
   const slow = a.stages.filter((s) => s.avgH !== null).sort((x, y) => (y.avgH as number) - (x.avgH as number))[0];
   if (slow) out.push(`Tahap terlama: ${slow.stage}, rata-rata ${fmtDuration(slow.avgH)} per pengajuan.`);
+  const rev = a.stages.filter((s) => ['ATS', 'PIA', 'NOF'].includes(s.stage) && s.avgH !== null && s.n >= 3).sort((x, y) => (y.avgH as number) - (x.avgH as number));
+  if (rev.length >= 2) {
+    const fast = rev[rev.length - 1];
+    const gap = ((rev[0].avgH as number) / (fast.avgH as number) - 1) * 100;
+    if (gap >= 20) out.push(`Hambatan proses: tahap ${rev[0].stage} ${Math.round(gap)}% lebih lama dibanding ${fast.stage} (${fmtDuration(rev[0].avgH)} vs ${fmtDuration(fast.avgH)}).`);
+  }
+  if (k.revisionRate !== null && k.submitted) out.push(`${k.revisedDocs} dari ${k.submitted} pengajuan (${pct(k.revisionRate)}) pernah dikembalikan untuk revisi.`);
+  const p = a.previous;
+  if (p && p.kpi.total) {
+    const d = Math.round(((k.total - p.kpi.total) / p.kpi.total) * 100);
+    out.push(`Jumlah pengajuan ${d === 0 ? 'sama dengan' : d > 0 ? `naik ${d}% dibanding` : `turun ${-d}% dibanding`} periode sebelumnya yang sama panjang (${p.kpi.total} pengajuan).`);
+  }
   out.push(k.pendingOver24h ? `${k.pendingOver24h} pengajuan menunggu lebih dari ${STALE_HOURS} jam di satu tahap.` : `Tidak ada pengajuan yang menunggu lebih dari ${STALE_HOURS} jam.`);
   const ap = a.airports[0];
   if (ap) out.push(`Bandara terbanyak: ${ap.airport}${ap.name ? ` (${ap.name})` : ''}, ${ap.n} pengajuan (${pct(ap.n / k.total)}).`);

@@ -25,7 +25,9 @@ export interface Analytics {
     total: number; approved: number; rejected: number; inReview: number; needsRevision: number;
     approvalRate: number | null; firstPassRate: number | null; avgTurnaroundH: number | null; medianTurnaroundH: number | null; avgRevisions: number | null;
     aiPassRate: number | null; correctedRate: number | null; regenRate: number | null; avgGenSec: number | null; pendingOver24h: number;
+    submitted: number; revisedDocs: number; revisionRate: number | null; rejectionRate: number | null;
   };
+  previous: { from: string; to: string; kpi: Analytics['kpi']; stages: Analytics['stages'] } | null;
   status: Record<string, number>;
   funnel: { label: string; n: number }[];
   granularity: 'day' | 'month';

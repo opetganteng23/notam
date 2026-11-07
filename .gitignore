@@ -8,3 +8,7 @@ finetune/*.zip
 finetune/*.gguf
 
 deploy/docker/secrets/
+
+# bahan mentah peta (hasil olahannya web/src/indonesia-outline.ts yang dipakai)
+data/*.geojson
+preview-map.svg

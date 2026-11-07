@@ -9,3 +9,6 @@ finetune
 test
 *.md
 deploy
+
+data/*.geojson
+preview-map.svg

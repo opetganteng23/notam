@@ -1,4 +1,4 @@
-import { DocLike, computeAnalytics, fmtDuration } from './analytics';
+import { DocLike, buildInsights, computeAnalytics, fmtDuration } from './analytics';
 
 const T0 = Date.UTC(2025, 0, 1);
 const at = (h: number) => new Date(T0 + h * 3_600_000);
@@ -92,6 +92,23 @@ describe('computeAnalytics', () => {
     expect(t).toContain('1 pengajuan menunggu lebih dari 24 jam');
     expect(t).toContain('Bandara terbanyak: WIHH');
     expect(t).toContain('Pengembalian terbanyak berasal dari PIA: 1 revisi dan 1 penolakan.');
+  });
+
+  it('tingkat revisi dan penolakan dihitung dari riwayat', () => {
+    expect(a.kpi.submitted).toBe(3);
+    expect(a.kpi.revisedDocs).toBe(1);
+    expect(a.kpi.revisionRate).toBeCloseTo(1 / 3);
+    expect(a.kpi.rejectionRate).toBe(0.5); // 1 ditolak dari 2 yang selesai
+    expect(a.previous).toBeNull();
+  });
+
+  it('insight membandingkan dengan periode sebelumnya yang sama panjang', () => {
+    const up = buildInsights({ ...a, previous: { from: 'x', to: 'y', stages: a.stages, kpi: { ...a.kpi, total: 2 } } }).join('\n');
+    expect(up).toContain('naik 50% dibanding periode sebelumnya');
+    const down = buildInsights({ ...a, previous: { from: 'x', to: 'y', stages: a.stages, kpi: { ...a.kpi, total: 6 } } }).join('\n');
+    expect(down).toContain('turun 50% dibanding periode sebelumnya');
+    const none = buildInsights({ ...a, previous: { from: 'x', to: 'y', stages: a.stages, kpi: { ...a.kpi, total: 0 } } }).join('\n');
+    expect(none).not.toContain('periode sebelumnya');
   });
 
   it('periode panjang beralih ke seri bulanan', () => {

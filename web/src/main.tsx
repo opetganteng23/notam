@@ -5,6 +5,8 @@ import { AnalyticsPanel } from './analytics';
 import { TypesPanel } from './types-report';
 import { KamusPanel } from './kamus';
 import { Ticker } from './ticker';
+import { Clocks } from './clocks';
+import { MapPanel } from './map';
 import { ProfilePanel, initialsOf } from './profile';
 import { NarrativeInput } from './suggest-input';
 import { Mark, Partners, TowerScene } from './brand';
@@ -233,6 +235,7 @@ function Dashboard({ tick, onStatus }: { tick: number; onStatus?: (s: string) =>
 
   return (
     <>
+      <Clocks />
       <div className="cards">
         {cards.map((c) => (
           <button key={c.label} className={`card ${c.cls}`} disabled={!c.status || !onStatus} onClick={() => c.status && onStatus?.(c.status)}>
@@ -427,18 +430,18 @@ function ListView({ tick, filter, setFilter, onChange, onReuse }: {
   );
 }
 
-type Tab = 'ringkasan' | 'analytics' | 'jenis' | 'server' | 'pengguna' | 'audit' | 'daftar' | 'kamus' | 'profil';
-type View = 'beranda' | 'analytics' | 'jenis' | 'kamus' | 'profil';
+type Tab = 'ringkasan' | 'analytics' | 'peta' | 'jenis' | 'server' | 'pengguna' | 'audit' | 'daftar' | 'kamus' | 'profil';
+type View = 'beranda' | 'analytics' | 'peta' | 'jenis' | 'kamus' | 'profil';
 interface Group<K extends string> { title: string; items: [K, string][] }
 const ADMIN_MENU: Group<Tab>[] = [
-  { title: 'Pantau', items: [['ringkasan', 'Ringkasan'], ['analytics', 'Analytics'], ['jenis', 'Laporan Jenis'], ['daftar', 'Daftar NOTAM']] },
+  { title: 'Pantau', items: [['ringkasan', 'Ringkasan'], ['analytics', 'Analytics'], ['peta', 'Peta Sebaran'], ['jenis', 'Laporan Jenis'], ['daftar', 'Daftar NOTAM']] },
   { title: 'Kelola', items: [['server', 'Server'], ['pengguna', 'Pengguna'], ['audit', 'Audit Log']] },
   { title: 'Referensi', items: [['kamus', 'Kamus']] },
   { title: 'Akun', items: [['profil', 'Profil saya']] },
 ];
 const ACCOUNT: Group<View> = { title: 'Akun', items: [['profil', 'Profil saya']] };
-const REVIEWER_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['analytics', 'Analytics'], ['jenis', 'Laporan Jenis'], ['kamus', 'Kamus']] }, ACCOUNT];
-const ORIGINATOR_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['kamus', 'Kamus']] }, ACCOUNT];
+const REVIEWER_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['analytics', 'Analytics'], ['peta', 'Peta Sebaran'], ['jenis', 'Laporan Jenis'], ['kamus', 'Kamus']] }, ACCOUNT];
+const ORIGINATOR_MENU: Group<View>[] = [{ title: 'Menu', items: [['beranda', 'Beranda'], ['peta', 'Peta Sebaran'], ['kamus', 'Kamus']] }, ACCOUNT];
 
 // Sidebar: kelompok menu di layar lebar, baris yang dapat digeser di layar kecil.
 function Side<K extends string>({ groups, current, onPick }: { groups: Group<K>[]; current: K; onPick: (k: K) => void }) {
@@ -512,6 +515,7 @@ function App() {
         <>
           {tab === 'ringkasan' && <Dashboard tick={tick} onStatus={byStatus} />}
           {tab === 'analytics' && <AnalyticsPanel />}
+          {tab === 'peta' && <MapPanel />}
           {tab === 'jenis' && <TypesPanel />}
           {tab === 'server' && <ServerPanel />}
           {tab === 'pengguna' && <Users />}
@@ -522,7 +526,7 @@ function App() {
         </>
       ) : (
         <>
-          {view === 'profil' ? <ProfilePanel onChange={setMe} /> : view === 'kamus' ? <KamusPanel /> : reviewer && view === 'analytics' ? <AnalyticsPanel /> : reviewer && view === 'jenis' ? <TypesPanel /> : (
+          {view === 'profil' ? <ProfilePanel onChange={setMe} /> : view === 'kamus' ? <KamusPanel /> : view === 'peta' ? <MapPanel /> : reviewer && view === 'analytics' ? <AnalyticsPanel /> : reviewer && view === 'jenis' ? <TypesPanel /> : (
             <>
               <Dashboard tick={tick} onStatus={(s) => setFilter({ ...EMPTY_FILTER, status: s })} />
               {role === 'ORIGINATOR' && <Create key={prefill.n} prefill={prefill} onDone={bump} />}

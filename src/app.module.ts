@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AnalyticsController, AnalyticsService } from './analytics/analytics.controller';
+import { MapController, MapService } from './map/map.controller';
 import { AuditController } from './audit/audit.controller';
 import { AuditService } from './audit/audit.service';
 import { AuthGuard } from './auth/auth';
@@ -34,8 +35,8 @@ export class AppModule {
         ]),
         JwtModule.register({ global: true, secret: o.jwtSecret, signOptions: { expiresIn: '8h' } }),
       ],
-      controllers: [AuthController, RequestsController, UsersController, ProfileController, SuggestController, HealthController, OpsController, AuditController, AnalyticsController, DictionaryController],
-      providers: [RequestsService, OpsService, AuditService, AnalyticsService, { provide: NOTAM_GENERATOR, useFactory: () => new RagGenerator(providerFromEnv()) }, { provide: APP_GUARD, useClass: AuthGuard }],
+      controllers: [AuthController, RequestsController, UsersController, ProfileController, SuggestController, HealthController, OpsController, AuditController, AnalyticsController, DictionaryController, MapController],
+      providers: [RequestsService, OpsService, AuditService, AnalyticsService, MapService, { provide: NOTAM_GENERATOR, useFactory: () => new RagGenerator(providerFromEnv()) }, { provide: APP_GUARD, useClass: AuthGuard }],
     };
   }
 }

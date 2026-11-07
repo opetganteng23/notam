@@ -121,6 +121,50 @@ function Ring({ value, label, color, hint }: { value: number | null; label: stri
   );
 }
 
+// Radar kesehatan operasi. Setiap sumbu bernilai 0-100 (makin besar makin sehat); sumbu tanpa data tampil di titik pusat.
+// Kecepatan tahap: 100 = rata-rata di bawah 1 jam, 0 = 24 jam atau lebih (24 jam = batas "macet" yang sama dengan penanda antrean).
+export function radarAxes(k: Analytics['kpi'], stages: Analytics['stages']) {
+  const speed = (name: string) => { const h = stages.find((s) => s.stage === name)?.avgH ?? null; return h === null ? null : Math.round(100 * (1 - Math.min(h, 24) / 24)); };
+  const rate = (r: number | null) => (r === null ? null : Math.round(r * 100));
+  return [
+    { key: 'Persetujuan', value: rate(k.approvalRate), def: 'Disetujui dibanding yang sudah selesai (disetujui + ditolak)' },
+    { key: 'Tanpa revisi', value: rate(k.firstPassRate), def: 'Disetujui tanpa pernah dikembalikan' },
+    { key: 'Tidak ditolak', value: k.rejectionRate === null ? null : 100 - Math.round(k.rejectionRate * 100), def: '100% dikurangi tingkat penolakan' },
+    { key: 'Kecepatan ATS', value: speed('ATS'), def: 'Rata-rata lama tinggal di ATS (100 = di bawah 1 jam, 0 = 24 jam atau lebih)' },
+    { key: 'Kecepatan PIA', value: speed('PIA'), def: 'Rata-rata lama tinggal di PIA (skala yang sama)' },
+    { key: 'Kecepatan NOF', value: speed('NOF'), def: 'Rata-rata lama tinggal di NOF (skala yang sama)' },
+  ];
+}
+
+function Radar({ cur, prev }: { cur: ReturnType<typeof radarAxes>; prev: ReturnType<typeof radarAxes> | null }) {
+  const hot = useHot();
+  const S = 340, c = S / 2, R = 108, n = cur.length;
+  const ang = (i: number) => (Math.PI * 2 * i) / n - Math.PI / 2;
+  const pt = (i: number, v: number | null): [number, number] => { const r = (R * (v ?? 0)) / 100; return [c + r * Math.cos(ang(i)), c + r * Math.sin(ang(i))]; };
+  const poly = (axes: ReturnType<typeof radarAxes>) => axes.map((a, i) => pt(i, a.value).map((x) => x.toFixed(1)).join(',')).join(' ');
+  return (
+    <div>
+      <svg viewBox={`0 0 ${S} ${S}`} className="radar" role="img" aria-label="Radar kesehatan operasi">
+        {[25, 50, 75, 100].map((g) => <polygon key={g} points={cur.map((_, i) => pt(i, g).map((x) => x.toFixed(1)).join(',')).join(' ')} fill="none" stroke="#dfe6ef" strokeWidth="1" />)}
+        {cur.map((_, i) => <line key={i} x1={c} y1={c} x2={pt(i, 100)[0]} y2={pt(i, 100)[1]} stroke="#dfe6ef" />)}
+        {prev && <polygon points={poly(prev)} fill="none" stroke="#66758a" strokeWidth="2" strokeDasharray="5 4" />}
+        <polygon points={poly(cur)} fill={C.blue} fillOpacity=".18" stroke={C.blue} strokeWidth="2.5" strokeLinejoin="round" />
+        {cur.map((a, i) => {
+          const [x, y] = pt(i, a.value), [lx, ly] = pt(i, 122);
+          return (
+            <g key={a.key} {...hot(`${a.key}: ${a.value === null ? 'belum ada data' : `${a.value}/100`}${prev && prev[i].value !== null ? ` · periode sebelumnya ${prev[i].value}/100` : ''} — ${a.def}`)}>
+              <circle cx={x} cy={y} r="4.5" fill={a.value === null ? '#b9c3d0' : C.blue} />
+              <text x={lx} y={ly} textAnchor={Math.abs(lx - c) < 6 ? 'middle' : lx > c ? 'start' : 'end'} dominantBaseline="middle" className="radar-l">{a.key}</text>
+              <text x={lx} y={ly + 13} textAnchor={Math.abs(lx - c) < 6 ? 'middle' : lx > c ? 'start' : 'end'} dominantBaseline="middle" className="radar-v">{a.value === null ? '–' : a.value}</text>
+            </g>
+          );
+        })}
+      </svg>
+      <div className="legend"><span><i style={{ background: C.blue }} />Periode ini</span>{prev && <span><i style={{ background: '#66758a' }} />Periode sebelumnya</span>}</div>
+    </div>
+  );
+}
+
 type Part = { label: string; v: number; color: string };
 function Stacked({ rows, onPick }: { rows: { label: string; title?: string; parts: Part[] }[]; onPick?: (row: string) => void }) {
   const hot = useHot();
@@ -170,9 +214,24 @@ export function Bars({ rows, unit = '', color, onPick }: { rows: { label: string
   return <>{rows.map((r) => <div className="bar wide" key={r.label} {...hot(`${r.label}: ${r.text ?? `${r.value}${unit}`}`, r.pick && onPick ? () => onPick(r.pick!) : undefined)}><span className="mono" title={r.label}>{r.label}</span><i style={{ width: `${(r.value / max) * 100}%`, ...(color && { background: color }) }} /><b>{r.text ?? `${r.value}${unit}`}</b></div>)}</>;
 }
 
-export function Kpi({ value, label, sub, tone, spark, onClick }: { value: string; label: string; sub?: string; tone?: string; spark?: ReactNode; onClick?: () => void }) {
+export function Kpi({ value, label, sub, tone, spark, delta, onClick }: { value: string; label: string; sub?: string; tone?: string; spark?: ReactNode; delta?: ReactNode; onClick?: () => void }) {
   const hot = useHot();
-  return <div className={`card ${tone ?? ''}`} {...(onClick ? hot(`${label}: klik untuk melihat daftar NOTAM`, onClick) : {})}><span className="num">{value}</span><span className="lbl">{label}</span>{sub && <span className="sub">{sub}</span>}{spark}</div>;
+  return <div className={`card ${tone ?? ''}`} {...(onClick ? hot(`${label}: klik untuk melihat daftar NOTAM`, onClick) : {})}><span className="num">{value}</span><span className="lbl">{label}</span>{sub && <span className="sub">{sub}</span>}{delta}{spark}</div>;
+}
+
+// Indikator perubahan terhadap periode sebelumnya yang sama panjang. Kosong bila tidak ada pembanding atau datanya tidak ada.
+// kind 'rate' = selisih dalam poin persen; 'count' dan 'dur' = persen perubahan. good = arah yang berarti membaik.
+export function Delta({ cur, prev, kind, good }: { cur: number | null; prev: number | null | undefined; kind: 'rate' | 'count' | 'dur'; good: 'up' | 'down' }) {
+  if (prev === undefined || cur === null || prev === null) return null;
+  let diff: number, text: string;
+  if (kind === 'rate') { diff = Math.round((cur - prev) * 100); text = `${Math.abs(diff)} poin`; }
+  else {
+    if (prev === 0) return cur > 0 ? <span className="delta flat">baru, belum ada di periode sebelumnya</span> : null;
+    diff = Math.round(((cur - prev) / prev) * 100); text = `${Math.abs(diff)}%`;
+  }
+  if (diff === 0) return <span className="delta flat">sama dengan periode sebelumnya</span>;
+  const better = good === 'up' ? diff > 0 : diff < 0;
+  return <span className={`delta ${better ? 'ok' : 'bad'}`}>{diff > 0 ? '▲' : '▼'} {text} vs periode sebelumnya</span>;
 }
 
 const iso = (d: Date) => d.toISOString();
@@ -211,6 +270,7 @@ export function AnalyticsPanel() {
   });
 
   const k = a?.kpi;
+  const pk = a?.previous?.kpi;
   const status = a ? Object.entries(a.status).map(([s, n]) => ({ label: STATUS_LABEL[s] ?? s, value: n, color: STATUS_COLOR[s] ?? '#66758a', pick: s })) : [];
   const v = a?.ai.validation ?? {};
   const sub = (key: 'submitted' | 'approved') => (a ? a.series.map((p) => p[key]) : []);
@@ -239,19 +299,21 @@ export function AnalyticsPanel() {
       {!a || !k ? (!error && <p className="muted">Memuat…</p>) : (
         <div className="dash">
           <div className="cards kpis span-12">
-            <Kpi value={String(k.total)} label="Total pengajuan" spark={<Spark values={sub('submitted')} />} />
-            <Kpi value={String(k.approved)} label="Disetujui NOF" tone="c-ok" onClick={() => open("NOTAM disetujui NOF", "status", "APPROVED_BY_NOF")} spark={<Spark values={sub('approved')} color={C.green} />} />
-            <Kpi value={String(k.rejected)} label="Ditolak" tone="c-reject" onClick={() => open("NOTAM ditolak", "status", "REJECTED")} />
+            <Kpi value={String(k.total)} label="Total pengajuan" delta={<Delta cur={k.total} prev={pk?.total} kind="count" good="up" />} spark={<Spark values={sub('submitted')} />} />
+            <Kpi value={String(k.approved)} label="Disetujui NOF" tone="c-ok" delta={<Delta cur={k.approved} prev={pk?.approved} kind="count" good="up" />} onClick={() => open("NOTAM disetujui NOF", "status", "APPROVED_BY_NOF")} spark={<Spark values={sub('approved')} color={C.green} />} />
+            <Kpi value={String(k.rejected)} label="Ditolak" tone="c-reject" delta={<Delta cur={k.rejected} prev={pk?.rejected} kind="count" good="down" />} onClick={() => open("NOTAM ditolak", "status", "REJECTED")} />
             <Kpi value={String(k.inReview + k.needsRevision)} label="Masih berjalan" sub={`${k.inReview} review · ${k.needsRevision} revisi`} tone="c-review" />
-            <Kpi value={fmtPct(k.approvalRate)} label="Tingkat persetujuan" sub={`${fmtPct(k.firstPassRate)} tanpa revisi`} tone="c-ok" />
-            <Kpi value={fmtDuration(k.avgTurnaroundH)} label="Rata-rata waktu selesai" sub={`median ${fmtDuration(k.medianTurnaroundH)}`} />
+            <Kpi value={fmtPct(k.approvalRate)} label="Tingkat persetujuan" sub={`${fmtPct(k.firstPassRate)} tanpa revisi`} tone="c-ok" delta={<Delta cur={k.approvalRate} prev={pk?.approvalRate} kind="rate" good="up" />} />
+            <Kpi value={fmtDuration(k.avgTurnaroundH)} label="Rata-rata waktu selesai" sub={`median ${fmtDuration(k.medianTurnaroundH)}`} delta={<Delta cur={k.avgTurnaroundH} prev={pk?.avgTurnaroundH} kind="dur" good="down" />} />
+            <Kpi value={fmtPct(k.revisionRate)} label="Tingkat revisi" sub={`${k.revisedDocs} dari ${k.submitted} pengajuan`} tone="c-revise" delta={<Delta cur={k.revisionRate} prev={pk?.revisionRate} kind="rate" good="down" />} />
+            <Kpi value={fmtPct(k.rejectionRate)} label="Tingkat penolakan" sub="dari yang sudah selesai" tone="c-reject" delta={<Delta cur={k.rejectionRate} prev={pk?.rejectionRate} kind="rate" good="down" />} />
             <Kpi value={String(k.pendingOver24h)} label="Menunggu > 24 jam" tone={k.pendingOver24h ? 'c-reject' : 'c-ok'} />
             <Kpi value={fmtPct(k.aiPassRate)} label="Lolos validasi AI" sub={`${fmtPct(k.correctedRate)} dikoreksi sistem`} />
           </div>
 
           <section className="panel span-12 insight-panel">
             <h3>Ringkasan eksekutif</h3>
-            <p className="muted">Diperbarui {fmtDateTime(a.period.generatedAt)} · Draft tidak dihitung</p>
+            <p className="muted">Diperbarui {fmtDateTime(a.period.generatedAt)} · Draft tidak dihitung{a.previous ? ` · Pembanding: ${new Date(a.previous.from).toLocaleDateString('id-ID')} – ${new Date(a.previous.to).toLocaleDateString('id-ID')}` : ' · Pilih periode selain "Semua" untuk melihat perbandingan'}</p>
             <ul className="insights">{a.insights.map((t) => <li key={t}>{t}</li>)}</ul>
           </section>
 
@@ -275,6 +337,20 @@ export function AnalyticsPanel() {
           <section className="panel span-4">
             <h3>Sebaran FIR</h3>
             {a.fir.length ? <Donut data={a.fir.map((f, i) => ({ label: f.fir, value: f.n, color: PAL[i % PAL.length], pick: f.fir }))} onPick={(f) => open(`NOTAM di FIR ${f}`, 'fir', f)} /> : <p className="muted">Belum ada data.</p>}
+          </section>
+
+          <section className="panel span-6">
+            <h3>Radar kesehatan operasi</h3>
+            <Radar cur={radarAxes(k, a.stages)} prev={a.previous ? radarAxes(a.previous.kpi, a.previous.stages) : null} />
+            <p className="muted">Skor 0–100, makin besar makin sehat. Sorot sebuah titik untuk melihat artinya. Garis putus-putus = periode sebelumnya yang sama panjang.</p>
+          </section>
+          <section className="panel span-6">
+            <h3>Cara membaca radar</h3>
+            <table className="mini">
+              <thead><tr><th>Sumbu</th><th>Skor</th><th>Arti</th></tr></thead>
+              <tbody>{radarAxes(k, a.stages).map((x) => <tr key={x.key}><td>{x.key}</td><td>{x.value === null ? '–' : x.value}</td><td>{x.def}</td></tr>)}</tbody>
+            </table>
+            <p className="muted">Skor kecepatan memakai batas 24 jam yang sama dengan penanda antrean, bukan SLA resmi AirNav. Sumbu tanpa data ditampilkan "–".</p>
           </section>
 
           <section className="panel span-6">

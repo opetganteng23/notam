@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { AuditService } from '../audit/audit.service';
 import { AuthUser, CurrentUser, Roles } from '../auth/auth';
 import { NotamRequest } from '../requests/schemas';
-import { Analytics, DocLike, Row, computeAnalytics } from './analytics';
+import { Analytics, DocLike, Row, buildInsights, computeAnalytics } from './analytics';
 import { typesToExcel, typesToPptx } from './export-types';
 import { analyticsToExcel } from './export-xlsx';
 import { analyticsToPptx } from './export-pptx';
@@ -44,7 +44,22 @@ export class AnalyticsService {
       .find(filter)
       .select({ formNo: 1, airport: 1, originator: 1, status: 1, createdAt: 1, events: 1, versions: { $slice: -1 } })
       .lean();
-    return computeAnalytics(docs as unknown as DocLike[], { from, to, airport: q.airport });
+    const result = computeAnalytics(docs as unknown as DocLike[], { from, to, airport: q.airport });
+    // Periode pembanding: rentang sebelumnya dengan durasi yang sama persis. Hanya bila ada tanggal awal.
+    if (from) {
+      const end = to ?? new Date();
+      const prevFrom = new Date(+from - (+end - +from));
+      const prevFilter: Record<string, unknown> = { status: { $ne: 'DRAFT' }, createdAt: { $gte: prevFrom, $lt: from } };
+      if (q.airport) prevFilter.airport = q.airport;
+      const prevDocs = await this.model
+        .find(prevFilter)
+        .select({ formNo: 1, airport: 1, originator: 1, status: 1, createdAt: 1, events: 1, versions: { $slice: -1 } })
+        .lean();
+      const prev = computeAnalytics(prevDocs as unknown as DocLike[], { from: prevFrom, to: from, airport: q.airport }).analytics;
+      result.analytics.previous = { from: prevFrom.toISOString(), to: from.toISOString(), kpi: prev.kpi, stages: prev.stages };
+      result.analytics.insights = buildInsights(result.analytics);
+    }
+    return result;
   }
 
   async runTypes(q: TypesQuery): Promise<{ report: TypesReport; rows: TypeRow[] }> {
