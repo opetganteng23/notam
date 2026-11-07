@@ -15,6 +15,7 @@ nc -vz -w 5 10.168.219.3 11436        # server ini harus bisa menjangkau Ollama 
 Bila port 8080 terpakai, pilih port lain dan isi `NOTAM_PORT` di `.env`. Bila `nc` gagal, minta AirNav membuka rute 172.20.9.8 → 10.168.219.3:11436.
 
 ## 1. Taruh kode di server
+Frontend dibuild di PC (`npm run build:web`, hasilnya folder `public/`) lalu dikirim terpisah ke akar kode di server (`~/notam-ai/public`), karena CPU server tidak mendukung vite.
 Salah satu: `git clone` repo (bila server bisa ke GitHub), atau dari PC: `scp -r` folder `app` tanpa `node_modules`, `dist`, `public`, `.env`, `finetune`.
 Semua perintah berikut dijalankan dari folder `app/deploy/docker`.
 
