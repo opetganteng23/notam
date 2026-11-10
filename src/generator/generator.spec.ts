@@ -4,7 +4,7 @@ import { join } from 'path';
 import { RagGenerator, MockLlm, OllamaLlm, correctNotam, providerFromEnv } from './generator';
 import { buildPrompt, retrieve } from './rag';
 import { findAirport, mentionedLocators, tzOf } from '../master/airports';
-import { annotateLocalTimes, expectedUtcPlan, expectedUtcStamps } from '../master/time';
+import { annotateLocalTimes, expectedUtcPlan, expectedUtcSchedule, expectedUtcStamps } from '../master/time';
 import { tpsWarnings } from '../master/tps';
 import { validateNotam } from './validator';
 import { BLOCKING } from '../requests/requests.service';
@@ -528,5 +528,35 @@ describe('LP vs LA dan tabel NSC (Traffic/Purpose/Scope)', () => {
   it('QMRLC memakai purpose NBO sesuai tabel NSC', () => {
     const t = correctNotam(mk('QMRLC', 'RWY 06/24 CLSD').replace('IV/NBO/A', 'IV/BO/A'), wihh, 'runway 06/24 ditutup').text;
     expect(t).toContain('QMRLC/IV/NBO/A/');
+  });
+});
+
+describe('D) jadwal harian dalam UTC', () => {
+  const ap = () => findAirport('WIHH')!;
+  const withD = (d: string) => GOOD.replace('E)', `D) ${d}\nE)`);
+  it('rentang berzona lokal dikonversi ke UTC', () => {
+    expect(expectedUtcSchedule('Runway ditutup setiap hari pukul 08.00-12.00 WIB')).toEqual(['0100-0500']);
+    expect(expectedUtcSchedule('ditutup tiap hari 0800-1200 WITA')).toEqual(['0000-0400']);
+    expect(expectedUtcSchedule('daily 08.00 sampai 17.00 WIT')).toEqual(['2300-0800']);
+  });
+  it('zona diwarisi dari jam berlabel lain di narasi yang sama', () => {
+    expect(expectedUtcSchedule('setiap hari pukul 08.00-12.00, mulai 10 November 2026 pukul 08.00 WIB')).toEqual(['0100-0500']);
+  });
+  it('melewati tengah malam dibungkus tanpa tanggal', () => {
+    expect(expectedUtcSchedule('setiap hari 05.00-10.00 WIB')).toEqual(['2200-0300']);
+  });
+  it('tanpa label zona atau berlabel UTC tidak diubah', () => {
+    expect(expectedUtcSchedule('setiap hari pukul 08.00-12.00')).toEqual([]);
+    expect(expectedUtcSchedule('setiap hari 0800-1200 UTC')).toEqual([]);
+    expect(expectedUtcSchedule('pukul 08.00-12.00 WIB')).toEqual([]); // bukan jadwal berulang
+  });
+  it('correctNotam menulis D) dalam UTC dan validator menandai yang belum', () => {
+    const input = 'Runway ditutup setiap hari pukul 08.00-12.00 WIB karena pekerjaan';
+    const r = correctNotam(withD('DAILY 0800-1200'), ap(), input);
+    expect(r.text).toContain('D) DAILY 0100-0500');
+    expect(r.corrections.join(' ')).toContain('D) ditulis dalam UTC');
+    expect(validateNotam(withD('DAILY 0800-1200'), 'WIHH', input).issues.map((i) => i.code)).toContain('D_UTC_MISMATCH');
+    expect(validateNotam(r.text, 'WIHH', input).issues.map((i) => i.code)).not.toContain('D_UTC_MISMATCH');
+    expect(correctNotam(withD('DAILY 0100-0500'), ap(), input).corrections.join(' ')).not.toContain('D)');
   });
 });

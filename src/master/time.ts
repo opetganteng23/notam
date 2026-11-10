@@ -101,3 +101,28 @@ export function expectedUtcPlan(text: string): { B?: string; C?: string } {
   const dates = [...text.matchAll(/\b\d{1,2}\s+([a-z]+)\s+\d{4}/gi)].filter((m) => monthIndex(m[1]) >= 0).map((m) => m.index ?? 0);
   return dates.length >= 2 && l[0].index === dates[dates.length - 1] ? { C: l[0].stamp } : { B: l[0].stamp };
 }
+
+const SCHEDULE = /setiap hari|tiap hari|harian|\bdaily\b/i;
+
+// Rentang jam jadwal harian untuk D) dalam UTC, urut menurut posisi di narasi. Hanya bila narasi menyebut jadwal berulang; hanya rentang berzona lokal
+// (label sendiri atau mengikuti jam berlabel, aturan sama dengan B/C) yang dikonversi. Menit negatif dibungkus +24 jam (D) tidak membawa tanggal).
+// Jam tanpa label zona dianggap UTC dan tidak menghasilkan apa pun. Mengembalikan HHMM-HHMM.
+export function expectedUtcSchedule(text: string): string[] {
+  if (!SCHEDULE.test(text)) return [];
+  const toks = clockTokens(text);
+  const inherit = canInherit(text, toks);
+  const sep = '(?:[-–]|sampai(?:\\s+dengan)?|s\\.?\\s?d\\.?|hingga|until|to)';
+  const re = new RegExp('\\b' + CLOCK + '(?:\\s*(' + ZONES + ')\\b)?\\s*' + sep + '\\s*' + CLOCK + '(?:\\s*(' + ZONES + ')\\b)?', 'gi');
+  const out: string[] = [];
+  for (const m of text.matchAll(re)) {
+    const own = (m[10] ?? m[5])?.toUpperCase();
+    const zone = localZone(m.index ?? 0, own, toks, inherit);
+    if (!zone) continue;
+    const conv = (h: number, mi: number) => {
+      const mins = (((h * 60 + mi - OFFSET[zone] * 60) % 1440) + 1440) % 1440;
+      return `${String(Math.floor(mins / 60)).padStart(2, '0')}${String(mins % 60).padStart(2, '0')}`;
+    };
+    out.push(`${conv(Number(m[1] ?? m[3]), Number(m[2] ?? m[4]))}-${conv(Number(m[6] ?? m[8]), Number(m[7] ?? m[9]))}`);
+  }
+  return out;
+}

@@ -1,5 +1,5 @@
 import { findAirport } from '../master/airports';
-import { expectedUtcPlan } from '../master/time';
+import { expectedUtcPlan, expectedUtcSchedule } from '../master/time';
 import { qcodeWarnings } from '../master/icao-qcode';
 import { tpsWarnings } from '../master/tps';
 
@@ -93,6 +93,11 @@ export function validateNotam(text: string, airportLocId: string, freeText?: str
     const ranges = [...it.D.matchAll(/(\d{4})\s*-\s*(\d{4})/g)];
     if (!ranges.length) err('D_FORMAT', 'D) tidak memuat rentang jam HHMM-HHMM');
     else if (ranges.some((r) => !hhmm(r[1]) || !hhmm(r[2]))) err('D_FORMAT', 'D) berisi jam yang tidak valid');
+    else {
+      const dPlan = freeText ? expectedUtcSchedule(freeText) : [];
+      if (dPlan.length === ranges.length && ranges.some((r, i) => `${r[1]}-${r[2]}` !== dPlan[i]))
+        err('D_UTC_MISMATCH', `D) (${ranges.map((r) => `${r[1]}-${r[2]}`).join(', ')}) tidak sama dengan konversi UTC dari teks input (${dPlan.join(', ')})`);
+    }
   } else if (freeText && SCHEDULE_HINT.test(freeText)) warn('D_MISSING', 'Input menyebut jadwal berulang tetapi D) tidak ada');
 
   // RMK ada di dalam E); bila ada harus berisi teks.
