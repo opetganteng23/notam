@@ -206,7 +206,7 @@ export function TypesPanel() {
                       </tr>
                       {openA[a.airport] && a.subjects.map((s) => (
                         <tr className="sub-row" key={s.code}>
-                          <td data-label="Subjek"><button className="linkish" onClick={() => setDrill({ title: `${a.airport} · ${s.label ?? s.code}`, extra: `${airportFiltered ? '' : `airport=${a.airport}&`}subject=${s.code}` })}>{s.label ?? <span className="mono">{s.code}</span>}{s.label && <span className="mono muted"> {s.code}</span>}</button></td>
+                          <td data-label="Subjek"><button className="linkish" onClick={() => setDrill({ title: `${a.airport} · ${s.label ?? s.code}`, extra: `${airportFiltered ? '' : `airport=${a.airport}&`}subject=${s.code}` })}>{s.label ? `${s.label} (${s.code})` : <span className="mono">{s.code}</span>}</button></td>
                           <td data-label="Total">{s.n}</td>
                           {IMPACT_ORDER.map((k) => <td key={k} data-label={IMPACT_LABEL[k]}>{s.impact[k] || ''}</td>)}
                         </tr>
@@ -238,12 +238,12 @@ export function TypesPanel() {
                       {open[g.group] && g.subjects.map((s) => (
                         <Fragment key={s.code}>
                           <tr className="sub-row">
-                            <td data-label="Subjek"><button className="linkish" onClick={() => setDrill({ title: `${s.label ?? s.code} (${s.code})`, extra: `group=${g.group}&subject=${s.code}` })}>{s.label ?? <span className="mono">{s.code}</span>}{s.label && <span className="mono muted"> {s.code}</span>}</button></td>
+                            <td data-label="Subjek"><button className="linkish" onClick={() => setDrill({ title: `${s.label ?? s.code} (${s.code})`, extra: `group=${g.group}&subject=${s.code}` })}>{s.label ? `${s.label} (${s.code})` : <span className="mono">{s.code}</span>}</button></td>
                             <td data-label="Jumlah">{s.n}</td><td data-label="Porsi">{fmtPct(s.n / r.coded)}</td><td /><td />
                           </tr>
                           {s.conditions.map((c) => (
                             <tr className="cond-row" key={c.code}>
-                              <td data-label="Kondisi"><button className="linkish" onClick={() => setDrill({ title: `${s.label ?? s.code} · ${c.label ?? c.code}`, extra: `group=${g.group}&subject=${s.code}&condition=${c.code}` })}>{c.label ?? <span className="mono">{c.code}</span>}{c.label && <span className="mono muted"> {c.code}</span>}</button></td>
+                              <td data-label="Kondisi"><button className="linkish" onClick={() => setDrill({ title: `${s.label ?? s.code} (${s.code}) · ${c.label ?? c.code} (${c.code})`, extra: `group=${g.group}&subject=${s.code}&condition=${c.code}` })}>{c.label ? `${c.label} (${c.code})` : <span className="mono">{c.code}</span>}</button></td>
                               <td data-label="Jumlah">{c.n}</td><td data-label="Porsi">{fmtPct(c.n / r.coded)}</td><td /><td />
                             </tr>
                           ))}

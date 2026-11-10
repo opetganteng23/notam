@@ -2,7 +2,7 @@ import * as ExcelJS from 'exceljs';
 import PptxGenJS from 'pptxgenjs';
 import { C, FONT, SLIDE_W } from './export-pptx';
 import { STATUS_ID, periodLabel, sheet, table } from './export-xlsx';
-import { CONDITION_NAME, SUBJECT_NAME, TypeRow, TypesReport } from './types';
+import { TypeRow, TypesReport, conditionLabel, subjectLabel } from './types';
 
 const name = (k: string, r: TypesReport) => (k === 'Lain' ? 'Lain-lain' : r.groups.find((g) => g.group === k)?.name ?? k);
 
@@ -40,7 +40,7 @@ export async function typesToExcel(r: TypesReport, rows: TypeRow[]): Promise<Buf
   head.height = 22;
   [...rows].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)).forEach((d, i) => {
     const rr = ws.getRow(5 + i);
-    rr.values = [d.formNo, new Date(d.createdAt), d.airport, d.originator, STATUS_ID[d.status] ?? d.status, d.qcode, name(d.group, r), SUBJECT_NAME[d.subject] ?? d.subject, CONDITION_NAME[d.condition] ?? d.condition, d.text, d.prompt, d.full];
+    rr.values = [d.formNo, new Date(d.createdAt), d.airport, d.originator, STATUS_ID[d.status] ?? d.status, d.qcode, name(d.group, r), subjectLabel(d.subject) ?? d.subject, conditionLabel(d.condition) ?? d.condition, d.text, d.prompt, d.full];
     rr.getCell(11).alignment = { wrapText: true, vertical: 'top' };
     rr.getCell(12).alignment = { wrapText: true, vertical: 'top' };
     rr.getCell(2).numFmt = 'dd mmm yyyy hh:mm';

@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { findAirport } from '../master/airports';
 
 // Nama kelompok mengikuti pengelompokan kode Q ICAO (huruf pertama setelah "Q").
@@ -11,6 +13,11 @@ export const GROUP_NAME: Record<string, string> = {
 // Kode yang contohnya tidak tegas sengaja tidak diberi arti dan tampil apa adanya.
 export const SUBJECT_NAME: Record<string, string> = { MR: 'Runway', FA: 'Bandara (aerodrome)', MX: 'Taxiway', MP: 'Stand pesawat', LP: 'PAPI', MW: 'Strip / bahu runway', NM: 'VOR/DME', MN: 'Apron', LT: 'Lampu threshold (RTIL)', IL: 'ILS localizer', NB: 'NDB', LE: 'Lampu tepi runway', LA: 'Lampu pendekatan (approach)', LI: 'Lampu ujung runway (REIL)', OB: 'Rintangan (obstacle)', FF: 'Pemadam kebakaran (RFFS)', IG: 'ILS glide path', LY: 'Lampu tepi taxiway', CB: 'ADS-B', NV: 'VOR', MT: 'Threshold runway', IC: 'ILS', IM: 'Marker (middle marker)', SF: 'Layanan informasi penerbangan (AFIS)', MU: 'Area putar (turn pad)', CS: 'Radar (MSSR)', PD: 'Prosedur keberangkatan (SID)', SP: 'Layanan radar pendekatan', LJ: 'RTIL', SA: 'ATIS', PA: 'Prosedur kedatangan (STAR)', PI: 'Prosedur pendekatan instrumen', LC: 'Lampu garis tengah runway', LF: 'Lampu kilat berurutan', ND: 'DME', ID: 'ILS/DME', FM: 'Layanan meteorologi', MC: 'Clearway', LB: 'Beacon bandara (ABN)', MM: 'Marka runway', MD: 'Jarak deklarasi (declared distance)', CD: 'Data link (CPDLC)', CA: 'Komunikasi udara-darat (HF)', MH: 'Arresting gear', RA: 'Pencadangan ruang udara', WU: 'Pesawat tanpa awak (UAV)' };
 export const CONDITION_NAME: Record<string, string> = { AS: 'Tidak dapat digunakan', LC: 'Ditutup', XX: 'Lainnya (teks bebas)', HW: 'Ada pekerjaan', AK: 'Kembali beroperasi normal', AH: 'Jam layanan berubah', LT: 'Terbatas', CM: 'Dipindahkan (displaced)', CE: 'Didirikan', TT: 'Trigger NOTAM', CH: 'Berubah', AU: 'Tidak tersedia', AG: 'Beroperasi, baru diperiksa di darat', CG: 'Diturunkan (downgraded)', HX: 'Konsentrasi burung', AW: 'Ditarik (withdrawn)', CC: 'Selesai', LW: 'Akan berlangsung', CT: 'Sedang diuji', CS: 'Terpasang', CN: 'NOTAM baru menyusul' };
+
+// Nama cadangan: terjemahan Indonesia seluruh tabel ICAO (data/icao-label-id.json). Nama dari contoh dataset didahulukan.
+const ICAO_ID: { subject: Record<string, string>; condition: Record<string, string> } = JSON.parse(readFileSync(join(__dirname, '..', '..', 'data', 'icao-label-id.json'), 'utf8'));
+export const subjectLabel = (code: string): string | null => SUBJECT_NAME[code] ?? ICAO_ID.subject[code] ?? null;
+export const conditionLabel = (code: string): string | null => CONDITION_NAME[code] ?? ICAO_ID.condition[code] ?? null;
 
 // Dampak operasional, dikelompokkan dari kode kondisi Q (dua huruf terakhir). Pengelompokan ini dibuat sistem agar mudah dibaca, BUKAN istilah resmi AirNav.
 export type Impact = 'CLOSED' | 'LIMITED' | 'NORMAL' | 'OTHER';
@@ -96,11 +103,11 @@ export function computeTypes(docs: TypeDoc[], o: { from?: Date; to?: Date; airpo
   const groupList = byN([...groups.entries()], (v) => v.n).map(([g, v]) => ({
     group: g, name: label(GROUP_NAME, g) ?? `Kelompok ${g}`, n: v.n, share: coded ? v.n / coded : 0, approved: v.approved, rejected: v.rejected,
     subjects: byN([...v.subjects.entries()], (s) => s.n).map(([code, s]) => ({
-      code, label: label(SUBJECT_NAME, code), n: s.n,
-      conditions: byN([...s.conds.entries()], (n) => n).map(([c, n]) => ({ code: c, label: label(CONDITION_NAME, c), n })),
+      code, label: subjectLabel(code), n: s.n,
+      conditions: byN([...s.conds.entries()], (n) => n).map(([c, n]) => ({ code: c, label: conditionLabel(c), n })),
     })),
   }));
-  const condList = byN([...conds.entries()], (n) => n).map(([code, n]) => ({ code, label: label(CONDITION_NAME, code), n, share: coded ? n / coded : 0 }));
+  const condList = byN([...conds.entries()], (n) => n).map(([code, n]) => ({ code, label: conditionLabel(code), n, share: coded ? n / coded : 0 }));
 
   // Tren: 5 kelompok teratas + "Lain" (harian bila <= 62 hari, selain itu bulanan)
   const times = rows.map((r) => +new Date(r.createdAt));
@@ -147,7 +154,7 @@ export function computeTypes(docs: TypeDoc[], o: { from?: Date; to?: Date; airpo
     bySubject.set(r.subject, sj);
   }
   const impact = IMPACTS.map((key) => ({ key, label: IMPACT_NAME[key], n: impactTotal[key], share: coded ? impactTotal[key] / coded : 0 }));
-  const impactMatrix = byN([...bySubject.entries()], (v) => v.total).slice(0, 10).map(([subject, v]) => ({ subject, label: label(SUBJECT_NAME, subject), group: v.group, counts: v.counts, total: v.total }));
+  const impactMatrix = byN([...bySubject.entries()], (v) => v.total).slice(0, 10).map(([subject, v]) => ({ subject, label: subjectLabel(subject), group: v.group, counts: v.counts, total: v.total }));
   const airportDetail = byN([...byAirport.entries()], (v) => v.length).slice(0, 8).map(([airport, rs]) => {
     const subj = new Map<string, { n: number; impact: Record<Impact, number> }>();
     const tot = zeroImpact();
@@ -161,7 +168,7 @@ export function computeTypes(docs: TypeDoc[], o: { from?: Date; to?: Date; airpo
     }
     return {
       airport, name: findAirport(airport)?.name ?? '', total: rs.length, impact: tot,
-      subjects: byN([...subj.entries()], (x) => x.n).map(([code, x]) => ({ code, label: label(SUBJECT_NAME, code), n: x.n, impact: x.impact })),
+      subjects: byN([...subj.entries()], (x) => x.n).map(([code, x]) => ({ code, label: subjectLabel(code), n: x.n, impact: x.impact })),
     };
   });
 
