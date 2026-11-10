@@ -18,6 +18,12 @@ export class RequestsController {
     return this.svc.revise(u, id, b.freeText);
   }
 
+  // PIA menyunting langsung Q) dan/atau E) saat NOTAM ada di PIA; B/C/D tetap milik Originator.
+  @Roles('PIA') @Put(':id/items')
+  editItems(@CurrentUser() u: AuthUser, @Param('id') id: string, @Body() b: { Q?: string; E?: string }) {
+    return this.svc.editItems(u, id, b ?? {});
+  }
+
   @Roles('ORIGINATOR') @Post(':id/submit')
   submit(@CurrentUser() u: AuthUser, @Param('id') id: string, @Body() b: { route: 'ATS' | 'PIA' }) {
     return this.svc.act(u, id, 'SUBMIT', { route: b.route });

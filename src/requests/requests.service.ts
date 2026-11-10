@@ -8,6 +8,7 @@ import { detectAirports, findAirport, mentionedAirportNames, mentionedLocators }
 import { Action, Route, WorkflowError, transition } from '../workflow/workflow';
 import { AuditService } from '../audit/audit.service';
 import { OpsService } from '../ops/ops.service';
+import { parseItems, replaceItems, validateNotam } from '../generator/validator';
 import { NotamRequest } from './schemas';
 
 // Aturan MoM: tanggal harus spesifik, bukan relatif.
@@ -128,6 +129,39 @@ export class RequestsService {
     doc.versions.push({ no: last.no + 1, freeText, generated: gen.text, corrections: gen.corrections, provider: gen.provider, model: gen.model, validation: gen.validation, ms: gen.ms } as any);
     const saved = await doc.save();
     await this.rec(user, 'REQUEST_TEXT', doc.formNo, `Mengubah teks ${doc.formNo} dan generate ulang (versi ${last.no + 1})`);
+    return saved;
+  }
+
+  // PIA menyunting Q) dan/atau E) langsung (tanpa generate ulang). Hasilnya versi baru; status tetap di PIA dan tidak menghabiskan jatah revisi.
+  // Hanya kesalahan yang pasti salah yang menolak simpanan; peringatan validator ditampilkan agar PIA dan NOF bisa menilai.
+  async editItems(user: AuthUser, id: string, b: { Q?: string; E?: string }) {
+    const doc = await this.load(id);
+    if (doc.status !== 'UNDER_PIA') throw new ConflictException(`Q) dan E) hanya dapat disunting PIA saat status Di PIA (sekarang ${doc.status})`);
+    const last = doc.versions[doc.versions.length - 1];
+    const cur = parseItems(last.generated);
+    const clean = (v: unknown, key: 'Q' | 'E') => {
+      if (v === undefined) return undefined;
+      const t = String(v).replace(new RegExp(`^\\s*${key}\\)\\s*`, 'i'), '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+      if (key === 'Q' && t.length > 1) throw new BadRequestException('Q) harus satu baris');
+      const val = t.join('\n').toUpperCase();
+      if (!val) throw new BadRequestException(`${key}) tidak boleh kosong`);
+      return val;
+    };
+    const repl = { Q: clean(b.Q, 'Q'), E: clean(b.E, 'E') };
+    const changed = (['Q', 'E'] as const).filter((k) => repl[k] !== undefined && repl[k] !== (cur[k] ?? ''));
+    if (!changed.length) throw new BadRequestException('Tidak ada perubahan pada Q) atau E)');
+    const text = replaceItems(last.generated, { ...(changed.includes('Q') && { Q: repl.Q }), ...(changed.includes('E') && { E: repl.E }) });
+    const validation = validateNotam(text, doc.airport, last.freeText);
+    const fatal = validation.issues.filter((i) => i.level === 'error' && (['Q_FORMAT', 'MISSING_Q', 'MISSING_E', ...BLOCKING].includes(i.code)));
+    if (fatal.length) throw new BadRequestException(`Suntingan ditolak: ${fatal.map((i) => i.message).join('; ')}`);
+    const version = { no: last.no + 1, freeText: last.freeText, generated: text, corrections: [], provider: last.provider, model: last.model, validation, editedBy: user.username, editedItems: changed, createdAt: new Date() };
+    // Hanya jika masih di PIA dan belum ada versi lain, agar dua suntingan bersamaan tidak saling menimpa.
+    const saved = await this.model.findOneAndUpdate({ _id: id, status: 'UNDER_PIA', versions: { $size: doc.versions.length } }, { $push: { versions: version } }, { returnDocument: 'after' });
+    if (!saved) throw new ConflictException('Data berubah oleh proses lain, muat ulang');
+    await this.rec(user, 'REQUEST_EDIT', doc.formNo, `PIA menyunting ${changed.map((k) => `${k})`).join(' dan ')} ${doc.formNo} (versi ${version.no})`, {
+      items: changed,
+      ...Object.fromEntries(changed.map((k) => [k, { from: cur[k] ?? '', to: repl[k] }])),
+    });
     return saved;
   }
 

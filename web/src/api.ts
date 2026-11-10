@@ -1,7 +1,7 @@
 export type Role = 'ORIGINATOR' | 'ATS' | 'PIA' | 'NOF' | 'ADMIN';
 
 export interface Issue { code: string; level: 'error' | 'warning'; message: string }
-export interface Version { no: number; ms?: number; freeText: string; generated: string; corrections?: string[]; provider: string; validation?: { status: string; issues: Issue[] } }
+export interface Version { no: number; ms?: number; freeText: string; generated: string; corrections?: string[]; provider: string; validation?: { status: string; issues: Issue[] }; editedBy?: string; editedItems?: string[]; createdAt?: string }
 export interface EventLog { actor: string; role: string; action: string; from: string; to: string; note?: string; at: string }
 export interface NotamRequest {
   _id: string; formNo: string; airport: string; originator: string; status: string; route?: string;
@@ -96,6 +96,7 @@ function describe(method: string, path: string, body: any, res: any): [string, s
   if (path === '/auth/login') return ['Berhasil masuk', `Selamat datang, ${body?.username}.`];
   if (method === 'POST' && path === '/requests') return ['NOTAM berhasil dibuat', `Nomor form ${res?.formNo ?? ''}${res?.versions?.[0]?.ms !== undefined ? `, disusun dalam ${fmtMs(res.versions[0].ms)}` : ''}. Periksa drafnya sebelum submit.`];
   if (/^\/requests\/[^/]+\/text$/.test(path)) return ['Teks diperbarui', `NOTAM disusun ulang (versi ${res?.versions?.length ?? '?'})${res?.versions?.at(-1)?.ms !== undefined ? ` dalam ${fmtMs(res.versions.at(-1).ms)}` : ''}.`];
+  if (/^\/requests\/[^/]+\/items$/.test(path)) return ['Q) / E) disimpan', `Versi ${res?.versions?.length ?? '?'} dibuat. Status tetap Di PIA.`];
   if (/^\/requests\/[^/]+\/submit$/.test(path)) return ['Pengajuan dikirim', `Diteruskan ke ${body?.route}. Status: ${STATUS_ID[res?.status] ?? res?.status}.`];
   if (/^\/requests\/[^/]+\/decision$/.test(path)) {
     const t = { ACCEPT: 'Accept dicatat', REVISE: 'Dikembalikan untuk revisi', REJECT: 'Reject dicatat' }[body?.action as 'ACCEPT'] ?? 'Keputusan dicatat';
@@ -143,6 +144,10 @@ export interface TypesReport {
   granularity: 'day' | 'month';
   trend: { keys: string[]; series: { period: string; counts: Record<string, number> }[] };
   matrix: { groups: string[]; rows: { airport: string; name: string; counts: Record<string, number>; total: number }[] };
+  impact: { key: ImpactKey; label: string; n: number; share: number }[];
+  impactMatrix: { subject: string; label: string | null; group: string; counts: Record<ImpactKey, number>; total: number }[];
+  airportDetail: { airport: string; name: string; total: number; impact: Record<ImpactKey, number>; subjects: { code: string; label: string | null; n: number; impact: Record<ImpactKey, number> }[] }[];
   insights: string[];
 }
+export type ImpactKey = 'CLOSED' | 'LIMITED' | 'NORMAL' | 'OTHER';
 export interface TypeItem { id: string; formNo: string; createdAt: string; airport: string; originator: string; status: string; qcode: string; group: string; subject: string; condition: string; text: string; prompt: string; full: string }

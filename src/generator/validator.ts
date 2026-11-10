@@ -46,6 +46,29 @@ export function parseItems(text: string): Record<string, string> {
   return items;
 }
 
+// Mengganti isi item tertentu (mis. Q dan E) dengan nilai baru; item lain tetap. Item yang belum ada ditambahkan (Q di awal, lainnya di akhir).
+export function replaceItems(text: string, repl: Partial<Record<'Q' | 'E', string>>): string {
+  const out: string[] = [];
+  const done = new Set<string>();
+  let skipping = false;
+  for (const line of text.split(/\r?\n/)) {
+    const m = /^\s*([QABCDE])\)\s*(.*)$/.exec(line);
+    if (m) {
+      const k = m[1] as 'Q' | 'E';
+      skipping = repl[k] !== undefined;
+      if (skipping) {
+        out.push(`${k}) ${repl[k]}`);
+        done.add(k);
+        continue;
+      }
+    } else if (skipping) continue;
+    out.push(line);
+  }
+  if (repl.Q !== undefined && !done.has('Q')) out.unshift(`Q) ${repl.Q}`);
+  if (repl.E !== undefined && !done.has('E')) out.push(`E) ${repl.E}`);
+  return out.join('\n');
+}
+
 // B)/C): YYMMDDHHMM (UTC) dan tanggal harus nyata.
 function parseTime(v: string): number | null {
   const m = /^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(v);

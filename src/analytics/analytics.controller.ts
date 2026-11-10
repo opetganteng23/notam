@@ -9,10 +9,10 @@ import { typesToExcel, typesToPptx } from './export-types';
 import { analyticsToExcel } from './export-xlsx';
 import { analyticsToPptx } from './export-pptx';
 import { findAirport } from '../master/airports';
-import { TypeDoc, TypeRow, TypesReport, computeTypes } from './types';
+import { IMPACTS, TypeDoc, TypeRow, TypesReport, computeTypes, impactOf } from './types';
 
 export interface AnalyticsQuery { from?: string; to?: string; airport?: string }
-export interface TypesQuery extends AnalyticsQuery { status?: string; group?: string; subject?: string; condition?: string }
+export interface TypesQuery extends AnalyticsQuery { status?: string; group?: string; subject?: string; condition?: string; impact?: string }
 
 const STATUSES = ['UNDER_ATS', 'UNDER_PIA', 'UNDER_NOF', 'REVISION_REQUIRED', 'REJECTED', 'APPROVED_BY_NOF'];
 
@@ -144,8 +144,9 @@ export class AnalyticsController {
   // Rincian NOTAM untuk satu jenis (klik pada laporan). Maksimal 300 baris.
   @Roles(...READERS) @Get('types/list')
   async typeList(@Query() q: TypesQuery) {
+    if (q.impact && !(IMPACTS as string[]).includes(q.impact)) throw new BadRequestException('Dampak tidak dikenal');
     const { rows } = await this.svc.runTypes(q);
-    const match = rows.filter((r) => (!q.group || r.group === q.group) && (!q.subject || r.subject === q.subject) && (!q.condition || r.condition === q.condition));
+    const match = rows.filter((r) => (!q.group || r.group === q.group) && (!q.subject || r.subject === q.subject) && (!q.condition || r.condition === q.condition) && (!q.impact || impactOf(r.condition) === q.impact));
     match.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
     return { total: match.length, items: match.slice(0, 300) };
   }

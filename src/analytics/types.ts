@@ -12,6 +12,18 @@ export const GROUP_NAME: Record<string, string> = {
 export const SUBJECT_NAME: Record<string, string> = { MR: 'Runway', FA: 'Bandara (aerodrome)', MX: 'Taxiway', MP: 'Stand pesawat', LP: 'PAPI', MW: 'Strip / bahu runway', NM: 'VOR/DME', MN: 'Apron', LT: 'Lampu threshold (RTIL)', IL: 'ILS localizer', NB: 'NDB', LE: 'Lampu tepi runway', LA: 'Lampu pendekatan (approach)', LI: 'Lampu ujung runway (REIL)', OB: 'Rintangan (obstacle)', FF: 'Pemadam kebakaran (RFFS)', IG: 'ILS glide path', LY: 'Lampu tepi taxiway', CB: 'ADS-B', NV: 'VOR', MT: 'Threshold runway', IC: 'ILS', IM: 'Marker (middle marker)', SF: 'Layanan informasi penerbangan (AFIS)', MU: 'Area putar (turn pad)', CS: 'Radar (MSSR)', PD: 'Prosedur keberangkatan (SID)', SP: 'Layanan radar pendekatan', LJ: 'RTIL', SA: 'ATIS', PA: 'Prosedur kedatangan (STAR)', PI: 'Prosedur pendekatan instrumen', LC: 'Lampu garis tengah runway', LF: 'Lampu kilat berurutan', ND: 'DME', ID: 'ILS/DME', FM: 'Layanan meteorologi', MC: 'Clearway', LB: 'Beacon bandara (ABN)', MM: 'Marka runway', MD: 'Jarak deklarasi (declared distance)', CD: 'Data link (CPDLC)', CA: 'Komunikasi udara-darat (HF)', MH: 'Arresting gear', RA: 'Pencadangan ruang udara', WU: 'Pesawat tanpa awak (UAV)' };
 export const CONDITION_NAME: Record<string, string> = { AS: 'Tidak dapat digunakan', LC: 'Ditutup', XX: 'Lainnya (teks bebas)', HW: 'Ada pekerjaan', AK: 'Kembali beroperasi normal', AH: 'Jam layanan berubah', LT: 'Terbatas', CM: 'Dipindahkan (displaced)', CE: 'Didirikan', TT: 'Trigger NOTAM', CH: 'Berubah', AU: 'Tidak tersedia', AG: 'Beroperasi, baru diperiksa di darat', CG: 'Diturunkan (downgraded)', HX: 'Konsentrasi burung', AW: 'Ditarik (withdrawn)', CC: 'Selesai', LW: 'Akan berlangsung', CT: 'Sedang diuji', CS: 'Terpasang', CN: 'NOTAM baru menyusul' };
 
+// Dampak operasional, dikelompokkan dari kode kondisi Q (dua huruf terakhir). Pengelompokan ini dibuat sistem agar mudah dibaca, BUKAN istilah resmi AirNav.
+export type Impact = 'CLOSED' | 'LIMITED' | 'NORMAL' | 'OTHER';
+export const IMPACTS: Impact[] = ['CLOSED', 'LIMITED', 'NORMAL', 'OTHER'];
+export const IMPACT_NAME: Record<Impact, string> = { CLOSED: 'Tidak bisa dipakai', LIMITED: 'Dipakai dengan pembatasan', NORMAL: 'Kembali normal', OTHER: 'Lainnya' };
+const IMPACT_OF: Record<string, Impact> = {
+  LC: 'CLOSED', AS: 'CLOSED', AU: 'CLOSED',
+  HW: 'LIMITED', LT: 'LIMITED', CM: 'LIMITED', CG: 'LIMITED', AH: 'LIMITED',
+  AK: 'NORMAL', AG: 'NORMAL', CC: 'NORMAL',
+};
+export const impactOf = (condition: string): Impact => IMPACT_OF[condition] ?? 'OTHER';
+const zeroImpact = (): Record<Impact, number> => ({ CLOSED: 0, LIMITED: 0, NORMAL: 0, OTHER: 0 });
+
 export interface TypeDoc {
   _id?: unknown; formNo: string; airport: string; originator: string; status: string; createdAt: Date;
   versions: { freeText?: string; generated?: string }[];
@@ -34,6 +46,10 @@ export interface TypesReport {
   granularity: 'day' | 'month';
   trend: { keys: string[]; series: { period: string; counts: Record<string, number> }[] };
   matrix: { groups: string[]; rows: { airport: string; name: string; counts: Record<string, number>; total: number }[] };
+  // Dampak operasional (dari kode kondisi), silang subjek x dampak (10 subjek teratas), dan rincian bandara sampai subjek.
+  impact: { key: Impact; label: string; n: number; share: number }[];
+  impactMatrix: { subject: string; label: string | null; group: string; counts: Record<Impact, number>; total: number }[];
+  airportDetail: { airport: string; name: string; total: number; impact: Record<Impact, number>; subjects: { code: string; label: string | null; n: number; impact: Record<Impact, number> }[] }[];
   insights: string[];
 }
 
@@ -119,11 +135,41 @@ export function computeTypes(docs: TypeDoc[], o: { from?: Date; to?: Date; airpo
     })),
   };
 
+  // Dampak operasional: total, silang subjek x dampak, dan rincian per bandara (8 teratas) sampai subjek.
+  const impactTotal = zeroImpact();
+  const bySubject = new Map<string, { group: string; counts: Record<Impact, number>; total: number }>();
+  for (const r of rows) {
+    const im = impactOf(r.condition);
+    impactTotal[im]++;
+    const sj = bySubject.get(r.subject) ?? { group: r.group, counts: zeroImpact(), total: 0 };
+    sj.counts[im]++;
+    sj.total++;
+    bySubject.set(r.subject, sj);
+  }
+  const impact = IMPACTS.map((key) => ({ key, label: IMPACT_NAME[key], n: impactTotal[key], share: coded ? impactTotal[key] / coded : 0 }));
+  const impactMatrix = byN([...bySubject.entries()], (v) => v.total).slice(0, 10).map(([subject, v]) => ({ subject, label: label(SUBJECT_NAME, subject), group: v.group, counts: v.counts, total: v.total }));
+  const airportDetail = byN([...byAirport.entries()], (v) => v.length).slice(0, 8).map(([airport, rs]) => {
+    const subj = new Map<string, { n: number; impact: Record<Impact, number> }>();
+    const tot = zeroImpact();
+    for (const r of rs) {
+      const im = impactOf(r.condition);
+      tot[im]++;
+      const x = subj.get(r.subject) ?? { n: 0, impact: zeroImpact() };
+      x.n++;
+      x.impact[im]++;
+      subj.set(r.subject, x);
+    }
+    return {
+      airport, name: findAirport(airport)?.name ?? '', total: rs.length, impact: tot,
+      subjects: byN([...subj.entries()], (x) => x.n).map(([code, x]) => ({ code, label: label(SUBJECT_NAME, code), n: x.n, impact: x.impact })),
+    };
+  });
+
   const report: TypesReport = {
     period: { from: o.from?.toISOString() ?? null, to: o.to?.toISOString() ?? null, generatedAt: now.toISOString(), airport: o.airport ?? null, status: o.status ?? null },
     total: docs.length, coded, uncoded, groups: groupList, conditions: condList, granularity,
     trend: { keys, series: [...buckets.entries()].map(([period, counts]) => ({ period, counts })) },
-    matrix, insights: [],
+    matrix, impact, impactMatrix, airportDetail, insights: [],
   };
   report.insights = typeInsights(report);
   return { report, rows };
@@ -140,6 +186,11 @@ export function typeInsights(r: TypesReport): string[] {
   if (r.groups.length > 3) out.push(`Tiga kelompok teratas mencakup ${pct(top3)} dari seluruh NOTAM.`);
   const c = r.conditions[0];
   if (c) out.push(`Kondisi paling umum: ${c.label ?? c.code} (${pct(c.share)}).`);
+  const closed = r.impact?.find((i) => i.key === 'CLOSED');
+  const limited = r.impact?.find((i) => i.key === 'LIMITED');
+  if (closed && limited && (closed.n || limited.n)) out.push(`Dampak operasional: ${closed.n} NOTAM berarti tidak bisa dipakai (${pct(closed.share)}) dan ${limited.n} dipakai dengan pembatasan (${pct(limited.share)}).`);
+  const rw = r.impactMatrix?.find((x) => x.subject === 'MR');
+  if (rw && rw.total) out.push(`Runway: ${rw.counts.CLOSED} ditutup, ${rw.counts.LIMITED} dengan pembatasan atau pekerjaan, dari ${rw.total} NOTAM runway.`);
   const m = r.matrix.rows[0];
   if (m) out.push(`Bandara dengan NOTAM terbanyak: ${m.airport}${m.name ? ` (${m.name})` : ''}, ${m.total} NOTAM.`);
   out.push('Kode Q berasal dari hasil susunan AI dan belum tentu dikoreksi peninjau; arti kode disimpulkan dari contoh dataset, bukan tabel resmi AirNav.');

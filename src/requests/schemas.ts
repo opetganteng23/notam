@@ -44,6 +44,9 @@ export class Version {
   @Prop({ type: [String], default: [] }) corrections: string[];
   @Prop({ type: Object }) validation: { status: string; issues: { code: string; level: string; message: string }[] };
   @Prop() ms: number;
+  // Versi hasil suntingan manual PIA atas Q)/E): siapa yang menyunting dan item yang diubah.
+  @Prop() editedBy: string;
+  @Prop({ type: [String], default: undefined }) editedItems: string[];
   @Prop({ default: () => new Date() }) createdAt: Date;
 }
 export const VersionSchema = SchemaFactory.createForClass(Version);

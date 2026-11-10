@@ -6,7 +6,7 @@ import { buildPrompt, retrieve } from './rag';
 import { findAirport, mentionedLocators, tzOf } from '../master/airports';
 import { annotateLocalTimes, expectedUtcPlan, expectedUtcSchedule, expectedUtcStamps } from '../master/time';
 import { tpsWarnings } from '../master/tps';
-import { validateNotam } from './validator';
+import { replaceItems, validateNotam } from './validator';
 import { BLOCKING } from '../requests/requests.service';
 
 const GOOD = `Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005
@@ -558,5 +558,27 @@ describe('D) jadwal harian dalam UTC', () => {
     expect(validateNotam(withD('DAILY 0800-1200'), 'WIHH', input).issues.map((i) => i.code)).toContain('D_UTC_MISMATCH');
     expect(validateNotam(r.text, 'WIHH', input).issues.map((i) => i.code)).not.toContain('D_UTC_MISMATCH');
     expect(correctNotam(withD('DAILY 0100-0500'), ap(), input).corrections.join(' ')).not.toContain('D)');
+  });
+});
+
+describe('replaceItems (suntingan Q dan E oleh PIA)', () => {
+  it('mengganti Q dan E, item lain tetap, termasuk E multi-baris', () => {
+    const multi = `${GOOD}\nRMK: ALL ACFT CTN`;
+    const out = replaceItems(multi, { Q: 'WIII/QMXLC/IV/NBO/A/000/999/0616S10653E005', E: 'TWY A CLSD' });
+    expect(out).toContain('Q) WIII/QMXLC/IV/NBO/A/000/999/0616S10653E005');
+    expect(out).toContain('E) TWY A CLSD');
+    expect(out).not.toContain('RMK');
+    expect(out).toContain('A) WIHH');
+    expect(out).toContain('B) 2411011700');
+    expect(out).toContain('C) 2411020500');
+  });
+  it('hanya Q: E tidak berubah', () => {
+    const out = replaceItems(GOOD, { Q: 'WIII/QMXLC/IV/NBO/A/000/999/0616S10653E005' });
+    expect(out).toContain('E) RWY 06/24 CLSD DUE TO WIP');
+  });
+  it('item yang belum ada ditambahkan', () => {
+    const out = replaceItems('A) WIHH\nB) 2411011700', { Q: 'X', E: 'Y' });
+    expect(out.split('\n')[0]).toBe('Q) X');
+    expect(out.endsWith('E) Y')).toBe(true);
   });
 });
