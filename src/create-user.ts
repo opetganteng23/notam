@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 import { connect, connection } from 'mongoose';
-import { MIN_PASSWORD, USERNAME_HINT, USERNAME_RE } from './users/rules';
+import { MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, normalizeUsername } from './users/rules';
 
 const ROLES = ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'];
 
@@ -8,7 +8,8 @@ const ROLES = ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'];
 // PowerShell: $env:NEW_USERNAME='a@b.id'; $env:NEW_PASSWORD='...'; npm run create-user
 // Tidak mengubah akun yang sudah ada.
 async function main() {
-  const { MONGO_URI, NEW_USERNAME: username, NEW_PASSWORD: password, NEW_ROLE: role = 'ADMIN' } = process.env;
+  const { MONGO_URI, NEW_USERNAME: rawUsername, NEW_PASSWORD: password, NEW_ROLE: role = 'ADMIN' } = process.env;
+  const username = normalizeUsername(rawUsername);
   if (!MONGO_URI || !username || !password) throw new Error('MONGO_URI, NEW_USERNAME, dan NEW_PASSWORD wajib diset');
   if (!USERNAME_RE.test(username)) throw new Error(USERNAME_HINT);
   if (password.length < MIN_PASSWORD) throw new Error(`Password minimal ${MIN_PASSWORD} karakter`);

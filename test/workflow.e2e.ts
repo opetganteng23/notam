@@ -224,10 +224,17 @@ describe('admin: manajemen pengguna', () => {
   });
 
   it('username boleh berupa alamat email; format tidak valid ditolak', async () => {
-    for (const bad of ['Opet@contoh.id', '@contoh.id', 'a@b', 'x@y.z', 'a b@contoh.id', 'a@@contoh.id']) await api('post', '/users', 'adm').send(user(bad)).expect(400);
+    for (const bad of ['@contoh.id', 'a@b', 'x@y.z', 'a b@contoh.id', 'a@@contoh.id']) await api('post', '/users', 'adm').send(user(bad)).expect(400);
     await api('post', '/users', 'adm').send({ ...user('admin.email@contoh.id'), role: 'ADMIN' }).expect(201);
     const tok = (await api('post', '/auth/login').send({ username: 'admin.email@contoh.id', password: 'password-ok' }).expect(201)).body.token;
     await request(http).get('/users').set({ Authorization: `Bearer ${tok}` }).expect(200); // role ADMIN berlaku
+  });
+
+  it('username dirapikan: spasi di ujung dan huruf kapital diubah ke huruf kecil, termasuk saat login', async () => {
+    const made = await api('post', '/users', 'adm').send(user('  Rapi.Email@Contoh.ID ')).expect(201);
+    assert.equal(made.body.username, 'rapi.email@contoh.id');
+    await api('post', '/auth/login').send({ username: ' Rapi.Email@Contoh.ID', password: 'password-ok' }).expect(201);
+    await api('post', '/users', 'adm').send(user('rapi.email@contoh.id')).expect(409); // sama setelah dirapikan
   });
 
   it('menonaktifkan akun berlaku seketika, termasuk token yang sudah terbit', async () => {
