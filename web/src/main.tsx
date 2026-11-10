@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AuditPanel, Modal, Users } from './admin';
+import { AuditPanel, Modal, Regions, Users } from './admin';
 import { AnalyticsPanel } from './analytics';
 import { TypesPanel } from './types-report';
 import { KamusPanel } from './kamus';
@@ -12,7 +12,7 @@ import { NarrativeInput } from './suggest-input';
 import { Mark, Partners, TowerScene } from './brand';
 import { Landing } from './landing';
 import { Toaster, toast } from './toast';
-import { GateState, Me, NotamRequest, OpsStatus, Stats, api, download, session } from './api';
+import { GateState, Me, NotamRequest, OpsStatus, RegionRow, Stats, api, download, session } from './api';
 import '@fontsource-variable/inter';
 import { fmtDate, fmtDateTime, fmtMs, useAsync, useElapsed } from './util';
 import './style.css';
@@ -389,8 +389,8 @@ function ServerPanel() {
   );
 }
 
-interface Filter { status: string; airport: string; q: string; from: string; to: string }
-const EMPTY_FILTER: Filter = { status: '', airport: '', q: '', from: '', to: '' };
+interface Filter { status: string; airport: string; q: string; from: string; to: string; region: string }
+const EMPTY_FILTER: Filter = { status: '', airport: '', q: '', from: '', to: '', region: '' };
 
 function ListView({ tick, filter, setFilter, onChange, onReuse }: {
   tick: number; filter: Filter; setFilter: (f: Filter) => void; onChange: () => void; onReuse: (r: NotamRequest) => void;
@@ -399,9 +399,21 @@ function ListView({ tick, filter, setFilter, onChange, onReuse }: {
   const [selected, setSelected] = useState('');
   const { error, run } = useAsync();
   const role = session.role;
+  const [regions, setRegions] = useState<RegionRow[]>([]);
+  const [mine, setMine] = useState<string[]>([]);
+  const asked = useRef(false);
+  useEffect(() => {
+    api<RegionRow[]>('GET', '/regions').then(setRegions, () => undefined);
+    api<Me>('GET', '/me').then((m) => {
+      setMine(m.regions ?? []);
+      // Peninjau yang punya wilayah langsung melihat antrean wilayahnya; bisa diganti ke "Semua wilayah".
+      if (!asked.current && m.regions?.length && m.role !== 'ORIGINATOR' && m.role !== 'ADMIN' && !filter.region) setFilter({ ...filter, region: 'mine' });
+      asked.current = true;
+    }, () => undefined);
+  }, []);
 
   const refresh = useCallback(() => run(async () => {
-    const params: Record<string, string> = { status: filter.status, airport: filter.airport, q: filter.q };
+    const params: Record<string, string> = { status: filter.status, airport: filter.airport, q: filter.q, region: filter.region };
     if (filter.from) params.from = new Date(`${filter.from}T00:00:00`).toISOString();
     if (filter.to) params.to = new Date(`${filter.to}T23:59:59.999`).toISOString();
     const qs = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString();
@@ -423,6 +435,13 @@ function ListView({ tick, filter, setFilter, onChange, onReuse }: {
           <option value="">Semua status</option>
           {Object.entries(STATUS_LABEL).filter(([k]) => reviewer ? k !== 'DRAFT' : true).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
+        {regions.length > 0 && (
+          <select aria-label="Wilayah" value={filter.region} onChange={(e) => setFilter({ ...filter, region: e.target.value })}>
+            <option value="">Semua wilayah</option>
+            {mine.length > 0 && <option value="mine">Wilayah saya</option>}
+            {regions.map((r) => <option key={r.code} value={r.code}>{r.name}</option>)}
+          </select>
+        )}
         <input aria-label="Bandara" placeholder="Bandara" maxLength={4} value={filter.airport} onChange={(e) => setFilter({ ...filter, airport: e.target.value.toUpperCase() })} />
         <label className="date">Dari <input type="date" value={filter.from} onChange={(e) => setFilter({ ...filter, from: e.target.value })} /></label>
         <label className="date">Sampai <input type="date" value={filter.to} onChange={(e) => setFilter({ ...filter, to: e.target.value })} /></label>
@@ -461,12 +480,12 @@ function ListView({ tick, filter, setFilter, onChange, onReuse }: {
   );
 }
 
-type Tab = 'ringkasan' | 'analytics' | 'peta' | 'jenis' | 'server' | 'pengguna' | 'audit' | 'daftar' | 'kamus' | 'profil';
+type Tab = 'ringkasan' | 'analytics' | 'peta' | 'jenis' | 'server' | 'pengguna' | 'wilayah' | 'audit' | 'daftar' | 'kamus' | 'profil';
 type View = 'beranda' | 'analytics' | 'peta' | 'jenis' | 'kamus' | 'profil';
 interface Group<K extends string> { title: string; items: [K, string][] }
 const ADMIN_MENU: Group<Tab>[] = [
   { title: 'Pantau', items: [['ringkasan', 'Ringkasan'], ['analytics', 'Analytics'], ['peta', 'Peta Sebaran'], ['jenis', 'Laporan Jenis'], ['daftar', 'Daftar NOTAM']] },
-  { title: 'Kelola', items: [['server', 'Server'], ['pengguna', 'Pengguna'], ['audit', 'Audit Log']] },
+  { title: 'Kelola', items: [['server', 'Server'], ['pengguna', 'Pengguna'], ['wilayah', 'Wilayah'], ['audit', 'Audit Log']] },
   { title: 'Referensi', items: [['kamus', 'Kamus']] },
   { title: 'Akun', items: [['profil', 'Profil saya']] },
 ];
@@ -550,6 +569,7 @@ function App() {
           {tab === 'jenis' && <TypesPanel />}
           {tab === 'server' && <ServerPanel />}
           {tab === 'pengguna' && <Users />}
+          {tab === 'wilayah' && <Regions />}
           {tab === 'audit' && <AuditPanel />}
           {tab === 'daftar' && list}
           {tab === 'kamus' && <KamusPanel />}

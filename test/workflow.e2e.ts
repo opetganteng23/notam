@@ -886,3 +886,68 @@ describe('profil saya', () => {
     assert.equal((await api('patch', `/users/${u._id}`, 'adm').send({ name: 'PIA Manado' }).expect(200)).body.name, 'PIA Manado');
   });
 });
+
+describe('wilayah (cabang)', () => {
+  const mk = async (username: string, role: string, regions?: string[]) => {
+    await api('post', '/users', 'adm').send({ username, password: 'password-ok', role, ...(regions && { regions }) }).expect(201);
+    tokens[username] = (await api('post', '/auth/login').send({ username, password: 'password-ok' }).expect(201)).body.token;
+  };
+
+  it('admin mengelola wilayah; validasi locator dan bandara tidak boleh di dua wilayah', async () => {
+    await api('post', '/regions', 'pia').send({ code: 'JKT', name: 'Jakarta', airports: ['WIHH'] }).expect(403);
+    await api('post', '/regions', 'adm').send({ code: 'jkt', name: 'Jakarta', airports: ['WIHH'] }).expect(201);
+    await api('post', '/regions', 'adm').send({ code: 'JKT', name: 'Lagi', airports: [] }).expect(409); // kode ganda
+    await api('post', '/regions', 'adm').send({ code: 'X', name: 'Pendek', airports: [] }).expect(400);
+    await api('post', '/regions', 'adm').send({ code: 'NGAWUR', name: 'Salah', airports: ['ZZZZ'] }).expect(400);
+    await api('post', '/regions', 'adm').send({ code: 'DUP', name: 'Ganda', airports: ['WIHH'] }).expect(409); // WIHH sudah di JKT
+    await api('post', '/regions', 'adm').send({ code: 'SUB', name: 'Surabaya', airports: 'WARR, WARR' }).expect(201);
+    const list = (await api('get', '/regions', 'orig').expect(200)).body; // semua yang login boleh membaca
+    assert.deepEqual(list.map((r: any) => [r.code, r.airports]), [['JKT', ['WIHH']], ['SUB', ['WARR']]]);
+    await api('patch', '/regions/SUB', 'adm').send({ airports: ['WARR', 'WIHH'] }).expect(409);
+    await api('patch', '/regions/SUB', 'adm').send({ name: 'Surabaya Raya' }).expect(200);
+  });
+
+  it('pengguna dengan wilayah hanya dapat membuat NOTAM untuk bandara wilayahnya', async () => {
+    await api('post', '/users', 'adm').send({ username: 'o-salah', password: 'password-ok', role: 'ORIGINATOR', regions: ['TIDAKADA'] }).expect(400);
+    await mk('o-jkt', 'ORIGINATOR', ['JKT']);
+    const own = await api('post', '/requests', 'o-jkt').send({ airport: 'WIHH', freeText: TEXT }).expect(201);
+    assert.equal(own.body.airport, 'WIHH');
+    await api('post', '/requests', 'o-jkt').send({ airport: 'WARR', freeText: TEXT.replace('Landasan pacu', 'Taxiway') }).expect(403);
+    await api('post', '/requests', 'orig').send({ airport: 'WARR', freeText: TEXT }).expect(201); // tanpa wilayah: tidak dibatasi
+  });
+
+  it('peninjau hanya dapat memutuskan dan menyunting NOTAM wilayahnya; NOF juga per wilayah', async () => {
+    await mk('pia-jkt', 'PIA', ['JKT']);
+    await mk('pia-sub', 'PIA', ['SUB']);
+    await mk('nof-sub', 'NOF', ['SUB']);
+    const id = await newSubmitted('PIA'); // WIHH
+    await api('post', `/requests/${id}/decision`, 'pia-sub').send({ action: 'ACCEPT' }).expect(403);
+    await api('put', `/requests/${id}/items`, 'pia-sub').send({ E: 'RWY 06/24 CLSD' }).expect(403);
+    await api('post', `/requests/${id}/decision`, 'pia-jkt').send({ action: 'ACCEPT' }).expect(201);
+    await api('post', `/requests/${id}/decision`, 'nof-sub').send({ action: 'ACCEPT' }).expect(403); // NOF wilayah lain
+    await api('post', `/requests/${id}/decision`, 'nof').send({ action: 'ACCEPT' }).expect(201); // NOF tanpa wilayah
+  });
+
+  it('daftar dapat difilter menurut wilayah ("mine" dan kode)', async () => {
+    const ids = (r: any) => r.body.map((x: any) => x.airport);
+    const mine = await api('get', '/requests?region=mine', 'pia-sub').expect(200);
+    assert.ok(ids(mine).every((a: string) => a === 'WARR'));
+    const jkt = await api('get', '/requests?region=JKT', 'pia-jkt').expect(200);
+    assert.ok(jkt.body.length > 0 && ids(jkt).every((a: string) => a === 'WIHH'));
+    const none = await api('get', '/requests?region=TIDAKADA', 'adm').expect(200);
+    assert.equal(none.body.length, 0);
+  });
+
+  it('mengubah wilayah pengguna dan menghapus wilayah melepasnya dari pengguna', async () => {
+    const users = (await api('get', '/users', 'adm')).body as any[];
+    const u = users.find((x) => x.username === 'pia-sub');
+    assert.deepEqual(u.regions, ['SUB']);
+    await api('patch', `/users/${u._id}`, 'adm').send({ regions: ['TIDAKADA'] }).expect(400);
+    await api('patch', `/users/${u._id}`, 'adm').send({ regions: ['SUB', 'JKT'] }).expect(200);
+    const del = (await api('delete', '/regions/SUB', 'adm').expect(200)).body;
+    assert.ok(del.users >= 2);
+    const after = ((await api('get', '/users', 'adm')).body as any[]).find((x) => x.username === 'pia-sub');
+    assert.deepEqual(after.regions, ['JKT']);
+    assert.equal((await api('get', '/me', 'pia-sub')).body.regions[0], 'JKT');
+  });
+});

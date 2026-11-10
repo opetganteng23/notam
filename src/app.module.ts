@@ -15,9 +15,10 @@ import { HealthController } from './health.controller';
 import { NOTAM_GENERATOR, RagGenerator, providerFromEnv } from './generator/generator';
 import { RequestsController } from './requests/requests.controller';
 import { RequestsService } from './requests/requests.service';
-import { AuditLog, AuditLogSchema, NotamRequest, NotamRequestSchema, Setting, SettingSchema, User, UserSchema } from './requests/schemas';
+import { AuditLog, AuditLogSchema, NotamRequest, NotamRequestSchema, Region, RegionSchema, Setting, SettingSchema, User, UserSchema } from './requests/schemas';
 import { UsersController } from './users/users.controller';
 import { ProfileController } from './users/profile.controller';
+import { RegionsController } from './regions/regions.controller';
 import { SuggestController } from './suggest/suggest.controller';
 
 @Module({})
@@ -31,11 +32,12 @@ export class AppModule {
           { name: User.name, schema: UserSchema },
           { name: NotamRequest.name, schema: NotamRequestSchema },
           { name: Setting.name, schema: SettingSchema },
+          { name: Region.name, schema: RegionSchema },
           { name: AuditLog.name, schema: AuditLogSchema },
         ]),
         JwtModule.register({ global: true, secret: o.jwtSecret, signOptions: { expiresIn: '8h' } }),
       ],
-      controllers: [AuthController, RequestsController, UsersController, ProfileController, SuggestController, HealthController, OpsController, AuditController, AnalyticsController, DictionaryController, MapController],
+      controllers: [AuthController, RequestsController, UsersController, ProfileController, SuggestController, HealthController, OpsController, AuditController, AnalyticsController, DictionaryController, MapController, RegionsController],
       providers: [RequestsService, OpsService, AuditService, AnalyticsService, MapService, { provide: NOTAM_GENERATOR, useFactory: () => new RagGenerator(providerFromEnv()) }, { provide: APP_GUARD, useClass: AuthGuard }],
     };
   }

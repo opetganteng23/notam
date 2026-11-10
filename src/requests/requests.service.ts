@@ -9,7 +9,8 @@ import { Action, Route, WorkflowError, transition } from '../workflow/workflow';
 import { AuditService } from '../audit/audit.service';
 import { OpsService } from '../ops/ops.service';
 import { parseItems, replaceItems, validateNotam } from '../generator/validator';
-import { NotamRequest } from './schemas';
+import { allowedAirports } from '../regions/scope';
+import { NotamRequest, Region } from './schemas';
 
 // Aturan MoM: tanggal harus spesifik, bukan relatif.
 const RELATIVE_DATE = /\b(hari ini|besok|kemarin|today|tomorrow|yesterday)\b/i;
@@ -25,6 +26,7 @@ export interface ListQuery {
   q?: string;
   from?: string;
   to?: string;
+  region?: string; // 'mine' atau kode wilayah
 }
 
 // Kesalahan yang pasti salah; draf dengan kesalahan ini tidak boleh dikirim ke peninjau.
@@ -43,10 +45,22 @@ export class RequestsService {
 
   constructor(
     @InjectModel(NotamRequest.name) private model: Model<NotamRequest>,
+    @InjectModel(Region.name) private regions: Model<Region>,
     @Inject(NOTAM_GENERATOR) private generator: NotamGenerator,
     private ops: OpsService,
     private audit: AuditService,
   ) {}
+
+  // Bandara yang boleh diproses pengguna (null = tidak dibatasi). ADMIN tidak membuat atau memutuskan NOTAM, jadi tidak dibatasi di sini.
+  private async scopeOf(user: AuthUser) {
+    if (user.role === 'ADMIN' || !user.regions?.length) return null;
+    return allowedAirports(await this.regions.find({ code: { $in: user.regions } }).lean(), user.regions);
+  }
+
+  private async assertScope(user: AuthUser, airport: string) {
+    const set = await this.scopeOf(user);
+    if (set && !set.has(airport)) throw new ForbiddenException(`Bandara ${airport} di luar wilayah Anda (${user.regions!.join(', ')})`);
+  }
 
   private async nextFormNo() {
     const n = (await this.model.countDocuments()) + 1;
@@ -94,6 +108,7 @@ export class RequestsService {
       airport = found[0].locId;
     }
     if (!findAirport(airport)) throw new BadRequestException('Locator bandara tidak ada di master data');
+    await this.assertScope(user, airport);
     this.checkInput(freeText, airport);
     if (reuseOf) {
       const src = await this.load(reuseOf);
@@ -136,6 +151,7 @@ export class RequestsService {
   // Hanya kesalahan yang pasti salah yang menolak simpanan; peringatan validator ditampilkan agar PIA dan NOF bisa menilai.
   async editItems(user: AuthUser, id: string, b: { Q?: string; E?: string }) {
     const doc = await this.load(id);
+    await this.assertScope(user, doc.airport);
     if (doc.status !== 'UNDER_PIA') throw new ConflictException(`Q) dan E) hanya dapat disunting PIA saat status Di PIA (sekarang ${doc.status})`);
     const last = doc.versions[doc.versions.length - 1];
     const cur = parseItems(last.generated);
@@ -168,6 +184,7 @@ export class RequestsService {
   async act(user: AuthUser, id: string, action: Action, opts: { route?: Route; note?: string }) {
     const doc = await this.load(id);
     if (action === 'SUBMIT' && doc.originator !== user.username) throw new ForbiddenException();
+    if (action !== 'SUBMIT') await this.assertScope(user, doc.airport);
     const blocking = (doc.versions[doc.versions.length - 1]?.validation?.issues ?? []).filter((i) => BLOCKING.includes(i.code));
     if (action === 'SUBMIT' && blocking.length)
       throw new BadRequestException(`Draf belum dapat di-submit: ${blocking.map((i) => i.message).join('; ')}. Perbaiki teks atau locator lalu Generate ulang.`);
@@ -226,6 +243,15 @@ export class RequestsService {
     const filter = this.scope(user);
     if (f.status) filter.status = String(f.status);
     if (f.airport) filter.airport = String(f.airport);
+    if (f.region) {
+      let set: Set<string> | null;
+      if (f.region === 'mine') set = await this.scopeOf(user);
+      else set = allowedAirports(await this.regions.find({ code: String(f.region) }).lean(), [String(f.region)]) ?? new Set();
+      if (set) {
+        const air = [...set];
+        filter.airport = f.airport ? (set.has(String(f.airport)) ? String(f.airport) : { $in: [] }) : { $in: air };
+      }
+    }
     if (f.from || f.to) filter.createdAt = { ...(f.from && { $gte: new Date(f.from) }), ...(f.to && { $lte: new Date(f.to) }) };
     if (f.q) {
       const re = new RegExp(String(f.q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');

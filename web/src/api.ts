@@ -8,8 +8,9 @@ export interface NotamRequest {
   piaRevisionCount: number; versions: Version[]; events: EventLog[]; createdAt: string;
 }
 
-export interface Me { username: string; name: string; role: Role; createdAt: string | null; lastLoginAt: string | null }
-export interface UserRow { _id: string; username: string; name: string; role: Role; active: boolean; createdAt: string; lastLoginAt: string | null }
+export interface Me { username: string; name: string; role: Role; createdAt: string | null; lastLoginAt: string | null; regions: string[] }
+export interface RegionRow { code: string; name: string; airports: string[]; users: number }
+export interface UserRow { _id: string; username: string; name: string; role: Role; active: boolean; createdAt: string; lastLoginAt: string | null; regions: string[] }
 export interface AuditItem { _id: string; at: string; actor: string; role?: string; action: string; target?: string; summary: string; ip?: string }
 export interface GateState { enabled: boolean; message: string; dailyLimit: number; window: string }
 export interface OpsStatus {

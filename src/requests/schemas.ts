@@ -9,8 +9,19 @@ export class User {
   @Prop({ type: String, required: true, enum: ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'] }) role: Role;
   @Prop({ default: true }) active: boolean;
   @Prop() lastLoginAt: Date;
+  // Kode wilayah tempat pengguna bertugas; kosong = tidak dibatasi (lihat regions/scope.ts).
+  @Prop({ type: [String], default: [] }) regions: string[];
 }
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Wilayah (cabang) AirNav: kumpulan bandara; satu bandara hanya di satu wilayah.
+@Schema({ timestamps: true })
+export class Region {
+  @Prop({ required: true, unique: true }) code: string;
+  @Prop({ required: true, trim: true }) name: string;
+  @Prop({ type: [String], default: [] }) airports: string[];
+}
+export const RegionSchema = SchemaFactory.createForClass(Region);
 
 // Jejak audit append-only: tidak ada endpoint yang mengubah atau menghapus. Tidak memuat password.
 @Schema({ collection: 'auditlogs' })

@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { AuditItem, Role, UserRow, api, download, session } from './api';
+import { AuditItem, RegionRow, Role, UserRow, api, download, session } from './api';
 import { fmtDate, fmtDateTime, useAsync } from './util';
 
 const ROLES: Role[] = ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'];
@@ -38,20 +38,23 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
 
 function UserDialog({ user, onClose, onSaved }: { user: UserRow | null; onClose: () => void; onSaved: () => void }) {
   const me = user?.username === session.user;
-  const [form, setForm] = useState({ username: user?.username ?? '', name: user?.name ?? '', password: '', role: (user?.role ?? 'ORIGINATOR') as Role, active: user?.active ?? true });
+  const [form, setForm] = useState({ username: user?.username ?? '', name: user?.name ?? '', password: '', role: (user?.role ?? 'ORIGINATOR') as Role, active: user?.active ?? true, regions: user?.regions ?? [] as string[] });
+  const [allRegions, setAllRegions] = useState<RegionRow[]>([]);
+  useEffect(() => { api<RegionRow[]>('GET', '/regions').then(setAllRegions, () => undefined); }, []);
   const [busy, setBusy] = useState(false);
   const { error, run } = useAsync();
 
   const save = () => run(async () => {
     setBusy(true);
     try {
-      if (!user) await api('POST', '/users', { username: form.username, name: form.name, password: form.password, role: form.role });
+      if (!user) await api('POST', '/users', { username: form.username, name: form.name, password: form.password, role: form.role, regions: form.regions });
       else {
         const body: Record<string, unknown> = {};
         if (form.name.trim() !== (user.name ?? '')) body.name = form.name;
         if (form.role !== user.role) body.role = form.role;
         if (form.active !== user.active) body.active = form.active;
         if (form.password) body.password = form.password;
+        if (JSON.stringify([...form.regions].sort()) !== JSON.stringify([...(user.regions ?? [])].sort())) body.regions = form.regions;
         if (Object.keys(body).length) await api('PATCH', `/users/${user._id}`, body);
       }
       onSaved();
@@ -74,6 +77,15 @@ function UserDialog({ user, onClose, onSaved }: { user: UserRow | null; onClose:
         <label className="field">Role
           <select disabled={me} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}>{ROLES.map((r) => <option key={r}>{r}</option>)}</select>
         </label>
+        {form.role !== 'ADMIN' && (
+          <fieldset className="field">
+            <legend>Wilayah (cabang)</legend>
+            {allRegions.length === 0 ? <span className="muted">Belum ada wilayah. Buat dulu di menu Wilayah. Tanpa wilayah, pengguna tidak dibatasi.</span> : allRegions.map((r) => (
+              <label className="check" key={r.code}><input type="checkbox" checked={form.regions.includes(r.code)} onChange={(e) => setForm({ ...form, regions: e.target.checked ? [...form.regions, r.code] : form.regions.filter((c) => c !== r.code) })} /> {r.name} <span className="mono muted">{r.code}</span></label>
+            ))}
+            <span className="muted">Pengguna hanya dapat membuat atau memproses NOTAM untuk bandara di wilayahnya. Kosong = tidak dibatasi.</span>
+          </fieldset>
+        )}
         {user && (
           <label className="check"><input type="checkbox" disabled={me} checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} /> Akun aktif{me && ' (akun Anda sendiri tidak dapat dinonaktifkan)'}</label>
         )}
@@ -156,11 +168,12 @@ export function Users() {
                 {label}
               </th>
             ))}
+            <th>Wilayah</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
-          {shown.length === 0 && <tr><td colSpan={6} className="muted empty">{users.length ? 'Tidak ada pengguna yang cocok.' : 'Memuat…'}</td></tr>}
+          {shown.length === 0 && <tr><td colSpan={7} className="muted empty">{users.length ? 'Tidak ada pengguna yang cocok.' : 'Memuat…'}</td></tr>}
           {shown.map((u) => {
             const me = u.username === session.user;
             return (
@@ -170,6 +183,7 @@ export function Users() {
                 <td data-label="Status"><span className={`pill ${u.active ? 's-APPROVED_BY_NOF' : 's-REJECTED'}`}>{u.active ? 'Aktif' : 'Nonaktif'}</span></td>
                 <td data-label="Terakhir login">{u.lastLoginAt ? fmtDateTime(u.lastLoginAt) : <span className="muted">Belum pernah</span>}</td>
                 <td data-label="Dibuat">{fmtDate(u.createdAt)}</td>
+                <td data-label="Wilayah">{u.role === 'ADMIN' ? <span className="muted">Semua</span> : u.regions?.length ? u.regions.map((c) => <span key={c} className="pill">{c}</span>) : <span className="muted">Tidak dibatasi</span>}</td>
                 <td className="actions">
                   <button className="ghost sm" onClick={() => setDialog(u)}>Ubah</button>
                   {!me && <button className="ghost sm" onClick={() => patch(u, { active: !u.active })}>{u.active ? 'Nonaktifkan' : 'Aktifkan'}</button>}
@@ -189,6 +203,7 @@ export function Users() {
 
 const ACTION: Record<string, [string, string]> = {
   LOGIN_OK: ['Login', 'ok'], LOGIN_FAIL: ['Login gagal', 'bad'], LOGIN_LOCKED: ['Login terkunci', 'bad'], LOGIN_BLOCKED: ['Login diblokir', 'bad'],
+  REGION_CREATE: ['Buat wilayah', 'info'], REGION_UPDATE: ['Ubah wilayah', 'warn'], REGION_DELETE: ['Hapus wilayah', 'bad'], REQUEST_EDIT: ['Sunting Q/E', 'warn'],
   USER_CREATE: ['Buat akun', 'info'], USER_UPDATE: ['Ubah akun', 'warn'], USER_DELETE: ['Hapus akun', 'bad'],
   SERVER_GATE: ['Atur generate', 'warn'], SERVER_LLM_WARMUP: ['Muat model', 'info'], SERVER_LLM_UNLOAD: ['Bongkar model', 'info'],
   REQUEST_CREATE: ['Buat NOTAM', 'info'], REQUEST_TEXT: ['Ubah teks', 'info'], REQUEST_SUBMIT: ['Submit', 'info'],
@@ -259,6 +274,85 @@ export function AuditPanel() {
       </table>
       <Pager page={page} size={size} total={data.total} onPage={setPage} onSize={setSize} />
       <p className="muted">Catatan hanya bisa ditambah, tidak dapat diubah atau dihapus lewat aplikasi. Password tidak pernah dicatat. Waktu dalam zona browser; CSV dalam UTC.</p>
+    </>
+  );
+}
+
+// Kelola wilayah (cabang): kumpulan bandara. Satu bandara hanya di satu wilayah.
+function RegionDialog({ region, onClose, onSaved }: { region: RegionRow | null; onClose: () => void; onSaved: () => void }) {
+  const [form, setForm] = useState({ code: region?.code ?? '', name: region?.name ?? '', airports: (region?.airports ?? []).join(', ') });
+  const [busy, setBusy] = useState(false);
+  const { error, run } = useAsync();
+  const save = () => run(async () => {
+    setBusy(true);
+    try {
+      const airports = form.airports.split(/[\s,;]+/).map((a) => a.trim().toUpperCase()).filter(Boolean);
+      if (!region) await api('POST', '/regions', { code: form.code, name: form.name, airports });
+      else await api('PATCH', `/regions/${region.code}`, { name: form.name, airports });
+      onSaved();
+      onClose();
+    } finally { setBusy(false); }
+  });
+  return (
+    <Modal title={region ? `Ubah wilayah ${region.code}` : 'Tambah wilayah'} onClose={onClose}>
+      <form className="form" onSubmit={(e) => { e.preventDefault(); save(); }}>
+        <label className="field">Kode
+          <input autoFocus={!region} disabled={!!region} value={form.code} maxLength={20} placeholder="mis. JKT" onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} />
+        </label>
+        <label className="field">Nama wilayah / cabang
+          <input value={form.name} maxLength={80} placeholder="mis. Cabang Jakarta" onChange={(e) => setForm({ ...form, name: e.target.value })} />
+        </label>
+        <label className="field">Bandara (locator ICAO, pisahkan dengan koma atau spasi)
+          <textarea rows={4} className="mono" value={form.airports} placeholder="WIHH, WIII, WIAA" onChange={(e) => setForm({ ...form, airports: e.target.value })} />
+        </label>
+        {error && <p role="alert">{error}</p>}
+        <div className="row end">
+          <button type="button" className="ghost" onClick={onClose}>Batal</button>
+          <button disabled={busy}>{busy ? 'Menyimpan…' : 'Simpan'}</button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export function Regions() {
+  const [list, setList] = useState<RegionRow[] | null>(null);
+  const [dialog, setDialog] = useState<RegionRow | 'new' | null>(null);
+  const { error, run } = useAsync();
+  const load = useCallback(() => run(async () => setList(await api<RegionRow[]>('GET', '/regions'))), []);
+  useEffect(() => { load(); }, [load]);
+  const remove = (r: RegionRow) => run(async () => {
+    if (!confirm(`Hapus wilayah "${r.name}"? Wilayah ini dilepas dari ${r.users} pengguna; pengguna tanpa wilayah tidak dibatasi.`)) return;
+    await api('DELETE', `/regions/${r.code}`);
+    await load();
+  });
+  return (
+    <>
+      <h2>Wilayah (cabang)</h2>
+      <p className="muted">NOTAM hanya dapat dibuat dan diproses oleh pengguna di wilayah bandaranya (termasuk NOF per wilayah). Pengguna tanpa wilayah tidak dibatasi, dan semua role tetap dapat melihat peta dan analytics nasional.</p>
+      <div className="toolbar"><span className="grow" /><button onClick={() => setDialog('new')}>Tambah wilayah</button></div>
+      {error && <p role="alert">{error}</p>}
+      <table className="users">
+        <thead><tr><th>Kode</th><th>Nama</th><th>Bandara</th><th>Pengguna</th><th>Aksi</th></tr></thead>
+        <tbody>
+          {list && list.length === 0 && <tr><td colSpan={5} className="muted empty">Belum ada wilayah.</td></tr>}
+          {!list && <tr><td colSpan={5} className="muted empty">Memuat…</td></tr>}
+          {list?.map((r) => (
+            <tr key={r.code}>
+              <td data-label="Kode"><span className="mono">{r.code}</span></td>
+              <td data-label="Nama"><b>{r.name}</b></td>
+              <td data-label="Bandara" className="mono">{r.airports.length ? r.airports.join(', ') : <span className="muted">Belum ada</span>} <span className="muted">({r.airports.length})</span></td>
+              <td data-label="Pengguna">{r.users}</td>
+              <td className="actions">
+                <button className="ghost sm" onClick={() => setDialog(r)}>Ubah</button>
+                <button className="btn-reject sm" onClick={() => remove(r)}>Hapus</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="muted">Satu bandara hanya boleh ada di satu wilayah. Semua perubahan tercatat di tab Audit Log.</p>
+      {dialog && <RegionDialog region={dialog === 'new' ? null : dialog} onClose={() => setDialog(null)} onSaved={load} />}
     </>
   );
 }

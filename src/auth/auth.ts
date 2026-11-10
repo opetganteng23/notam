@@ -10,6 +10,7 @@ export interface AuthUser {
   sub: string;
   username: string;
   role: Role;
+  regions?: string[];
 }
 
 export const Roles = (...roles: Role[]) => SetMetadata('roles', roles);
@@ -32,9 +33,10 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     // Role dan status aktif diambil dari DB, bukan token: perubahan oleh admin berlaku seketika.
-    const u = await this.users.findById(req.user.sub).select('role active').lean().catch(() => null);
+    const u = await this.users.findById(req.user.sub).select('role active regions').lean().catch(() => null);
     if (!u || u.active === false) throw new UnauthorizedException();
     req.user.role = u.role;
+    req.user.regions = u.regions ?? [];
     const roles = this.reflector.get<Role[]>('roles', ctx.getHandler());
     if (roles && !roles.includes(req.user.role)) throw new ForbiddenException('Role tidak berwenang');
     return true;

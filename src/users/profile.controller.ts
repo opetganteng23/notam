@@ -8,7 +8,7 @@ import { AuthUser, CurrentUser } from '../auth/auth';
 import { NotamRequest, User } from '../requests/schemas';
 import { MAX_NAME, MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, cleanName, normalizeUsername } from './rules';
 
-const view = (u: any) => ({ username: u.username, name: u.name ?? '', role: u.role, createdAt: u.createdAt ?? null, lastLoginAt: u.lastLoginAt ?? null });
+const view = (u: any) => ({ username: u.username, name: u.name ?? '', role: u.role, createdAt: u.createdAt ?? null, lastLoginAt: u.lastLoginAt ?? null, regions: u.regions ?? [] });
 
 // Profil milik pengguna yang sedang login (semua role). Perubahan email dan password wajib password saat ini.
 @Controller('me')
