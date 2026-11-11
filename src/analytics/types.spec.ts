@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { TypeDoc, computeTypes, conditionLabel, impactOf, parseQ, subjectLabel } from './types';
+import { SUBJECT_CODES, TypeDoc, computeTypes, conditionLabel, impactOf, parseQ, subjectLabel } from './types';
 
 const T0 = Date.UTC(2025, 0, 1);
 const at = (h: number) => new Date(T0 + h * 3_600_000);
@@ -119,6 +119,10 @@ describe('nama subjek & kondisi lengkap', () => {
   it('semua kode ICAO punya nama Indonesia', () => {
     for (const k of Object.keys(icao.subject)) expect(subjectLabel(k)).toBeTruthy();
     for (const k of Object.keys(icao.condition)) expect(conditionLabel(k)).toBeTruthy();
+  });
+  it('daftar pilihan subjek memuat semua kode dan berurutan unik', () => {
+    expect(SUBJECT_CODES).toEqual(expect.arrayContaining(['MR', 'MX', ...Object.keys(icao.subject)]));
+    expect(new Set(SUBJECT_CODES).size).toBe(SUBJECT_CODES.length);
   });
   it('nama dari dataset AirNav tetap didahulukan', () => {
     expect(subjectLabel('MR')).toBe('Runway');

@@ -3,22 +3,22 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuditService } from '../audit/audit.service';
 import { AuthUser, CurrentUser, Roles } from '../auth/auth';
-import { NotamRequest } from '../requests/schemas';
+import { NotamRequest, Region } from '../requests/schemas';
 import { Analytics, DocLike, Row, buildInsights, computeAnalytics } from './analytics';
 import { typesToExcel, typesToPptx } from './export-types';
 import { analyticsToExcel } from './export-xlsx';
 import { analyticsToPptx } from './export-pptx';
 import { findAirport } from '../master/airports';
-import { IMPACTS, TypeDoc, TypeRow, TypesReport, computeTypes, impactOf } from './types';
+import { GROUP_NAME, IMPACTS, IMPACT_NAME, SUBJECT_CODES, TypeDoc, TypeRow, TypesReport, computeTypes, impactOf, parseQ, subjectLabel } from './types';
 
 export interface AnalyticsQuery { from?: string; to?: string; airport?: string }
-export interface TypesQuery extends AnalyticsQuery { status?: string; group?: string; subject?: string; condition?: string; impact?: string }
+export interface TypesQuery extends AnalyticsQuery { region?: string; status?: string; group?: string; subject?: string; condition?: string; impact?: string }
 
 const STATUSES = ['UNDER_ATS', 'UNDER_PIA', 'UNDER_NOF', 'REVISION_REQUIRED', 'REJECTED', 'APPROVED_BY_NOF'];
 
 @Injectable()
 export class AnalyticsService {
-  constructor(@InjectModel(NotamRequest.name) private model: Model<NotamRequest>) {}
+  constructor(@InjectModel(NotamRequest.name) private model: Model<NotamRequest>, @InjectModel(Region.name) private regions: Model<Region>) {}
 
   // Draft tidak pernah dihitung. Parameter tidak valid ditolak dengan pesan yang jelas.
   private filter(q: TypesQuery, allowStatus: boolean) {
@@ -64,11 +64,27 @@ export class AnalyticsService {
 
   async runTypes(q: TypesQuery): Promise<{ report: TypesReport; rows: TypeRow[] }> {
     const { filter, from, to } = this.filter(q, true);
-    const docs = await this.model
+    if (q.impact && !(IMPACTS as string[]).includes(q.impact)) throw new BadRequestException('Dampak tidak dikenal');
+    if (q.subject && !/^[A-Z]{2}$/.test(q.subject)) throw new BadRequestException('Subjek harus 2 huruf kapital');
+    // Wilayah: hanya bandara milik wilayah itu. Bila bandara juga diisi, hasilnya irisan keduanya.
+    if (q.region) {
+      const reg = await this.regions.findOne({ code: q.region }).lean();
+      if (!reg) throw new BadRequestException('Wilayah tidak dikenal');
+      const inRegion = reg.airports ?? [];
+      filter.airport = q.airport ? (inRegion.includes(q.airport) ? q.airport : { $in: [] }) : { $in: inRegion };
+    }
+    let docs = await this.model
       .find(filter)
       .select({ formNo: 1, airport: 1, originator: 1, status: 1, createdAt: 1, versions: { $slice: -1 } })
-      .lean();
-    return computeTypes(docs as unknown as TypeDoc[], { from, to, airport: q.airport, status: q.status });
+      .lean() as unknown as TypeDoc[];
+    // Subjek dan dampak dibaca dari kode Q susunan terakhir, sama seperti pada laporan.
+    if (q.subject || q.impact) {
+      docs = docs.filter((d) => {
+        const p = parseQ(d.versions[d.versions.length - 1]?.generated);
+        return !!p && (!q.subject || p.subject === q.subject) && (!q.impact || impactOf(p.condition) === q.impact);
+      });
+    }
+    return computeTypes(docs, { from, to, airport: q.airport, status: q.status });
   }
 }
 
@@ -136,6 +152,15 @@ export class AnalyticsController {
   }
 
   // ---- Laporan menurut jenis NOTAM (kode Q)
+  // Pilihan untuk filter: semua subjek (lengkap dari tabel ICAO) dan semua kategori dampak.
+  @Roles(...READERS) @Get('types/options')
+  options() {
+    return {
+      subjects: SUBJECT_CODES.map((code) => ({ code, label: subjectLabel(code) ?? code, group: GROUP_NAME[code[0]] ?? code[0] })).sort((a, b) => a.label.localeCompare(b.label, 'id')),
+      impacts: IMPACTS.map((key) => ({ key, label: IMPACT_NAME[key] })),
+    };
+  }
+
   @Roles(...READERS) @Get('types')
   async types(@Query() q: TypesQuery) {
     return (await this.svc.runTypes(q)).report;

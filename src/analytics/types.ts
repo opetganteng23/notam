@@ -17,6 +17,7 @@ export const CONDITION_NAME: Record<string, string> = { AS: 'Tidak dapat digunak
 // Nama cadangan: terjemahan Indonesia seluruh tabel ICAO (data/icao-label-id.json). Nama dari contoh dataset didahulukan.
 const ICAO_ID: { subject: Record<string, string>; condition: Record<string, string> } = JSON.parse(readFileSync(join(__dirname, '..', '..', 'data', 'icao-label-id.json'), 'utf8'));
 export const subjectLabel = (code: string): string | null => SUBJECT_NAME[code] ?? ICAO_ID.subject[code] ?? null;
+export const SUBJECT_CODES: string[] = [...new Set([...Object.keys(SUBJECT_NAME), ...Object.keys(ICAO_ID.subject)])].filter((c) => c !== 'XX').sort();
 export const conditionLabel = (code: string): string | null => CONDITION_NAME[code] ?? ICAO_ID.condition[code] ?? null;
 
 // Dampak operasional, dikelompokkan dari kode kondisi Q (dua huruf terakhir). Pengelompokan ini dibuat sistem agar mudah dibaca, BUKAN istilah resmi AirNav.

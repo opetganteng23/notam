@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal } from './admin';
 import { Bars, Donut, Kpi } from './analytics';
-import { ImpactKey, TypeItem, TypesReport, api, download } from './api';
+import { ImpactKey, RegionRow, TypeItem, TypesReport, api, download } from './api';
 import { fmtDate, fmtPct, useAsync } from './util';
 
 const PAL = ['#1769c2', '#f2a900', '#17784f', '#b83232', '#8fb8e8', '#7c6fd0', '#66758a'];
@@ -57,11 +57,23 @@ function StackedBars({ report, names }: { report: TypesReport; names: Record<str
   );
 }
 
+// Gabungkan filter aktif dengan filter klik; yang terakhir menang agar parameter tidak ganda.
+function mergeQuery(base: string, extra: string) {
+  const m = new URLSearchParams(base);
+  new URLSearchParams(extra).forEach((v, k) => m.set(k, v));
+  return m.toString();
+}
+
 export function TypesPanel() {
   const [preset, setPreset] = useState<Preset>('30');
   const [custom, setCustom] = useState({ from: '', to: '' });
   const [airport, setAirport] = useState('');
   const [status, setStatus] = useState('');
+  const [subject, setSubject] = useState('');
+  const [impact, setImpact] = useState('');
+  const [region, setRegion] = useState('');
+  const [opts, setOpts] = useState<{ subjects: { code: string; label: string; group: string }[] }>({ subjects: [] });
+  const [regions, setRegions] = useState<RegionRow[]>([]);
   const [r, setR] = useState<TypesReport | null>(null);
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState('');
@@ -79,8 +91,17 @@ export function TypesPanel() {
     else if (preset !== 'all') { const f = new Date(now); f.setDate(f.getDate() - Number(preset)); f.setHours(0, 0, 0, 0); p.from = f.toISOString(); }
     if (/^[A-Z]{4}$/.test(airport)) p.airport = airport;
     if (status) p.status = status;
+    if (subject) p.subject = subject;
+    if (impact) p.impact = impact;
+    if (region) p.region = region;
     return new URLSearchParams(p).toString();
-  }, [preset, custom, airport, status]);
+  }, [preset, custom, airport, status, subject, impact, region]);
+
+  // Pilihan filter dimuat sekali. Bila gagal, filter tetap bisa dipakai tanpa daftar.
+  useEffect(() => {
+    api<typeof opts>('GET', '/analytics/types/options').then(setOpts).catch(() => undefined);
+    api<RegionRow[]>('GET', '/regions').then(setRegions).catch(() => undefined);
+  }, []);
 
   const load = useCallback(() => run(async () => setR(await api<TypesReport>('GET', `/analytics/types${query ? `?${query}` : ''}`))), [query]);
   useEffect(() => { const t = setTimeout(load, 200); return () => clearTimeout(t); }, [load]);
@@ -114,6 +135,20 @@ export function TypesPanel() {
           <option value="">Semua status</option>
           {Object.entries(STATUS_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
+        <select aria-label="Subjek" value={subject} onChange={(e) => setSubject(e.target.value)}>
+          <option value="">Semua subjek</option>
+          {opts.subjects.map((s) => <option key={s.code} value={s.code}>{s.label} ({s.code})</option>)}
+        </select>
+        <select aria-label="Dampak" value={impact} onChange={(e) => setImpact(e.target.value)}>
+          <option value="">Semua dampak</option>
+          {(Object.keys(IMPACT_LABEL) as ImpactKey[]).map((k) => <option key={k} value={k}>{IMPACT_LABEL[k]}</option>)}
+        </select>
+        {regions.length > 0 && (
+          <select aria-label="Wilayah" value={region} onChange={(e) => setRegion(e.target.value)}>
+            <option value="">Semua wilayah</option>
+            {regions.map((g) => <option key={g.code} value={g.code}>{g.name} ({g.code})</option>)}
+          </select>
+        )}
         <span className="grow" />
         <button className="ghost" disabled={!!busy || !r} onClick={() => exportAs('xlsx')}>{busy === 'xlsx' ? 'Menyiapkan…' : 'Unduh Excel'}</button>
         <button disabled={!!busy || !r} onClick={() => exportAs('pptx')}>{busy === 'pptx' ? 'Menyiapkan…' : 'Unduh PowerPoint'}</button>
@@ -284,7 +319,7 @@ export function TypesPanel() {
           </section>
         </>
       )}
-      {drill && <Drill title={drill.title} query={[query, drill.extra].filter(Boolean).join('&')} onClose={() => setDrill(null)} />}
+      {drill && <Drill title={drill.title} query={mergeQuery(query, drill.extra)} onClose={() => setDrill(null)} />}
     </>
   );
 }
