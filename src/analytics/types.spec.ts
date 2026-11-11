@@ -1,4 +1,5 @@
-import { TypeDoc, computeTypes, impactOf, parseQ } from './types';
+import { readFileSync } from 'fs';
+import { TypeDoc, computeTypes, conditionLabel, impactOf, parseQ, subjectLabel } from './types';
 
 const T0 = Date.UTC(2025, 0, 1);
 const at = (h: number) => new Date(T0 + h * 3_600_000);
