@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { AuditService } from '../audit/audit.service';
 import { User } from '../requests/schemas';
 import { Public } from './auth';
+import { normalizeUsername } from '../users/rules';
 
 const MAX_FAILS = 5;
 const LOCK_MS = 15 * 60_000;
@@ -26,7 +27,7 @@ export class AuthController {
       await this.audit.record({ actor: name, action: 'LOGIN_LOCKED', summary: `Login ditolak: terlalu banyak percobaan gagal (${name})`, ip: req.ip });
       throw new HttpException('Terlalu banyak percobaan, coba lagi nanti', HttpStatus.TOO_MANY_REQUESTS);
     }
-    const u = await this.users.findOne({ username: String(b.username) });
+    const u = await this.users.findOne({ username: normalizeUsername(b.username) });
     if (!u || !(await bcrypt.compare(String(b.password), u.passwordHash))) {
       if (this.fails.size > 1000) for (const [k, v] of this.fails) if (v.until <= Date.now()) this.fails.delete(k);
       const n = (f && f.until > Date.now() ? f.n : 0) + 1;

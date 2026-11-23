@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { AuditService } from '../audit/audit.service';
 import { AuthUser, CurrentUser } from '../auth/auth';
 import { NotamRequest, User } from '../requests/schemas';
-import { MAX_NAME, MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, cleanName } from './rules';
+import { MAX_NAME, MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, cleanName, normalizeUsername } from './rules';
 
 const view = (u: any) => ({ username: u.username, name: u.name ?? '', role: u.role, createdAt: u.createdAt ?? null, lastLoginAt: u.lastLoginAt ?? null });
 
@@ -58,7 +58,7 @@ export class ProfileController {
   // Username dipakai sebagai pemilik NOTAM, jadi kepemilikan ikut dipindahkan. Riwayat lama tetap mencatat nama lama.
   @Post('username')
   async username(@CurrentUser() me: AuthUser, @Body() b: { username?: string; current?: string }) {
-    const next = String(b.username ?? '').trim().toLowerCase();
+    const next = normalizeUsername(b.username);
     if (!USERNAME_RE.test(next)) throw new BadRequestException(USERNAME_HINT);
     const u = await this.verify(me, b.current);
     const old = u.username;

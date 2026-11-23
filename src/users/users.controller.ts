@@ -8,7 +8,7 @@ import { User } from '../requests/schemas';
 import { Role } from '../workflow/workflow';
 import { cleanAirports } from '../auth/scope';
 import { findAirport } from '../master/airports';
-import { MAX_NAME, MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, cleanName } from './rules';
+import { MAX_NAME, MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, cleanName, normalizeUsername } from './rules';
 
 const ROLES: Role[] = ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'];
 const view = (u: any) => ({ _id: u._id, username: u.username, name: u.name ?? '', role: u.role, airports: u.airports ?? [], active: u.active !== false, createdAt: u.createdAt, lastLoginAt: u.lastLoginAt ?? null });
@@ -45,12 +45,13 @@ export class UsersController {
   async create(@CurrentUser() me: AuthUser, @Body() b: { username: string; password: string; role: Role; name?: string; airports?: string[] }) {
     const name = cleanName(b.name);
     if (name.length > MAX_NAME) throw new BadRequestException(`Nama maksimal ${MAX_NAME} karakter`);
-    if (!USERNAME_RE.test(String(b.username))) throw new BadRequestException(USERNAME_HINT);
+    const username = normalizeUsername(b.username);
+    if (!USERNAME_RE.test(username)) throw new BadRequestException(USERNAME_HINT);
     this.checkPassword(b.password);
     this.checkRole(b.role);
     const airports = this.airports(b.airports);
     try {
-      const u = await this.users.create({ username: b.username, name, role: b.role, airports, passwordHash: await bcrypt.hash(b.password, 10) });
+      const u = await this.users.create({ username, name, role: b.role, airports, passwordHash: await bcrypt.hash(b.password, 10) });
       await this.rec(me, 'USER_CREATE', u.username, `Membuat akun ${u.username} (${u.role})${airports.length ? ` bandara ${airports.join(',')}` : ''}`, { role: u.role, airports });
       return view(u);
     } catch (e: any) {
