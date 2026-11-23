@@ -71,20 +71,26 @@ const EN_MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july
 const monthIndex = (name: string) => (MONTHS.indexOf(name.toLowerCase()) >= 0 ? MONTHS.indexOf(name.toLowerCase()) : EN_MONTHS.indexOf(name.toLowerCase()));
 
 // "DD <bulan> YYYY [pukul] HH.MM [zona]" pada teks -> stempel UTC YYMMDDHHMM untuk yang berzona lokal (label sendiri atau ikut jam berlabel lain).
-function localStamps(text: string): { stamp: string; index: number }[] {
+interface Local { stamp: string; index: number; end: number; local: number; zone: string }
+const fmt = (ms: number) => {
+  const d = new Date(ms);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${p(d.getUTCFullYear() % 100)}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}${p(d.getUTCHours())}${p(d.getUTCMinutes())}`;
+};
+
+function localStamps(text: string): Local[] {
   const toks = clockTokens(text);
   const inherit = canInherit(text, toks);
   const re = new RegExp('\\b(\\d{1,2})\\s+([a-z]+)\\s+(\\d{4})\\s*,?\\s*(?:pukul|jam|at)?\\s*(' + CLOCK + ')(?:\\s*(' + ZONES + ')\\b)?', 'gi');
-  const out: { stamp: string; index: number }[] = [];
+  const out: Local[] = [];
   for (const m of text.matchAll(re)) {
     const mo = monthIndex(m[2]);
     if (mo < 0) continue;
     const pos = (m.index ?? 0) + m[0].lastIndexOf(m[4]);
     const zone = localZone(pos, m[9]?.toUpperCase(), toks, inherit);
     if (!zone) continue;
-    const d = new Date(Date.UTC(Number(m[3]), mo, Number(m[1]), Number(m[5] ?? m[7]), Number(m[6] ?? m[8])) - OFFSET[zone] * 3600_000);
-    const p = (n: number) => String(n).padStart(2, '0');
-    out.push({ stamp: `${p(d.getUTCFullYear() % 100)}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}${p(d.getUTCHours())}${p(d.getUTCMinutes())}`, index: m.index ?? 0 });
+    const local = Date.UTC(Number(m[3]), mo, Number(m[1]), Number(m[5] ?? m[7]), Number(m[6] ?? m[8]));
+    out.push({ stamp: fmt(local - OFFSET[zone] * 3600_000), index: m.index ?? 0, end: (m.index ?? 0) + m[0].length, local, zone });
   }
   return out;
 }
@@ -99,5 +105,24 @@ export function expectedUtcPlan(text: string): { B?: string; C?: string } {
   if (!l.length) return {};
   if (l.length > 1) return { B: l[0].stamp, C: l[l.length - 1].stamp };
   const dates = [...text.matchAll(/\b\d{1,2}\s+([a-z]+)\s+\d{4}/gi)].filter((m) => monthIndex(m[1]) >= 0).map((m) => m.index ?? 0);
-  return dates.length >= 2 && l[0].index === dates[dates.length - 1] ? { C: l[0].stamp } : { B: l[0].stamp };
+  if (dates.length >= 2 && l[0].index === dates[dates.length - 1]) return { C: l[0].stamp };
+  const c = sameDayEnd(text, l[0]);
+  return c ? { B: l[0].stamp, C: c } : { B: l[0].stamp };
+}
+
+// Jam akhir tanpa tanggal sendiri tepat setelah jam mulai: "25 November 2026 pukul 08.00 sampai 10.00 WIB", "08.00-10.00 WIB".
+// Tanggal = tanggal jam mulai; bila jam akhir <= jam mulai, hari berikutnya. Zona = label jam akhir, bila tidak ada maka zona jam mulai.
+// Jadwal harian (D) tidak disentuh.
+const RANGE_END = new RegExp('^\\s*(?:sampai(?:\\s+dengan)?|hingga|s\\.?\\s?d\\.?|s/d|until|to|[-–])\\s*(?:pukul|pkl\\.?|jam)?\\s*' + CLOCK + '(?:\\s*(' + ZONES + ')\\b)?', 'i');
+function sameDayEnd(text: string, start: Local): string | undefined {
+  if (/setiap hari|tiap hari|harian|\bdaily\b/i.test(text)) return undefined;
+  const m = RANGE_END.exec(text.slice(start.end));
+  if (!m) return undefined;
+  const own = m[5]?.toUpperCase();
+  if (own && !OFFSET[own]) return undefined;
+  const zone = own ?? start.zone;
+  const day = Math.floor(start.local / 86_400_000) * 86_400_000;
+  let end = day + (Number(m[1] ?? m[3]) * 60 + Number(m[2] ?? m[4])) * 60_000;
+  if (end <= start.local) end += 86_400_000;
+  return fmt(end - OFFSET[zone] * 3600_000);
 }

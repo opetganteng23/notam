@@ -530,3 +530,34 @@ describe('LP vs LA dan tabel NSC (Traffic/Purpose/Scope)', () => {
     expect(t).toContain('QMRLC/IV/NBO/A/');
   });
 });
+
+describe('jam akhir tanpa tanggal sendiri (rentang di hari yang sama)', () => {
+  const wihh = findAirport('WIHH')!;
+  const at = (d: string, range: string) => `Runway 03/21 Bandara Budiarto ditutup untuk perbaikan permukaan pada ${d} November 2026 pukul ${range}`;
+  it('"08.00 sampai 10.00 WIB": C) ikut dikonversi', () => {
+    expect(expectedUtcPlan(at('25', '08.00 sampai 10.00 WIB'))).toEqual({ B: '2611250100', C: '2611250300' });
+  });
+  it('"08.00 WIB sampai 10.00 WIB"', () => {
+    expect(expectedUtcPlan(at('26', '08.00 WIB sampai 10.00 WIB'))).toEqual({ B: '2611260100', C: '2611260300' });
+  });
+  it('jam akhir <= jam mulai: hari berikutnya', () => {
+    expect(expectedUtcPlan(at('25', '22.00 sampai 02.00 WIB'))).toEqual({ B: '2611251500', C: '2611251900' });
+  });
+  it('WITA', () => {
+    expect(expectedUtcPlan(at('25', '08.00 sampai 10.00 WITA'))).toEqual({ B: '2611250000', C: '2611250200' });
+  });
+  it('tanda hubung setara dengan "sampai"', () => {
+    expect(expectedUtcPlan(at('25', '08.00-10.00 WIB'))).toEqual(expectedUtcPlan(at('25', '08.00 sampai 10.00 WIB')));
+  });
+  it('regresi: dua tanggal eksplisit dan hanya jam mulai tidak berubah', () => {
+    expect(expectedUtcPlan('ditutup mulai tanggal 7 November 2026 pukul 08.00 WIB sampai tanggal 8 November 2026 pukul 10.00 WIB')).toEqual({ B: '2611070100', C: '2611080300' });
+    expect(expectedUtcPlan('ditutup mulai 25 November 2026 pukul 08.00 WIB')).toEqual({ B: '2611250100' });
+    expect(expectedUtcPlan('ditutup mulai 25 November 2026 pukul 08.00 WIB sampai selesai')).toEqual({ B: '2611250100' });
+  });
+  it('correctNotam: C) 2611251000 dikoreksi menjadi 2611250300 dengan catatan', () => {
+    const n = 'Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2611250100\nC) 2611251000\nE) RWY 03/21 CLSD DUE TO WIP';
+    const r = correctNotam(n, wihh, at('25', '08.00 sampai 10.00 WIB'));
+    expect(r.text).toContain('C) 2611250300');
+    expect(r.corrections.some((c) => c.startsWith('C) ditulis dalam UTC: 2611250300'))).toBe(true);
+  });
+});
