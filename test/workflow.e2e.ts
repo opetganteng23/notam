@@ -694,6 +694,18 @@ describe('laporan jenis NOTAM', () => {
     assert.ok(all.airportDetail.every((a: any) => a.subjects.reduce((x: number, s: any) => x + s.n, 0) === a.total));
   });
 
+  it('laporan jenis beserta filter subjek/dampak dibatasi cakupan bandara akun', async () => {
+    const all = (await api('get', '/analytics/types/list', 'pia.wiii').expect(200)).body;
+    assert.ok(all.items.every((x: any) => x.airport === 'WIII'));
+    for (const q of ['impact=CLOSED', 'subject=MR', 'subject=MR&impact=CLOSED']) {
+      const r = (await api('get', `/analytics/types/list?${q}`, 'pia.wiii').expect(200)).body;
+      assert.ok(r.items.every((x: any) => x.airport === 'WIII'));
+    }
+    // Meminta bandara di luar cakupan secara eksplisit ditolak (aturan cakupan yang sudah ada).
+    await api('get', '/analytics/types?airport=WIHH', 'pia.wiii').expect(403);
+    await api('get', '/analytics/types/list?airport=WIHH&impact=CLOSED', 'pia.wiii').expect(403);
+  });
+
   it('filter dampak pada daftar rincian', async () => {
     const base = '/analytics/types/list?airport=WAAA';
     const total = (await api('get', base, 'adm').expect(200)).body.total;
