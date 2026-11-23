@@ -1,6 +1,6 @@
 import { Airport, findAirport } from '../master/airports';
 import { buildPrompt } from './rag';
-import { expectedUtcPlan } from '../master/time';
+import { expectedUtcPlan, expectedUtcSchedule } from '../master/time';
 import { ICAO_CONDITION, ICAO_SUBJECT, textSubject } from '../master/icao-qcode';
 import { officialTps, usualTps } from '../master/tps';
 import { Validation, parseItems, validateNotam, REASON_CUE } from './validator';
@@ -125,6 +125,15 @@ export function correctNotam(text: string, airport: Airport, freeText: string): 
   if (plan.B && /^\d{10}$/.test(items.B ?? '') && items.B !== plan.B) setItem('B', items.B, plan.B, `B) ditulis dalam UTC: {to} = ${human(plan.B)} UTC (jam ${tz} di narasi ${shift(tz)})`);
   const c = items.C?.match(/^(\d{10})( ?EST)?$/);
   if (plan.C && c && c[1] !== plan.C) setItem('C', c[1], plan.C, `C) ditulis dalam UTC: {to} = ${human(plan.C)} UTC (jam ${tz} di narasi ${shift(tz)})`);
+  // D) jadwal harian: rentang jam lokal di narasi harus ditulis UTC (jumlah rentang harus sama agar pasangannya jelas).
+  const dPlan = expectedUtcSchedule(freeText);
+  const dRanges = [...(items.D ?? '').matchAll(/(\d{4})\s*-\s*(\d{4})/g)];
+  if (dPlan.length && dRanges.length === dPlan.length && dRanges.some((r, i) => `${r[1]}-${r[2]}` !== dPlan[i])) {
+    let i = 0;
+    const from = items.D;
+    const to = from.replace(/(\d{4})\s*-\s*(\d{4})/g, () => dPlan[i++]);
+    setItem('D', from, to, `D) ditulis dalam UTC: {to} (jam ${tz} di narasi ${shift(tz)})`);
+  }
   const closed = movementAreaClosed(text, freeText);
   if (closed) {
     text = closed.text;
