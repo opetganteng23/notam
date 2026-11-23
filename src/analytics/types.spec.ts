@@ -1,4 +1,4 @@
-import { TypeDoc, computeTypes, parseQ } from './types';
+import { TypeDoc, computeTypes, impactOf, parseQ } from './types';
 
 const T0 = Date.UTC(2025, 0, 1);
 const at = (h: number) => new Date(T0 + h * 3_600_000);
@@ -63,6 +63,26 @@ describe('computeTypes', () => {
   it('matriks bandara x kelompok', () => {
     expect(r.matrix.rows.map((x) => [x.airport, x.total])).toEqual([['WADD', 2], ['WIHH', 2], ['WAAA', 1]]);
     expect(r.matrix.rows[0].counts).toEqual({ M: 1, F: 0, L: 1 });
+  });
+
+  it('kode kondisi dikelompokkan menjadi dampak operasional', () => {
+    expect(['LC', 'AS', 'AU'].map(impactOf)).toEqual(['CLOSED', 'CLOSED', 'CLOSED']);
+    expect(['HW', 'LT', 'CM', 'CG', 'AH'].map(impactOf)).toEqual(['LIMITED', 'LIMITED', 'LIMITED', 'LIMITED', 'LIMITED']);
+    expect(['AK', 'AG', 'CC'].map(impactOf)).toEqual(['NORMAL', 'NORMAL', 'NORMAL']);
+    expect(['XX', 'CE', 'ZZ'].map(impactOf)).toEqual(['OTHER', 'OTHER', 'OTHER']);
+  });
+
+  it('ringkasan dampak, silang subjek x dampak, dan rincian bandara konsisten', () => {
+    expect(r.impact.map((i) => [i.key, i.n])).toEqual([['CLOSED', 3], ['LIMITED', 2], ['NORMAL', 0], ['OTHER', 0]]);
+    expect(r.impact.reduce((a, i) => a + i.n, 0)).toBe(r.coded);
+    const mr = r.impactMatrix.find((x) => x.subject === 'MR')!;
+    expect([mr.label, mr.total, mr.counts.CLOSED, mr.counts.LIMITED]).toEqual(['Runway', 2, 1, 1]);
+    expect(r.impactMatrix.reduce((a, x) => a + x.total, 0)).toBe(r.coded);
+    expect(r.airportDetail.map((a) => [a.airport, a.total])).toEqual([['WADD', 2], ['WIHH', 2], ['WAAA', 1]]);
+    const hh = r.airportDetail.find((a) => a.airport === 'WIHH')!;
+    expect(hh.impact).toEqual({ CLOSED: 1, LIMITED: 1, NORMAL: 0, OTHER: 0 });
+    expect(hh.subjects.map((x) => [x.code, x.n])).toEqual([['MR', 2]]);
+    expect(r.insights.join('\n')).toContain('Runway: 1 ditutup, 1 dengan pembatasan atau pekerjaan, dari 2 NOTAM runway.');
   });
 
   it('baris data menyimpan isi item E satu baris', () => {

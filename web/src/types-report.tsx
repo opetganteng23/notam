@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal } from './admin';
 import { Bars, Donut, Kpi } from './analytics';
-import { TypeItem, TypesReport, api, download } from './api';
+import { ImpactKey, TypeItem, TypesReport, api, download } from './api';
 import { fmtDate, fmtPct, useAsync } from './util';
 
 const PAL = ['#1769c2', '#f2a900', '#17784f', '#b83232', '#8fb8e8', '#7c6fd0', '#66758a'];
@@ -9,6 +9,11 @@ const STATUS_LABEL: Record<string, string> = {
   UNDER_ATS: 'Review ATS', UNDER_PIA: 'Review PIA', UNDER_NOF: 'Review NOF',
   REVISION_REQUIRED: 'Perlu revisi', REJECTED: 'Ditolak', APPROVED_BY_NOF: 'Disetujui NOF',
 };
+// Dampak operasional (pengelompokan dari kode kondisi Q): warna dan versi transparan untuk sel heatmap.
+const IMPACT_ORDER: ImpactKey[] = ['CLOSED', 'LIMITED', 'NORMAL', 'OTHER'];
+const IMPACT_LABEL: Record<ImpactKey, string> = { CLOSED: 'Tidak bisa dipakai', LIMITED: 'Dipakai dengan pembatasan', NORMAL: 'Kembali normal', OTHER: 'Lainnya' };
+const IMPACT_TONE: Record<ImpactKey, string> = { CLOSED: 'c-reject', LIMITED: 'c-revise', NORMAL: 'c-ok', OTHER: 'c-review' };
+const IMPACT_RGB: Record<ImpactKey, string> = { CLOSED: '184, 50, 50', LIMITED: '242, 169, 0', NORMAL: '23, 120, 79', OTHER: '102, 117, 138' };
 type Preset = '7' | '30' | '90' | 'year' | 'all' | 'custom';
 const PRESETS: [Preset, string][] = [['7', '7 hari'], ['30', '30 hari'], ['90', '90 hari'], ['year', 'Tahun ini'], ['all', 'Semua'], ['custom', 'Kustom']];
 const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -61,6 +66,7 @@ export function TypesPanel() {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState('');
   const [drill, setDrill] = useState<{ title: string; extra: string } | null>(null);
+  const [openA, setOpenA] = useState<Record<string, boolean>>({});
   const { error, run } = useAsync();
 
   const query = useMemo(() => {
@@ -87,6 +93,8 @@ export function TypesPanel() {
   const names = useMemo<Record<string, string>>(() => ({ ...Object.fromEntries((r?.groups ?? []).map((g) => [g.group, g.name])), Lain: 'Lain-lain' }), [r]);
   const top = r?.groups[0];
   const cond = r?.conditions[0];
+  const airportFiltered = /^[A-Z]{4}$/.test(airport);
+  const maxImp = Math.max(1, ...(r?.impactMatrix.flatMap((m) => Object.values(m.counts)) ?? [1]));
   const maxCell = Math.max(1, ...(r?.matrix.rows.flatMap((m) => Object.values(m.counts)) ?? [1]));
 
   return (
@@ -136,6 +144,80 @@ export function TypesPanel() {
               <Bars rows={r.conditions.slice(0, 8).map((c) => ({ label: c.label ?? c.code, value: c.n, text: `${c.n} · ${fmtPct(c.share)}` }))} />
             </section>
           </div>
+
+          <section>
+            <h3>Dampak operasional</h3>
+            <p className="muted">Dikelompokkan dari kode kondisi Q. Klik kartu atau angka untuk melihat daftar NOTAM-nya.</p>
+            <div className="cards kpis">
+              {IMPACT_ORDER.map((k) => {
+                const i = r.impact.find((x) => x.key === k);
+                return (
+                  <button key={k} className={`card ${IMPACT_TONE[k]}`} disabled={!i?.n} onClick={() => setDrill({ title: IMPACT_LABEL[k], extra: `impact=${k}` })}>
+                    <span className="num">{i?.n ?? 0}</span>
+                    <span className="lbl">{IMPACT_LABEL[k]}</span>
+                    {i ? <span className="sub">{fmtPct(i.share)}</span> : null}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          <section>
+            <h3>Subjek dan dampak</h3>
+            {r.impactMatrix.length === 0 ? <p className="muted">Belum ada data.</p> : (
+              <table className="mini heat">
+                <thead><tr><th>Subjek</th>{IMPACT_ORDER.map((k) => <th key={k}>{IMPACT_LABEL[k]}</th>)}<th>Total</th></tr></thead>
+                <tbody>
+                  {r.impactMatrix.map((m) => (
+                    <tr key={m.subject}>
+                      <td data-label="Subjek"><b>{m.label ?? m.subject}</b>{m.label && <span className="mono muted"> {m.subject}</span>}</td>
+                      {IMPACT_ORDER.map((k) => {
+                        const v = m.counts[k];
+                        return (
+                          <td key={k} data-label={IMPACT_LABEL[k]} className="cell" style={{ background: v ? `rgba(${IMPACT_RGB[k]}, ${0.12 + 0.6 * (v / maxImp)})` : undefined }}>
+                            {v ? <button className="linkish" onClick={() => setDrill({ title: `${m.label ?? m.subject} · ${IMPACT_LABEL[k]}`, extra: `subject=${m.subject}&impact=${k}` })}>{v}</button> : ''}
+                          </td>
+                        );
+                      })}
+                      <td data-label="Total"><b>{m.total}</b></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            <p className="muted">Sepuluh subjek teratas. Pengelompokan dampak dibuat sistem dari kode kondisi, bukan istilah resmi AirNav.</p>
+          </section>
+
+          <section>
+            <h3>Rincian per bandara</h3>
+            {r.airportDetail.length === 0 ? <p className="muted">Belum ada data.</p> : (
+              <table className="mini types">
+                <thead><tr><th>Bandara</th><th>Total</th>{IMPACT_ORDER.map((k) => <th key={k}>{IMPACT_LABEL[k]}</th>)}</tr></thead>
+                <tbody>
+                  {r.airportDetail.map((a) => (
+                    <Fragment key={a.airport}>
+                      <tr className="grp-row">
+                        <td data-label="Bandara">
+                          <button className="ghost sm" aria-expanded={!!openA[a.airport]} onClick={() => setOpenA({ ...openA, [a.airport]: !openA[a.airport] })}>{openA[a.airport] ? 'Tutup' : 'Buka'}</button>
+                          <button className="linkish" onClick={() => setDrill({ title: `${a.airport}${a.name ? ` · ${a.name}` : ''}`, extra: airportFiltered ? '' : `airport=${a.airport}` })}><b className="mono">{a.airport}</b>{a.name && <span className="muted"> {a.name}</span>}</button>
+                        </td>
+                        <td data-label="Total"><b>{a.total}</b></td>
+                        {IMPACT_ORDER.map((k) => <td key={k} data-label={IMPACT_LABEL[k]}>{a.impact[k] || ''}</td>)}
+                      </tr>
+                      {openA[a.airport] && a.subjects.map((s) => (
+                        <tr className="sub-row" key={s.code}>
+                          <td data-label="Subjek"><button className="linkish" onClick={() => setDrill({ title: `${a.airport} · ${s.label ?? s.code}`, extra: `${airportFiltered ? '' : `airport=${a.airport}&`}subject=${s.code}` })}>{s.label ?? <span className="mono">{s.code}</span>}{s.label && <span className="mono muted"> {s.code}</span>}</button></td>
+                          <td data-label="Total">{s.n}</td>
+                          {IMPACT_ORDER.map((k) => <td key={k} data-label={IMPACT_LABEL[k]}>{s.impact[k] || ''}</td>)}
+                        </tr>
+                      ))}
+                    </Fragment>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            <p className="muted">Delapan bandara dengan NOTAM terbanyak. Klik "Buka" untuk melihat rincian per subjek.</p>
+          </section>
 
           <section>
             <h3>Rincian: kelompok, subjek, dan kondisi</h3>
@@ -202,7 +284,7 @@ export function TypesPanel() {
           </section>
         </>
       )}
-      {drill && <Drill title={drill.title} query={`${query}${query ? '&' : ''}${drill.extra}`} onClose={() => setDrill(null)} />}
+      {drill && <Drill title={drill.title} query={[query, drill.extra].filter(Boolean).join('&')} onClose={() => setDrill(null)} />}
     </>
   );
 }

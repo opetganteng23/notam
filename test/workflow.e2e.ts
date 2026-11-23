@@ -39,16 +39,16 @@ before(async () => {
   await connect(uri);
   const hash = await bcrypt.hash('pw', 4);
   await connection.collection('users').insertMany(
-    ['orig:ORIGINATOR', 'ats:ATS', 'pia:PIA', 'nof:NOF', 'orig2:ORIGINATOR', 'adm:ADMIN'].map((s) => {
-      const [username, role] = s.split(':');
-      return { username, role, passwordHash: hash };
+    ['orig:ORIGINATOR', 'ats:ATS', 'pia:PIA', 'nof:NOF', 'orig2:ORIGINATOR', 'adm:ADMIN', 'pia.wihh:PIA:WIHH', 'pia.wiii:PIA:WIII'].map((s) => {
+      const [username, role, airport] = s.split(':');
+      return { username, role, passwordHash: hash, ...(airport && { airports: [airport] }) };
     }),
   );
   await connection.close();
   app = await NestFactory.create(AppModule.register({ mongoUri: uri, jwtSecret: 'test' }), { logger: false });
   await app.init();
   http = app.getHttpServer();
-  for (const u of ['orig', 'ats', 'pia', 'nof', 'orig2', 'adm']) {
+  for (const u of ['orig', 'ats', 'pia', 'nof', 'orig2', 'adm', 'pia.wihh', 'pia.wiii']) {
     tokens[u] = (await api('post', '/auth/login').send({ username: u, password: 'pw' }).expect(201)).body.token;
   }
 });
@@ -147,6 +147,37 @@ describe('alur review', () => {
     await decide(id, 'pia', 'REVISE').expect(409);
     const r = await decide(id, 'pia', 'REVISE', 'jam salah').expect(201);
     assert.equal(r.body.status, 'REVISION_REQUIRED');
+  });
+
+  it('PIA menyunting Q) dan E): versi baru, status tetap, hanya PIA saat Di PIA', async () => {
+    const id = await newSubmitted('PIA');
+    // Keluaran mock tidak berbentuk NOTAM; ganti dengan draf yang berformat benar agar suntingan realistis.
+    const formNo = (await api('get', `/requests/${id}`, 'pia').expect(200)).body.formNo;
+    const GEN = 'Q) WIIF/QMRLC/IV/NBO/A/000/999/0616S10653E005\nA) WIHH\nB) 2411020000\nC) 2411020500\nE) RWY 06/24 CLSD DUE TO WIP';
+    await app.get(getConnectionToken()).collection('notamrequests').updateOne({ formNo }, { $set: { 'versions.0.generated': GEN } });
+    const Q2 = 'WIIF/QMRHW/IV/NBO/A/000/999/0616S10653E005';
+    const edit = (who: string, body: object) => api('put', `/requests/${id}/items`, who).send(body);
+    await edit('orig', { Q: Q2 }).expect(403);
+    await edit('pia.wiii', { Q: Q2 }).expect(404); // PIA bandara lain tidak dapat menyunting
+
+    await edit('ats', { Q: Q2 }).expect(403);
+    await edit('pia.wihh', {}).expect(400);
+    await edit('pia.wihh', { Q: 'ngawur' }).expect(400);
+    await edit('pia.wihh', { E: '   ' }).expect(400);
+    const r = await edit('pia.wihh', { Q: `q) ${Q2.toLowerCase()}`, E: 'rwy 06/24 wip' }).expect(200);
+    assert.equal(r.body.status, 'UNDER_PIA');
+    assert.equal(r.body.piaRevisionCount, 0);
+    assert.equal(r.body.versions.length, 2);
+    const v = r.body.versions[1];
+    assert.ok(v.editedBy);
+    assert.deepEqual(v.editedItems, ['Q', 'E']);
+    assert.ok(v.generated.includes(`Q) ${Q2}`));
+    assert.ok(v.generated.includes('E) RWY 06/24 WIP'));
+    assert.ok(v.generated.includes('A) WIHH') && v.generated.includes('B) 2411020000')); // item lain tidak berubah
+    assert.equal(v.freeText, r.body.versions[0].freeText);
+    await edit('pia.wihh', { Q: Q2 }).expect(400); // tidak ada perubahan
+    await decide(id, 'pia.wihh', 'ACCEPT').expect(201);
+    await edit('pia.wihh', { E: 'RWY 06/24 CLSD' }).expect(409); // sudah di NOF
   });
 
   it('revisi PIA dibatasi 3x lalu hanya bisa reject', async () => {
@@ -658,6 +689,18 @@ describe('laporan jenis NOTAM', () => {
     assert.equal(all.total, list.length);
     assert.equal(all.coded + all.uncoded, all.total);
     assert.equal(all.groups.reduce((a: number, g: any) => a + g.n, 0), all.coded);
+    assert.equal(all.impact.reduce((a: number, i: any) => a + i.n, 0), all.coded); // dampak operasional konsisten
+    assert.equal(all.impactMatrix.reduce((a: number, m: any) => a + m.total, 0) <= all.coded, true);
+    assert.ok(all.airportDetail.every((a: any) => a.subjects.reduce((x: number, s: any) => x + s.n, 0) === a.total));
+  });
+
+  it('filter dampak pada daftar rincian', async () => {
+    const base = '/analytics/types/list?airport=WAAA';
+    const total = (await api('get', base, 'adm').expect(200)).body.total;
+    let sum = 0;
+    for (const k of ['CLOSED', 'LIMITED', 'NORMAL', 'OTHER']) sum += (await api('get', `${base}&impact=${k}`, 'adm').expect(200)).body.total;
+    assert.equal(sum, total);
+    await api('get', `${base}&impact=NGAWUR`, 'adm').expect(400);
   });
 
   it('daftar NOTAM per jenis (rincian)', async () => {

@@ -24,6 +24,16 @@ const STATUS_LABEL: Record<string, string> = {
 const ACTION_LABEL: Record<string, string> = { SUBMIT: 'submit', ACCEPT: 'accept', REVISE: 'revisi', REJECT: 'reject' };
 
 const lastVersion = (r: NotamRequest) => r.versions[r.versions.length - 1];
+// Isi item (Q/E) dari teks NOTAM; E boleh multi-baris.
+function itemOf(generated: string, key: 'Q' | 'E') {
+  let cur = '';
+  const out: Record<string, string> = {};
+  for (const line of generated.split(/\r?\n/)) {
+    const m = /^\s*([QABCDE])\)\s*(.*)$/.exec(line);
+    if (m) { cur = m[1]; out[cur] = m[2].trim(); } else if (cur) out[cur] += '\n' + line.trim();
+  }
+  return out[key] ?? '';
+}
 const itemE = (generated: string) => generated.split('\n').find((l) => /^E\)/.test(l))?.replace(/^E\)\s*/, '') ?? generated.split('\n')[0];
 
 function Login({ onDone, onBack }: { onDone: () => void; onBack: () => void }) {
@@ -127,6 +137,8 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
   const [text, setText] = useState('');
   const [route, setRoute] = useState<'ATS' | 'PIA'>('ATS');
   const [note, setNote] = useState('');
+  const [q, setQ] = useState('');
+  const [e, setE] = useState('');
   const [busy, setBusy] = useState(false);
   const { error, run } = useAsync();
   const ref = useRef<HTMLElement>(null);
@@ -136,7 +148,10 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
   const load = useCallback(() => run(async () => {
     const d = await api<NotamRequest>('GET', `/requests/${id}`);
     setR(d);
-    setText(d.versions[d.versions.length - 1].freeText);
+    const v = d.versions[d.versions.length - 1];
+    setText(v.freeText);
+    setQ(itemOf(v.generated, 'Q'));
+    setE(itemOf(v.generated, 'E'));
   }), [id]);
   useEffect(() => { load(); }, [load]);
   useEffect(() => { ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [id]);
@@ -170,6 +185,7 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
           <ul>{last.corrections.map((c) => <li key={c}>{c}</li>)}</ul>
         </div>
       ) : null}
+      {last.editedBy ? <p className="note">Q)/E) disunting oleh <b>{last.editedBy}</b> (PIA){last.editedItems?.length ? `: ${last.editedItems.map((k) => `${k})`).join(' dan ')}` : ''}. Teks input asli tidak berubah.</p> : null}
       <p>Validasi: <strong className={`v-${last.validation?.status}`}>{last.validation?.status ?? '-'}</strong></p>
       <ul>{last.validation?.issues.map((i) => <li key={i.code}>[{i.level}] {i.message}</li>)}</ul>
 
@@ -193,6 +209,18 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
         </>
       )}
 
+      {role === 'PIA' && r.status === 'UNDER_PIA' && (
+        <>
+          <h3>Sunting Q) dan E) <span className="muted">(B, C, D milik Originator; kembalikan lewat Revisi bila perlu)</span></h3>
+          <div className="row"><label style={{ flex: '1 1 100%' }}>Q)<input className="mono" style={{ width: '100%' }} value={q} onChange={(ev) => setQ(ev.target.value)} /></label></div>
+          <div className="row"><label style={{ flex: '1 1 100%' }}>E)<textarea className="mono" rows={3} style={{ width: '100%' }} value={e} onChange={(ev) => setE(ev.target.value)} /></label></div>
+          <div className="row">
+            <button className="ghost" disabled={busy || (q.trim() === itemOf(last.generated, 'Q') && e.trim() === itemOf(last.generated, 'E'))} onClick={() => act(async () => { await api('PUT', `/requests/${id}/items`, { Q: q, E: e }); done(); })}>Simpan sunting Q/E</button>
+            <span className="muted">Disimpan sebagai versi baru, status tetap di PIA, dan tidak menghabiskan jatah revisi.</span>
+          </div>
+        </>
+      )}
+
       {reviewing && (
         <div className="row">
           <input style={{ flex: '1 1 260px' }} placeholder="Catatan (wajib untuk revisi/tolak)" value={note} onChange={(e) => setNote(e.target.value)} />
@@ -209,6 +237,9 @@ function Detail({ id, onChange }: { id: string; onChange: () => void }) {
       <ul className="events">
         {r.events.map((e, i) => (
           <li key={i}>{fmtDateTime(e.at)} · {e.actor} ({e.role}) {ACTION_LABEL[e.action] ?? e.action}: {STATUS_LABEL[e.from]} → {STATUS_LABEL[e.to]}{e.note && ` — ${e.note}`}</li>
+        ))}
+        {r.versions.filter((v) => v.editedBy).map((v) => (
+          <li key={`v${v.no}`}>{v.createdAt ? fmtDateTime(v.createdAt) : ''} · {v.editedBy} (PIA) menyunting {(v.editedItems ?? []).map((k) => `${k})`).join(' dan ')} — versi {v.no}</li>
         ))}
       </ul>
     </section>
