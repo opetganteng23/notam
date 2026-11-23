@@ -1,4 +1,5 @@
-import { TypeDoc, computeTypes, impactOf, parseQ } from './types';
+import { readFileSync } from 'fs';
+import { TypeDoc, computeTypes, conditionLabel, impactOf, parseQ, subjectLabel } from './types';
 
 const T0 = Date.UTC(2025, 0, 1);
 const at = (h: number) => new Date(T0 + h * 3_600_000);
@@ -110,5 +111,17 @@ describe('computeTypes', () => {
     const e = computeTypes([], { now: at(0) }).report;
     expect(e).toMatchObject({ total: 0, coded: 0, uncoded: 0, groups: [], conditions: [] });
     expect(e.insights).toEqual(['Belum ada pengajuan pada periode ini.']);
+  });
+});
+
+describe('nama subjek & kondisi lengkap', () => {
+  const icao = JSON.parse(readFileSync('data/icao-notam-code.json', 'utf8'));
+  it('semua kode ICAO punya nama Indonesia', () => {
+    for (const k of Object.keys(icao.subject)) expect(subjectLabel(k)).toBeTruthy();
+    for (const k of Object.keys(icao.condition)) expect(conditionLabel(k)).toBeTruthy();
+  });
+  it('nama dari dataset AirNav tetap didahulukan', () => {
+    expect(subjectLabel('MR')).toBe('Runway');
+    expect(conditionLabel('LC')).toBe('Ditutup');
   });
 });

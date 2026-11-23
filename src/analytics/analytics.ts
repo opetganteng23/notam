@@ -1,5 +1,5 @@
 import { findAirport } from '../master/airports';
-import { CONDITION_NAME, SUBJECT_NAME } from './types';
+import { conditionLabel, subjectLabel } from './types';
 
 const H = 3_600_000;
 export const STALE_HOURS = 24;
@@ -72,7 +72,7 @@ const monthKey = (d: Date) => iso(d).slice(0, 7);
 
 function qcodeOf(generated?: string) {
   const m = /Q\)\s*\w{4}\/Q([A-Z]{2})([A-Z]{2})/.exec(generated ?? '');
-  return m ? { code: `Q${m[1]}${m[2]}`, label: `${SUBJECT_NAME[m[1]] ?? m[1]} – ${(CONDITION_NAME[m[2]] ?? m[2]).toLowerCase()}` } : null;
+  return m ? { code: `Q${m[1]}${m[2]}`, label: `${subjectLabel(m[1]) ?? m[1]} – ${(conditionLabel(m[2]) ?? m[2]).toLowerCase()}` } : null;
 }
 
 // Menghitung seluruh metrik dashboard eksekutif dari dokumen non-Draft. Fungsi murni agar mudah diuji.
