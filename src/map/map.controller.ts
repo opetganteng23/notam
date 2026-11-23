@@ -2,6 +2,7 @@ import { BadRequestException, Controller, Get, Injectable, NotFoundException, Pa
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthUser, CurrentUser } from '../auth/auth';
+import { airportFilter } from '../auth/scope';
 import { findAirport } from '../master/airports';
 import { NotamRequest } from '../requests/schemas';
 import { Item, MapDoc, MapFilter, ValidityState, buildPoints, canSee, parseValidity, selectItems, timeline, validityState } from './map';
@@ -18,7 +19,7 @@ export class MapService {
   // Draft hanya terlihat oleh pembuatnya. Originator melihat miliknya (semua status) dan NOTAM orang lain yang sudah disetujui NOF.
   // Role lain (ATS, PIA, NOF, Admin) melihat semua yang sudah disubmit.
   private scope(u: AuthUser): Record<string, unknown> {
-    return u.role === 'ORIGINATOR' ? { $or: [{ originator: u.username }, { status: 'APPROVED_BY_NOF' }] } : { status: { $ne: 'DRAFT' } };
+    return u.role === 'ORIGINATOR' ? { $or: [{ originator: u.username }, { status: 'APPROVED_BY_NOF' }] } : { status: { $ne: 'DRAFT' }, ...airportFilter(u) };
   }
 
   private parse(q: MapQuery): MapFilter {

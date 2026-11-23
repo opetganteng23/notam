@@ -12,3 +12,6 @@ deploy/docker/secrets/
 # bahan mentah peta (hasil olahannya web/src/indonesia-outline.ts yang dipakai)
 data/*.geojson
 preview-map.svg
+
+# kredensial akun trial (jangan di-commit)
+akun-trial*.csv

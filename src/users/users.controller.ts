@@ -6,10 +6,12 @@ import { AuditService } from '../audit/audit.service';
 import { AuthUser, CurrentUser, Roles } from '../auth/auth';
 import { User } from '../requests/schemas';
 import { Role } from '../workflow/workflow';
+import { cleanAirports } from '../auth/scope';
+import { findAirport } from '../master/airports';
 import { MAX_NAME, MIN_PASSWORD, USERNAME_HINT, USERNAME_RE, cleanName } from './rules';
 
 const ROLES: Role[] = ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'];
-const view = (u: any) => ({ _id: u._id, username: u.username, name: u.name ?? '', role: u.role, active: u.active !== false, createdAt: u.createdAt, lastLoginAt: u.lastLoginAt ?? null });
+const view = (u: any) => ({ _id: u._id, username: u.username, name: u.name ?? '', role: u.role, airports: u.airports ?? [], active: u.active !== false, createdAt: u.createdAt, lastLoginAt: u.lastLoginAt ?? null });
 
 // Manajemen akun: hanya ADMIN.
 @Controller('users')
@@ -23,6 +25,13 @@ export class UsersController {
   private checkPassword(p: unknown) {
     if (typeof p !== 'string' || p.length < MIN_PASSWORD) throw new BadRequestException(`Password minimal ${MIN_PASSWORD} karakter`);
   }
+  private airports(v: unknown) {
+    try {
+      return cleanAirports(v, (l) => !!findAirport(l));
+    } catch (e: any) {
+      throw new BadRequestException(e.message);
+    }
+  }
   private checkRole(r: unknown) {
     if (!ROLES.includes(r as Role)) throw new BadRequestException(`Role harus salah satu dari ${ROLES.join(', ')}`);
   }
@@ -33,15 +42,16 @@ export class UsersController {
   }
 
   @Roles('ADMIN') @Post()
-  async create(@CurrentUser() me: AuthUser, @Body() b: { username: string; password: string; role: Role; name?: string }) {
+  async create(@CurrentUser() me: AuthUser, @Body() b: { username: string; password: string; role: Role; name?: string; airports?: string[] }) {
     const name = cleanName(b.name);
     if (name.length > MAX_NAME) throw new BadRequestException(`Nama maksimal ${MAX_NAME} karakter`);
     if (!USERNAME_RE.test(String(b.username))) throw new BadRequestException(USERNAME_HINT);
     this.checkPassword(b.password);
     this.checkRole(b.role);
+    const airports = this.airports(b.airports);
     try {
-      const u = await this.users.create({ username: b.username, name, role: b.role, passwordHash: await bcrypt.hash(b.password, 10) });
-      await this.rec(me, 'USER_CREATE', u.username, `Membuat akun ${u.username} (${u.role})`, { role: u.role });
+      const u = await this.users.create({ username: b.username, name, role: b.role, airports, passwordHash: await bcrypt.hash(b.password, 10) });
+      await this.rec(me, 'USER_CREATE', u.username, `Membuat akun ${u.username} (${u.role})${airports.length ? ` bandara ${airports.join(',')}` : ''}`, { role: u.role, airports });
       return view(u);
     } catch (e: any) {
       if (e?.code === 11000) throw new ConflictException('Username sudah dipakai');
@@ -50,11 +60,12 @@ export class UsersController {
   }
 
   @Roles('ADMIN') @Patch(':id')
-  async update(@CurrentUser() me: AuthUser, @Param('id') id: string, @Body() b: { role?: Role; active?: boolean; password?: string; name?: string }) {
+  async update(@CurrentUser() me: AuthUser, @Param('id') id: string, @Body() b: { role?: Role; active?: boolean; password?: string; name?: string; airports?: string[] }) {
     const set: Record<string, unknown> = {};
     if (b.name !== undefined) { const n = cleanName(b.name); if (n.length > MAX_NAME) throw new BadRequestException(`Nama maksimal ${MAX_NAME} karakter`); set.name = n; }
     if (b.role !== undefined) { this.checkRole(b.role); set.role = b.role; }
     if (b.active !== undefined) set.active = !!b.active;
+    if (b.airports !== undefined) set.airports = this.airports(b.airports);
     if (b.password !== undefined) { this.checkPassword(b.password); set.passwordHash = await bcrypt.hash(b.password, 10); }
     if (!Object.keys(set).length) throw new BadRequestException('Tidak ada perubahan');
     if (id === me.sub && (set.active === false || (set.role && set.role !== me.role))) throw new BadRequestException('Tidak dapat menonaktifkan atau mengubah role akun sendiri');
@@ -66,6 +77,8 @@ export class UsersController {
     if (set.role && set.role !== before.role) { changes.push(`role ${before.role} → ${u.role}`); detail.role = { from: before.role, to: u.role }; }
     if (set.active !== undefined && (set.active as boolean) !== (before.active !== false)) { changes.push(u.active ? 'diaktifkan' : 'dinonaktifkan'); detail.active = { from: before.active !== false, to: u.active }; }
     if (set.name !== undefined && set.name !== (before.name ?? '')) { changes.push(`nama menjadi "${set.name}"`); detail.name = { from: before.name ?? '', to: set.name }; }
+    const nowA = (u.airports ?? []).join(','), wasA = (before.airports ?? []).join(',');
+    if (set.airports !== undefined && nowA !== wasA) { changes.push(`bandara ${wasA || '(semua)'} → ${nowA || '(semua)'}`); detail.airports = { from: before.airports ?? [], to: u.airports ?? [] }; }
     if (set.passwordHash) { changes.push('password direset'); detail.passwordReset = true; }
     if (changes.length) await this.rec(me, 'USER_UPDATE', u.username, `Mengubah akun ${u.username}: ${changes.join(', ')}`, detail);
     return view(u);

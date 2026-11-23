@@ -8,6 +8,8 @@ export class User {
   @Prop({ required: true }) passwordHash: string;
   @Prop({ type: String, required: true, enum: ['ORIGINATOR', 'ATS', 'PIA', 'NOF', 'ADMIN'] }) role: Role;
   @Prop({ default: true }) active: boolean;
+  // Cakupan bandara (locator ICAO). Kosong = semua bandara.
+  @Prop({ type: [String], default: [] }) airports: string[];
   @Prop() lastLoginAt: Date;
 }
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -11,6 +11,7 @@
     "build:all": "npm run build:web && npm run build",
     "seed": "node --env-file-if-exists=.env dist/seed.js",
     "create-user": "node --env-file-if-exists=.env dist/create-user.js",
+    "set-airports": "node --env-file-if-exists=.env dist/set-airports.js",
     "migrate": "node --env-file-if-exists=.env dist/migrate.js",
     "import:dataset": "node --env-file-if-exists=.env dist/import-dataset.js",
     "dev:web": "vite",

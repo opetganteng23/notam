@@ -38,18 +38,19 @@ export function Modal({ title, onClose, children, wide }: { title: string; onClo
 
 function UserDialog({ user, onClose, onSaved }: { user: UserRow | null; onClose: () => void; onSaved: () => void }) {
   const me = user?.username === session.user;
-  const [form, setForm] = useState({ username: user?.username ?? '', name: user?.name ?? '', password: '', role: (user?.role ?? 'ORIGINATOR') as Role, active: user?.active ?? true });
+  const [form, setForm] = useState({ username: user?.username ?? '', name: user?.name ?? '', password: '', role: (user?.role ?? 'ORIGINATOR') as Role, airports: (user?.airports ?? []).join(', '), active: user?.active ?? true });
   const [busy, setBusy] = useState(false);
   const { error, run } = useAsync();
 
   const save = () => run(async () => {
     setBusy(true);
     try {
-      if (!user) await api('POST', '/users', { username: form.username, name: form.name, password: form.password, role: form.role });
+      if (!user) await api('POST', '/users', { username: form.username, name: form.name, password: form.password, role: form.role, airports: form.airports });
       else {
         const body: Record<string, unknown> = {};
         if (form.name.trim() !== (user.name ?? '')) body.name = form.name;
         if (form.role !== user.role) body.role = form.role;
+        if (form.airports.trim().toUpperCase().split(/[\s,;]+/).filter(Boolean).join(',') !== (user.airports ?? []).join(',')) body.airports = form.airports;
         if (form.active !== user.active) body.active = form.active;
         if (form.password) body.password = form.password;
         if (Object.keys(body).length) await api('PATCH', `/users/${user._id}`, body);
@@ -73,6 +74,9 @@ function UserDialog({ user, onClose, onSaved }: { user: UserRow | null; onClose:
         </label>
         <label className="field">Role
           <select disabled={me} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}>{ROLES.map((r) => <option key={r}>{r}</option>)}</select>
+        </label>
+        <label className="field">Bandara (locator ICAO, pisahkan koma)
+          <input value={form.airports} placeholder="kosong = semua bandara, contoh: WIII, WIRR" onChange={(e) => setForm({ ...form, airports: e.target.value })} />
         </label>
         {user && (
           <label className="check"><input type="checkbox" disabled={me} checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} /> Akun aktif{me && ' (akun Anda sendiri tidak dapat dinonaktifkan)'}</label>
@@ -166,7 +170,7 @@ export function Users() {
             return (
               <tr key={u._id}>
                 <td data-label="Username">{u.name && <b className="uname">{u.name}</b>}<span className="mono">{u.username}</span>{me && <span className="muted"> (Anda)</span>}</td>
-                <td data-label="Role"><span className="pill">{u.role}</span></td>
+                <td data-label="Role"><span className="pill">{u.role}</span>{!!u.airports?.length && <span className="muted mono"> {u.airports.join(', ')}</span>}</td>
                 <td data-label="Status"><span className={`pill ${u.active ? 's-APPROVED_BY_NOF' : 's-REJECTED'}`}>{u.active ? 'Aktif' : 'Nonaktif'}</span></td>
                 <td data-label="Terakhir login">{u.lastLoginAt ? fmtDateTime(u.lastLoginAt) : <span className="muted">Belum pernah</span>}</td>
                 <td data-label="Dibuat">{fmtDate(u.createdAt)}</td>

@@ -1,8 +1,9 @@
-import { BadRequestException, Controller, Get, Injectable, Query, StreamableFile } from '@nestjs/common';
+import { BadRequestException, Controller, ForbiddenException, Get, Injectable, Query, StreamableFile } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuditService } from '../audit/audit.service';
 import { AuthUser, CurrentUser, Roles } from '../auth/auth';
+import { inScope, scopeOf } from '../auth/scope';
 import { NotamRequest } from '../requests/schemas';
 import { Analytics, DocLike, Row, buildInsights, computeAnalytics } from './analytics';
 import { typesToExcel, typesToPptx } from './export-types';
@@ -21,7 +22,7 @@ export class AnalyticsService {
   constructor(@InjectModel(NotamRequest.name) private model: Model<NotamRequest>) {}
 
   // Draft tidak pernah dihitung. Parameter tidak valid ditolak dengan pesan yang jelas.
-  private filter(q: TypesQuery, allowStatus: boolean) {
+  private filter(q: TypesQuery, allowStatus: boolean, u: AuthUser) {
     const date = (name: 'from' | 'to') => {
       if (!q[name]) return undefined;
       const d = new Date(q[name] as string);
@@ -34,12 +35,14 @@ export class AnalyticsService {
     if (allowStatus && q.status && !STATUSES.includes(q.status)) throw new BadRequestException(`Status harus salah satu dari ${STATUSES.join(', ')}`);
     const filter: Record<string, unknown> = { status: allowStatus && q.status ? q.status : { $ne: 'DRAFT' } };
     if (from || to) filter.createdAt = { ...(from && { $gte: from }), ...(to && { $lte: to }) };
+    if (q.airport && !inScope(u, q.airport)) throw new ForbiddenException('Bandara di luar cakupan akun ini');
     if (q.airport) filter.airport = q.airport;
+    else if (scopeOf(u).length) filter.airport = { $in: scopeOf(u) };
     return { filter, from, to };
   }
 
-  async run(q: AnalyticsQuery): Promise<{ analytics: Analytics; rows: Row[] }> {
-    const { filter, from, to } = this.filter(q, false);
+  async run(q: AnalyticsQuery, u: AuthUser): Promise<{ analytics: Analytics; rows: Row[] }> {
+    const { filter, from, to } = this.filter(q, false, u);
     const docs = await this.model
       .find(filter)
       .select({ formNo: 1, airport: 1, originator: 1, status: 1, createdAt: 1, events: 1, versions: { $slice: -1 } })
@@ -51,6 +54,7 @@ export class AnalyticsService {
       const prevFrom = new Date(+from - (+end - +from));
       const prevFilter: Record<string, unknown> = { status: { $ne: 'DRAFT' }, createdAt: { $gte: prevFrom, $lt: from } };
       if (q.airport) prevFilter.airport = q.airport;
+      else if (scopeOf(u).length) prevFilter.airport = { $in: scopeOf(u) };
       const prevDocs = await this.model
         .find(prevFilter)
         .select({ formNo: 1, airport: 1, originator: 1, status: 1, createdAt: 1, events: 1, versions: { $slice: -1 } })
@@ -62,8 +66,8 @@ export class AnalyticsService {
     return result;
   }
 
-  async runTypes(q: TypesQuery): Promise<{ report: TypesReport; rows: TypeRow[] }> {
-    const { filter, from, to } = this.filter(q, true);
+  async runTypes(q: TypesQuery, u: AuthUser): Promise<{ report: TypesReport; rows: TypeRow[] }> {
+    const { filter, from, to } = this.filter(q, true, u);
     const docs = await this.model
       .find(filter)
       .select({ formNo: 1, airport: 1, originator: 1, status: 1, createdAt: 1, versions: { $slice: -1 } })
@@ -85,13 +89,13 @@ export class AnalyticsController {
   }
 
   @Roles(...READERS) @Get()
-  async get(@Query() q: AnalyticsQuery) {
-    return (await this.svc.run(q)).analytics;
+  async get(@CurrentUser() u: AuthUser, @Query() q: AnalyticsQuery) {
+    return (await this.svc.run(q, u)).analytics;
   }
 
   @Roles(...READERS) @Get('export.xlsx')
   async xlsx(@CurrentUser() u: AuthUser, @Query() q: AnalyticsQuery) {
-    const { analytics, rows } = await this.svc.run(q);
+    const { analytics, rows } = await this.svc.run(q, u);
     await this.rec(u, 'ringkasan eksekutif', 'Excel', q);
     return new StreamableFile(await analyticsToExcel(analytics, rows), {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -101,7 +105,7 @@ export class AnalyticsController {
 
   @Roles(...READERS) @Get('export.pptx')
   async pptx(@CurrentUser() u: AuthUser, @Query() q: AnalyticsQuery) {
-    const { analytics } = await this.svc.run(q);
+    const { analytics } = await this.svc.run(q, u);
     await this.rec(u, 'ringkasan eksekutif', 'PowerPoint', q);
     return new StreamableFile(await analyticsToPptx(analytics), {
       type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
@@ -111,8 +115,8 @@ export class AnalyticsController {
 
   // Rincian NOTAM di balik satu elemen grafik (klik pada analytics). Maksimal 300 baris.
   @Roles(...READERS) @Get('drill')
-  async drill(@Query() q: AnalyticsQuery & { dim?: string; value?: string }) {
-    const { rows } = await this.svc.run(q);
+  async drill(@CurrentUser() u: AuthUser, @Query() q: AnalyticsQuery & { dim?: string; value?: string }) {
+    const { rows } = await this.svc.run(q, u);
     const v = q.value ?? '';
     const by: Record<string, (r: Row) => boolean> = {
       status: (r) => r.status === v,
@@ -137,14 +141,14 @@ export class AnalyticsController {
 
   // ---- Laporan menurut jenis NOTAM (kode Q)
   @Roles(...READERS) @Get('types')
-  async types(@Query() q: TypesQuery) {
-    return (await this.svc.runTypes(q)).report;
+  async types(@CurrentUser() u: AuthUser, @Query() q: TypesQuery) {
+    return (await this.svc.runTypes(q, u)).report;
   }
 
   // Rincian NOTAM untuk satu jenis (klik pada laporan). Maksimal 300 baris.
   @Roles(...READERS) @Get('types/list')
-  async typeList(@Query() q: TypesQuery) {
-    const { rows } = await this.svc.runTypes(q);
+  async typeList(@CurrentUser() u: AuthUser, @Query() q: TypesQuery) {
+    const { rows } = await this.svc.runTypes(q, u);
     const match = rows.filter((r) => (!q.group || r.group === q.group) && (!q.subject || r.subject === q.subject) && (!q.condition || r.condition === q.condition));
     match.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
     return { total: match.length, items: match.slice(0, 300) };
@@ -152,7 +156,7 @@ export class AnalyticsController {
 
   @Roles(...READERS) @Get('types/export.xlsx')
   async typesXlsx(@CurrentUser() u: AuthUser, @Query() q: TypesQuery) {
-    const { report, rows } = await this.svc.runTypes(q);
+    const { report, rows } = await this.svc.runTypes(q, u);
     await this.rec(u, 'laporan jenis NOTAM', 'Excel', q);
     return new StreamableFile(await typesToExcel(report, rows), {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -162,7 +166,7 @@ export class AnalyticsController {
 
   @Roles(...READERS) @Get('types/export.pptx')
   async typesPptx(@CurrentUser() u: AuthUser, @Query() q: TypesQuery) {
-    const { report } = await this.svc.runTypes(q);
+    const { report } = await this.svc.runTypes(q, u);
     await this.rec(u, 'laporan jenis NOTAM', 'PowerPoint', q);
     return new StreamableFile(await typesToPptx(report), {
       type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',

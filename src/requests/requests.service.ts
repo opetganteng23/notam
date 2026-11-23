@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, ForbiddenException, Inject, Inj
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthUser } from '../auth/auth';
+import { airportFilter, inScope, scopeOf } from '../auth/scope';
 import { NOTAM_GENERATOR, NotamGenerator } from '../generator/generator';
 import { endBeforeStart, hasDate } from './input-check';
 import { detectAirports, findAirport, mentionedAirportNames, mentionedLocators } from '../master/airports';
@@ -93,6 +94,7 @@ export class RequestsService {
       airport = found[0].locId;
     }
     if (!findAirport(airport)) throw new BadRequestException('Locator bandara tidak ada di master data');
+    if (!inScope(user, airport)) throw new ForbiddenException(`Akun ini hanya dapat mengajukan NOTAM untuk bandara ${scopeOf(user).join(', ')}, bukan ${airport}`);
     this.checkInput(freeText, airport);
     if (reuseOf) {
       const src = await this.load(reuseOf);
@@ -133,6 +135,7 @@ export class RequestsService {
 
   async act(user: AuthUser, id: string, action: Action, opts: { route?: Route; note?: string }) {
     const doc = await this.load(id);
+    if (user.role !== 'ORIGINATOR' && !inScope(user, doc.airport)) throw new NotFoundException();
     if (action === 'SUBMIT' && doc.originator !== user.username) throw new ForbiddenException();
     const blocking = (doc.versions[doc.versions.length - 1]?.validation?.issues ?? []).filter((i) => BLOCKING.includes(i.code));
     if (action === 'SUBMIT' && blocking.length)
@@ -161,9 +164,9 @@ export class RequestsService {
     return updated;
   }
 
-  // Originator hanya melihat miliknya; role lain (termasuk admin) melihat semua yang sudah disubmit.
+  // Originator hanya melihat miliknya; role lain melihat yang sudah disubmit, dibatasi cakupan bandara akunnya (kosong = semua).
   private scope(user: AuthUser): Record<string, any> {
-    return user.role === 'ORIGINATOR' ? { originator: user.username } : { status: { $ne: 'DRAFT' } };
+    return user.role === 'ORIGINATOR' ? { originator: user.username } : { status: { $ne: 'DRAFT' }, ...airportFilter(user) };
   }
 
   async stats(user: AuthUser) {
@@ -191,7 +194,10 @@ export class RequestsService {
   async list(user: AuthUser, f: ListQuery) {
     const filter = this.scope(user);
     if (f.status) filter.status = String(f.status);
-    if (f.airport) filter.airport = String(f.airport);
+    if (f.airport) {
+      if (user.role !== 'ORIGINATOR' && !inScope(user, String(f.airport))) return [];
+      filter.airport = String(f.airport);
+    }
     if (f.from || f.to) filter.createdAt = { ...(f.from && { $gte: new Date(f.from) }), ...(f.to && { $lte: new Date(f.to) }) };
     if (f.q) {
       const re = new RegExp(String(f.q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
@@ -202,7 +208,7 @@ export class RequestsService {
 
   async get(user: AuthUser, id: string) {
     const doc = await this.load(id);
-    if (user.role === 'ORIGINATOR' ? doc.originator !== user.username : doc.status === 'DRAFT') throw new NotFoundException();
+    if (user.role === 'ORIGINATOR' ? doc.originator !== user.username : doc.status === 'DRAFT' || !inScope(user, doc.airport)) throw new NotFoundException();
     return doc;
   }
 }
