@@ -48,7 +48,7 @@ if ($tun) { 'tunnel   : sudah berjalan' }
 elseif (-not $KeyPath -or -not (Test-Path $KeyPath)) { 'tunnel   : DILEWATI (isi -KeyPath atau variabel NOTAM_SSH_KEY)' }
 else {
   $loop = "# notam-tunnel`n" +
-    "while (`$true) { & ssh -i '$KeyPath' -o BatchMode=yes -o ConnectTimeout=10 $VpsHost 'fuser -k ${RemotePort}/tcp >/dev/null 2>&1'; & ssh -i '$KeyPath' -N -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=20 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=accept-new " +
+    "while (`$true) { & ssh -i '$KeyPath' -o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=10 -o ServerAliveCountMax=3 $VpsHost 'fuser -k ${RemotePort}/tcp >/dev/null 2>&1'; & ssh -i '$KeyPath' -N -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=20 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=accept-new " +
     "-R 127.0.0.1:${RemotePort}:127.0.0.1:${LocalPort} $VpsHost; Start-Sleep 10 }"
   Start-Process powershell -ArgumentList '-NoProfile', '-WindowStyle', 'Hidden', '-Command', $loop -WindowStyle Hidden
   Start-Sleep 4
